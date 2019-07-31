@@ -49,12 +49,20 @@ def article(): #for searching articles
                                 iNum = issue.split(".")[1]
                                 x = x + 1
                                 print(vNum + "." + iNum + "." + aNum + " - " + title)
-                            else:
+
+            if x == 0:
+                for folder in os.listdir(base):
+                    if "Vol " in folder:
+                        path = base + folder + "/"
+                        for issue in os.listdir(path):
+                            nPath = path + issue + "/"
+                            for file in os.listdir(nPath):
                                 found = []
+                                f = file.lower()
                                 for y in terms:
                                     y = y.lower()
                                     if y == "the" or y == "of" or y == "a" or y == "and" or y == "or" or y == "if" or y == "&" or y == "is" or y == "on":
-                                        kl = 0 #do nothing
+                                        kl = 0
                                     elif y in f:
                                         aNum = file.split(")")[0]
                                         title = file.split(") - ")[1]
@@ -62,11 +70,12 @@ def article(): #for searching articles
                                         iNum = issue.split(".")[1]
                                         x = x + 1
                                         d = vNum + "." + iNum + "." + aNum + " - " + title
-                                        if d not in found:
+                                        if not d in found:
                                             found.append(d)
                                 if len(found) > 0:
                                     for t in found:
                                         print(t)
-            if x == 0:
-                print()
-                print("No Articles Found")
+
+                if x == 0:
+                    print()
+                    print("No articles found")
