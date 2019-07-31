@@ -16,6 +16,7 @@ import os
 import helpcmd as h
 import lister
 import search
+import fixAuthor
 from pathvalidate import ValidationError, validate_filename
 #JETS ARCHIVE STARTS AT LINK 33
 def main_test():
@@ -41,6 +42,8 @@ def main_test():
                     print("ERROR: unknown command")
         elif com == "-l":
             lister.main()
+        elif com == "-f":
+            fixAuthor.main()
         elif com == "-h":
             h.help()
     
