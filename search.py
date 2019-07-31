@@ -12,7 +12,7 @@ def article(): #for searching articles
         x = 0
         term = sys.argv[3]
         if len(sys.argv) > 4:
-            for x in range(3,len(sys.argv)):
+            for x in range(4,len(sys.argv)):
                 term = term + " " + sys.argv[x]
         for folder in os.listdir(base):
             if "Vol " in folder:
