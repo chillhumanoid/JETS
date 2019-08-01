@@ -15,6 +15,7 @@ import issues
 import os
 import helpcmd as h
 import lister
+import forceRename
 import search
 import fixAuthor
 from pathvalidate import ValidationError, validate_filename
@@ -44,6 +45,8 @@ def main_test():
             lister.main()
         elif com == "-f":
             fixAuthor.main()
+        elif com == "-fr":
+            forceRename.main()
         elif com == "-h":
             h.help()
     

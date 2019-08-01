@@ -45,7 +45,7 @@ def getName(article):
         elif count == 3 and article.count(")") == 4:
             x = article.find("(", x) + 1
             x = article.find("(", x) + 1
-        y = article.find(")", x)
+        y = article.find(").", x)
         author = article[x:y]
         try:
             validate_filename(author)
@@ -53,8 +53,6 @@ def getName(article):
         except ValidationError as e:
             print("{}\n".format(e), file=sys.stderr)
         path = base + "Authors/" + author + "/"
-        if not os.path.exists(path):
-            os.mkdir(path)
         pdfMetaData(article, author)
         nArt = changeArticleName(article)
         global curPath
@@ -63,8 +61,11 @@ def getName(article):
         aNum = nArt[:x]
         pNum = curIssue.split(" ")[1]
         fNum = pNum + "." + aNum
+        if not os.path.exists(path):
+            print(fNum)
         nArt = nArt.replace(aNum + ")", fNum)
-        copyfile(curPath, path + nArt)
+        
+        #copyfile(curPath, path + nArt)
     else:
         with open(curPath, 'rb') as f:
             pdf = PdfFileReader(f)
@@ -78,7 +79,7 @@ def getName(article):
             if not author == None:
                 path = base + "Authors/" + author + "/"
                 if not os.path.exists(path):
-                    os.mkdir(path)
+                    print(fNum)
                 copyfile(curPath, path + article)
             
         
