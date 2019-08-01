@@ -47,6 +47,8 @@ def main_test():
             fixAuthor.main()
         elif com == "-fr":
             forceRename.main()
+        elif com == "-c":
+            forceRename.confirm()
         elif com == "-h":
             h.help()
     
