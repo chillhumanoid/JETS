@@ -17,7 +17,7 @@ def main(vNum, iNum, aNum): #had to adjust this because of fixAuthor
         if "Vol " + vNum in vol: #get into the right volume folder
             path = base + vol    #set the path
             for issue in os.listdir(path): #run through the specific volume folder
-                if int(iNum) == 0 or vNum + "." + iNum in issue: #find the right issue folder
+                if vNum + "." + iNum in issue: #find the right issue folder
                     print("test")
                     nPath = path +"/" + issue +"/" #set the new path
                     for article in os.listdir(nPath): #run through the specific issue folder

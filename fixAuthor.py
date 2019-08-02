@@ -35,23 +35,35 @@ def fix(vNum, iNum):
         curVol = vol
         if "Vol " + vNum + " " in vol: #gets correct volume
             curPath = base + vol + "/"
-            for issue in os.listdir(curPath):
-                if iNum == 0 or issue.endswith("." + iNum): #gets correct issue
-                    curIssue = issue
-                    curPath = base + vol + "/" + issue + "/" #keep this way to avoid "errors"
-                    for article in os.listdir(curPath):
-                        if not article.startswith("OUT "):
-                            author = getAuthor(article, vNum, iNum)
-                            if not author == 0:
-                                titles = getTitle(article, vNum, iNum)
-                                nTitle = titles[0]
-                                oTitle = titles[1]
-                                output = getOutput(article, author, oTitle, nTitle)
-                                setMetaData(nTitle, author, output, article)
-                            elif author == 0:
-                                x = article.find(")")
-                                aNum = article[:x]
-                                forceRename.main(vNum, iNum, aNum) #instead of trying to do this automagically
+            if iNum == 0:
+                    for issue in os.listdir(curPath):
+                        t = issue.split(" ")[1]
+                        iNum = t.split(".")[1]
+                        curIssue = issue
+                        curPath = base + vol + "/" + issue + "/" #keep this way to avoid "errors"
+                        for article in os.listdir(curPath):
+                            if not article.startswith("OUT "):
+                                author = getAuthor(article, vNum, iNum)
+                                if not author == 0:
+                                    titles = getTitle(article)
+                                    nTitle = titles[0]
+                                    oTitle = titles[1]
+                                    output = getOutput(article, oTitle, nTitle)
+                                    setMetaData(nTitle, author, output, article)
+            else:
+                for issue in os.listdir(curPath):
+                    if vNum + "." + iNum in issue:
+                        curIssue = issue
+                        curPath = base + vol + "/" + issue + "/"
+                        for article in os.listdir(curPath):
+                            if not article.startswith("OUT "):
+                                author = getAuthor(article,vNum, iNum)
+                                if not author == 0:
+                                    titles = getTitle(article)
+                                    nTitle = titles[0]
+                                    oTitle = titles[1]
+                                    output = getOutput(article, oTitle, nTitle)
+                                    setMetaData(nTitle, author, output, article)
 
     
 def getAuthor(article,vNum, iNum): #gets the author name)
@@ -61,7 +73,8 @@ def getAuthor(article,vNum, iNum): #gets the author name)
     if not x == 0:
         count = article.count("(")
         if count > 1:
-            return 0            
+            forceRename.main(vNum, iNum, aNum) #instead of trying to do this automagically
+            return 0
         else:
             y = article.find(")", x + 1)
 
@@ -85,7 +98,7 @@ def getAuthor(article,vNum, iNum): #gets the author name)
         author = "JETS"
         return author
 
-def getTitle(article, vNum, iNum):
+def getTitle(article):
     count = article.count("(")
     x = article.find(") - ") + 4
     if count > 0:
@@ -99,7 +112,7 @@ def getTitle(article, vNum, iNum):
     data = (new, old)
     return(data)
 
-def getOutput(article,author, otitle, ntitle):
+def getOutput(article, otitle, ntitle):
     output = article.replace(otitle, ntitle)
     output = "OUT " + output
     try:
