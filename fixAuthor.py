@@ -1,5 +1,5 @@
-import sys
-import os
+import sys, os
+import forceRename
 from pathvalidate import ValidationError, validate_filename
 from PyPDF2 import PdfFileReader, PdfFileWriter
 from shutil import copyfile
@@ -8,123 +8,170 @@ base = "C:/Users/jonat/OneDrive/Documents/JETS/"
 curPath = ""
 curIssue = ""
 curVol = ""
+
 def main():    #Main file. going to go about this a different way this time
     length = len(sys.argv)
     if length > 2:
         arg1 = sys.argv[2]
-        if int(arg1) >= 1 and int(arg1) <= 62:
-            data = arg1
-            startfix(arg1)
+        if "." in arg1:
+            vNum = arg1.split(".")[0]
+            iNum = arg1.split(".")[1]
         else:
-            print("Correct Usage: jets -f (1-62)")
+            vNum = arg1
+            iNum = 0
+        if int(vNum) >= 1 and int(vNum) <= 62 and int(iNum) >= 0 and int(iNum) <= 4:
+            fix(vNum, iNum)
+            confirmNew(vNum, iNum)
+        else:
+            print("Correct Usage: jets -f (1-62).(1-4)")
     else:
-        print("Correct Usage: jets -f (1-62)")
-
-def startfix(data):
+        print("Correct Usage: jets -f (1-62).(1-4)")
+        
+def fix(vNum, iNum):
     global curPath
     global curIssue
     global curVol
     for vol in os.listdir(base):
         curVol = vol
-        if "Vol " + data + " " in vol:
+        if "Vol " + vNum + " " in vol: #gets correct volume
             curPath = base + vol + "/"
             for issue in os.listdir(curPath):
-                curIssue = issue
-                curPath = base + vol + "/" + issue #keep this way to avoid "errors"
-                for article in os.listdir(curPath):
-                    curPath = base + vol + "/" + issue + "/" + article
-                    getName(article)
-                    
+                if iNum == 0 or issue.endswith("." + iNum): #gets correct issue
+                    curIssue = issue
+                    curPath = base + vol + "/" + issue + "/" #keep this way to avoid "errors"
+                    for article in os.listdir(curPath):
+                        if not article.startswith("OUT "):
+                            author = getAuthor(article, vNum, iNum)
+                            if not author == 0:
+                                titles = getTitle(article, vNum, iNum)
+                                nTitle = titles[0]
+                                oTitle = titles[1]
+                                output = getOutput(article, author, oTitle, nTitle)
+                                setMetaData(nTitle, author, output, article)
+                            elif author == 0:
+                                x = article.find(")")
+                                aNum = article[:x]
+                                forceRename.main(vNum, iNum, aNum) #instead of trying to do this automagically
 
-def getName(article):
-    x = article.find("(") + 1
+    
+def getAuthor(article,vNum, iNum): #gets the author name)
+    x = article.find("(") + 1 #hold
+    e = article.find(")")
+    aNum = article[:e]
     if not x == 0:
         count = article.count("(")
-        if count == 2 and article.count(")") == 3:
-            x = article.find("(", x) + 1
-        elif count == 3 and article.count(")") == 4:
-            x = article.find("(", x) + 1
-            x = article.find("(", x) + 1
-        y = article.find(").", x)
-        author = article[x:y]
-        try:
-            validate_filename(author)
-            validate_filename(article)
-        except ValidationError as e:
-            print("{}\n".format(e), file=sys.stderr)
-        path = base + "Authors/" + author + "/"
-        pdfMetaData(article, author)
-        nArt = changeArticleName(article)
-        global curPath
-        curPath = curPath.replace(article, nArt)
-        x = nArt.find(") - ")
-        aNum = nArt[:x]
-        pNum = curIssue.split(" ")[1]
-        fNum = pNum + "." + aNum
-        if not os.path.exists(path):
-            print(fNum)
-        nArt = nArt.replace(aNum + ")", fNum)
-        #copyfile(curPath, path + nArt)
-    else:
-        with open(curPath, 'rb') as f:
-            pdf = PdfFileReader(f)
-            information = pdf.getDocumentInfo()
-            author = information.author
-            x = article.find(") - ")
-            aNum = article[:x]
-            pNum = curIssue.split(" ")[1] #stands for pre-number
-            fNum = pNum + "." + aNum      #Full Number
-            article = article.replace(aNum + ")", fNum)
-            if not author == None:
-                path = base + "Authors/" + author + "/"
-                if not os.path.exists(path):
-                    print(fNum)
-                copyfile(curPath, path + article)
-            
-        
-def pdfMetaData(article, author):
-    st = article.find(") - ") + 4
-    end = article.find("(" + author)
-    title = article[st:end-1]
-    with open(curPath, 'rb') as f:
-        pdf = PdfFileReader(f)
-        information = pdf.getDocumentInfo()
-        writer = PdfFileWriter()
-        writer.appendPagesFromReader(pdf)
-        metadata = pdf.getDocumentInfo()
-        writer.addMetadata({
-            '/Author': author,
-            '/Title': title
-        })
+        if count > 1:
+            return 0            
+        else:
+            y = article.find(")", x + 1)
 
-        fout = open(curPath, 'ab')
-        writer.write(fout)
-        f.close()
-        
-def changeArticleName(article):
-    count = article.count("(")
-    x = article.find("(")
-    if count == 2 and article.count(")") > count:
-        x = article.find("(", x + 1)
-    elif count == 3 and article.count(")") > count:
-        x = article.find("(", x + 1)
-        x = article.find("(", x + 1)
-    x = x -1
-    
-    nArticle = article[:x] + ".pdf"
-    nPath = curPath.replace(article, nArticle)
-    print("Confirm change:")
-    print("OLD: " + curPath)
-    print("NEW: " + nPath)
-    choice = input("Confirm?(Y/N): ")
-    choice = choice.lower()
-    if choice == 'y':
-        os.rename(curPath, nPath)
-        print("Name Changed")
-        print()
+            author = article[x:y]
+            author = author.strip()
+            
+            if author.endswith(" "):
+                author.strip()
+            if author.endswith("."):
+                author = author[:-1]
+                
+            try:
+                validate_filename(author)
+                validate_filename(article)
+            except ValidationError as e:
+                print()
+                print("{}\n".format(e), file=sys.stderr)
+            else:
+                return author
     else:
-        print()
-        print("Okay")
-        print()
-    return nArticle
+        author = "JETS"
+        return author
+
+def getTitle(article, vNum, iNum):
+    count = article.count("(")
+    x = article.find(") - ") + 4
+    if count > 0:
+        y = article.find("(")
+        new = article[x:y]
+    else:
+        y = article.find(".pdf")
+        new = article[x:y]
+    z = article.find(".pdf")
+    old = article[x:z]
+    data = (new, old)
+    return(data)
+
+def getOutput(article,author, otitle, ntitle):
+    output = article.replace(otitle, ntitle)
+    output = "OUT " + output
+    try:
+        validate_filename(output)
+    except ValidationError as e:
+        print("{}\n".format(e), file=sys.stderr)
+    return output
     
+def setMetaData(title, author, output, article):
+    f = open(curPath + article, 'rb')
+    pdf = PdfFileReader(f)
+    writer = PdfFileWriter()
+    writer.appendPagesFromReader(pdf)
+    writer.addMetadata({
+        '/Author': author,
+        '/Title': title
+    })
+    fout = open(curPath + output, 'ab')
+    writer.write(fout)
+    fout.close()
+    f.close()
+
+def confirmNew(vNum, iNum):
+    for vol in os.listdir(base):
+        curVol = vol
+        if "Vol " + vNum + " " in vol: #gets correct volume
+            path = base + vol + "/"
+            if iNum == 0:
+                for issue in os.listdir(path):
+                    iNum = issue.split(" ")[1]
+                    iNum = iNum.split(".")[1]
+                    curIssue = issue
+                    nPath = base + vol + "/" + issue + "/" #keep this way to avoid "errors"
+                    for article in os.listdir(nPath):
+                        if article.startswith("OUT "):
+                            x = article.find("T ")+2
+                            y = article.find(") - ")
+                            aNum = article[x:y]
+                            with open(nPath + article, 'rb') as f:
+                                pdf = PdfFileReader(f)
+                                info = pdf.getDocumentInfo()
+                                author = info.author
+                                if author == None:
+                                    author = ""
+                                title = info.title
+                                if title == None:
+                                    title = ""
+                                print()
+                                print(str(vNum) + "." + str(iNum) + "." + str(aNum))
+                                print("AUTHOR: " + author)
+                                print("TITLE: " + title)
+            else:
+                for issue in os.listdir(path):
+                    if vNum + "." + iNum in issue:
+                        curIssue = issue
+                        nPath = base + vol + "/" + issue + "/"
+                        for article in os.listdir(nPath):
+                            if article.startwith("OUT "):
+                                x = article.find("T ") + 2
+                                y = article.find(") -")
+                                aNum = article[x:y]
+                                with open(nPath + article, 'rb') as f:
+                                    pdf = PdfFileReader(f)
+                                    info = pdf.getDocumentInfo()
+                                    author = info.author
+                                    if author == None:
+                                        author = ""
+                                    title = info.title
+                                    if title == None:
+                                        title = ""
+                                    print()
+                                    print(str(vNum) + "." + str(iNum) + "." + str(aNum))
+                                    print("AUTHOR: " + author)
+                                    print("TITLE: " + title)
+

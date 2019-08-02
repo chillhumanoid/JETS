@@ -31,7 +31,7 @@ def main():
         elif com == "-f": #fix author command
             fixAuthor.main() #i don't remember how this works, will look
         elif com == "-fr": #force rename command
-            forceRename.main() #forces the rename of a specific file, user has to init.
+            forceRename.main1() #forces the rename of a specific file, user has to init.
         elif com == "-c": #confirm that the title and author are there
             forceRename.confirm()
         elif com == "-h": #help command
@@ -40,5 +40,5 @@ def main():
 
 base = "C:/Users/jonat/OneDrive/Documents/Jets/" #currently unused       
 curDirectory = "C:/Users/jonat/OneDrive/Documents/Jets/" #currently unused
-main) #calls main()
+main() #calls main()
 #menu(curDirectory) remnant from old menu, see old_menu.py

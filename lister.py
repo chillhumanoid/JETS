@@ -54,7 +54,7 @@ def listIssues(num):
             path = base + vol
             for issue in os.listdir(path):
                 nPath = path + "/" + issue + "/"
-                for aNum in range(len(os.listdir(nPath))):
+                for aNum in range(len(os.listdir(nPath))+1):
                     front = issue.split(" ")[1]
                     num = front + "." + str(aNum)
                     forceRename.conf(num)
