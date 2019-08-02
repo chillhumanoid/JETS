@@ -64,7 +64,6 @@ def getName(article):
         if not os.path.exists(path):
             print(fNum)
         nArt = nArt.replace(aNum + ")", fNum)
-        
         #copyfile(curPath, path + nArt)
     else:
         with open(curPath, 'rb') as f:

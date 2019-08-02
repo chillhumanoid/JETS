@@ -1,6 +1,7 @@
 ##imports
 import sys
 import os
+import forceRename
 
 ##global variables
 base = "C:/Users/jonat/OneDrive/Documents/Jets/"
@@ -52,7 +53,11 @@ def listIssues(num):
         if "Vol " + num + " " in vol:
             path = base + vol
             for issue in os.listdir(path):
-                print(issue)
+                nPath = path + "/" + issue + "/"
+                for aNum in range(len(os.listdir(nPath))):
+                    front = issue.split(" ")[1]
+                    num = front + "." + str(aNum)
+                    forceRename.conf(num)
                 
 def listArticles(num):
     print()
@@ -64,5 +69,5 @@ def listArticles(num):
             for issue in os.listdir(path):
                 if " " + num in issue:
                     nPath = path + issue + "/" 
-                    for article in os.listdir(nPath):
-                        print(article)
+                    for aNum in range(len(os.listdir(nPath))):
+                        print(aNum)
