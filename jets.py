@@ -31,15 +31,17 @@ def main():
         elif com == "-f": #fix author command
             fixAuthor.main() #i don't remember how this works, will look
         elif com == "-fr": #force rename command
-            forceRename.main1() #forces the rename of a specific file, user has to init.
+            forceRename.argGet() #forces the rename of a specific file, user has to init.
         elif com == "-c": #confirm that the title and author are there
-            forceRename.confirm()
+            forceRename.argGet()
         elif com == "-fo":
             fixOut.main()
         elif com == "-ca":
             authFolder.main()
         elif com == "-o":
             opener.getArgs()
+        elif com == "-fa":
+            forceRename.argGet()
         elif com == "-h": #help command
             helpcmd.help()
     
