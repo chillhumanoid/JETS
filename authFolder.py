@@ -53,12 +53,17 @@ def main():
             print()
             print("Incorrect Argument")
             print("Correct Usage: jets -ca (1-62).(1-4).##")
-
+    elif len(sys.argv) == 2:
+        createFolders(0,0,0)
+    else:
+        print()
+        print("Too many arguments")
+        print("Correct Usage: jets -ca (1-62).(1-4).##")
 def createFolders(vNum, iNum, aNum):
     path = base + "Authors/"
     x = 0
     for vol in os.listdir(base):
-        if "Vol " + vNum + " " in vol:
+        if "Vol " + vNum + " " in vol or vNum == 0:
             p = base + vol + "/"
             for issue in os.listdir(p):
                 if vNum + "." + iNum in issue or iNum == 0:
