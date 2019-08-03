@@ -3,13 +3,35 @@ from pathvalidate import ValidationError, validate_filename; from PyPDF2 import 
 
 base = "C:/Users/jonat/OneDrive/Documents/JETS/"
 def main1(): #for when called from cmdline
-    args = sys.argv[2] #get the arguments after -fr (should be #.#.#)
-    vNum = args.split(".")[0] #get volume number
-    iNum = args.split(".")[1] #get issue number
-    aNum = args.split(".")[2] #get article number
-    main(vNum, iNum, aNum)
-    confirm()
-    
+
+    if len(sys.argv) == 3:
+        args = sys.argv[2] #get the arguments after -fr
+
+        if sys.argv[2].count(".") == 2:
+            vNum = args.split(".")[0] #get volume number
+            if int(vNum) >= 1 and int(vNum) <= 62:
+                iNum = args.split(".")[1]
+                if int(iNum) >= 1 and int(iNum) <= 4:
+                    aNum = args.split(".")[2]
+                    main(vNum, iNum, aNum)
+                else:
+                    print()
+                    print("Invalid issue number")
+                    print("Correct Usage: jets -fr (1-62).(1-4).##")
+            else:
+                print()
+                print("Invalid volume number")
+                print("Correct Usage: jets -fr (1-62).(1-4).##")
+        else:
+            print()
+            print("Incorrect argument")
+            print("Correct Usage: jets -fr (1-62).(1-4).##")
+
+    else:
+        print()
+        print("Need an argument")
+        print("Correct Usage: jets -fr (1-62).(1-4).##")
+        
 def main(vNum, iNum, aNum): #had to adjust this because of fixAuthor
     vNum = str(vNum)
     iNum = str(iNum)
