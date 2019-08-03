@@ -1,7 +1,7 @@
 ##imports
-import sys, os, forceRename
+import sys, os, forceRename, re
 from PyPDF2 import PdfFileReader, PdfFileWriter
-import re
+from shutil import copyfile
 
 ##global variables
 base = "C:/Users/jonat/OneDrive/Documents/Jets/"
@@ -9,70 +9,68 @@ base = "C:/Users/jonat/OneDrive/Documents/Jets/"
 ##functions
 def main():                  #start of script
     if len(sys.argv) < 3:    # if the user only entered "jets -l"
-        listVolumes()        #list all volumes
-    elif sys.argv[2] == "-v":   #only correct way if not just -l
-        if len(sys.argv) < 4:   #if -v but no number
-            print()             
-            print("Correct Usage: jets -l -v (1-62)")
+        listAll()        #list all articles
+    elif len(sys.argv) == 3:   #only correct way if not just -l
+        arg = sys.argv[2]
+        if "." in arg:
+            vNum = arg.split(".")[0]
+            iNum = arg.split(".")[1]
+            listInIssue(vNum, iNum)
         else:
-            num = sys.argv[3] #get number
-            if len(num) == 2: #if they had a leading 0
-                s = num[0:1] 
-                if s == "0":
-                    num = num[1:] #gets rid of leading 0
-            if len(sys.argv) > 4: #if they had more than just -v 
-                if sys.argv[4] == "-i": #if it's -i (only correct argument)
-                    if len(sys.argv) < 6 or len(sys.argv) > 6: #if less than 6, or greater than 6
-                        print()
-                        print("Correct Usage: jets -l -v (1-62) -i (1-4)")  
-                    else:
-                        iNum = int(sys.argv[5]) #sets issue number
-                        if iNum > 0 and iNum < 5: #if this issue number is between 1-4
-                            num = str(num) + "." + str(iNum) #reconstruct number, may not be necessary
-                            listArticles(num)  #list articles
-                        else:
-                            print()
-                            print("Correct Usage: jets -l -v (1-62) -i (1-4)")
-                else: #if not -i
-                    print()
-                    print("Correct Usage: jets -l -v (1-62) -i (1-4)")
-            else:
-                listIssues(num) #display issues if only -v argument
-    elif sys.argv[2] == "-a":
-        listAuth()
+            vNum = arg
+            listInVol(vNum)
     else:
-        print("Correct Usage: jets -l -v (1-62)")
+        print()
+        print("Too many arguments")
+        print("Correct Usage: jets -l (1-62).(1-4)")
         
-def listVolumes():
+def listAll():
     print() #blank for formatting
-    for vol in os.listdir(base):
-        if "Vol " in vol:  #rules out "all" and "authors"
-            print(vol) #displays all volumes
+    for article in os.listdir(base + "All/"):
+        print(article)
 
-def listIssues(num):
-    print()
-    for vol in os.listdir(base):
-        if "Vol " + num + " " in vol:
-            path = base + vol
-            for issue in os.listdir(path):
-                nPath = path + "/" + issue + "/"
-                for aNum in range(len(os.listdir(nPath))+1):
-                    front = issue.split(" ")[1]
-                    num = front + "." + str(aNum)
-                    forceRename.conf(num)
-                
-def listArticles(num):
-    print()
-    vNum = num.split(".")[0]
-    iNum = num.split(".")[1]
-    for vol in os.listdir(base):
-        if "Vol " + vNum + " (" in vol:
-            path = base + vol + "/"
-            for issue in os.listdir(path):
-                if " " + num in issue:
-                    nPath = path + issue + "/" 
-                    for aNum in range(len(os.listdir(nPath))):
-                        print(aNum)
+def listInVol(vNum):
+    if int(vNum) >= 1 and int(vNum) <= 62:
+        print()
+        for vol in os.listdir(base):
+            if "Vol " + vNum + " " in vol:
+                path = base + vol + "/"
+                for issue in os.listdir(path):
+                    nPath = path + issue + "/"
+                    for article in os.listdir(nPath):
+                        aNum = article.split(") - ")[0]
+                        front = issue.split(" ")[1]
+                        num = front + "." + aNum
+                        print("Article " + str(num) + ":")
+                        forceRename.conf(num)
+    else:
+        print()
+        print("invalid volume")
+        print("Correct Usage: jets -l (1-62)")
+        
+def listInIssue(vNum, iNum):
+    if int(vNum) >= 1 and int(vNum) <=62:
+        if int(iNum) >= 1 and int(iNum) <= 4:
+            print()
+            for vol in os.listdir(base):
+                if "Vol " + vNum + " " in vol:
+                    path = base + vol
+                    for issue in os.listdir(path):
+                        if vNum + "." + iNum in issue:
+                            nPath = path + "/" + issue + "/"
+                            for aNum in range(1,len(os.listdir(nPath))+1):
+                                front = issue.split(" ")[1]
+                                num = front + "." + str(aNum)
+                                print("Article " + str(num) + ":")
+                                forceRename.conf(num)
+        else:
+            print()
+            print("invalid issue")
+            print("Correct Usage: jets -l (1-62).(1-4)")
+    else:
+        print()
+        print("invalid volume")
+        print("Correct Usage: jets -l (1-62).(1-4)")
 
 
 def listAuth():

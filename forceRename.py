@@ -123,7 +123,6 @@ def conf(num): #same as above, but used when other files are calling it(or it's 
                                 title = info.title
                                 author = info.author
                                 f.close()
-                            print()
                             if author == None:
                                 author = ""
                                 print(num)
@@ -132,4 +131,5 @@ def conf(num): #same as above, but used when other files are calling it(or it's 
                                 title = ""
                                 print(num)
                             print("Title: " + title)
+                            print()
                             
