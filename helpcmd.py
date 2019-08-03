@@ -16,12 +16,21 @@ def help():
         if arg == "-l":
             print()
             print("List Command")
+            print()
+            print("Description: Lists all articles, or all articles in a volume or issue")
+            print()
+            print("Usage:")
             print("      -l                Prints all articles in all volumes")
             print("      -l (1-62)         Prints all articles in given volume")
             print("      -l (1-62).(1-4)   Prints all articles in given volume and issue")
         elif arg == "-s":
-            #search
-            x = 1
+            print()
+            print("Search Command")
+            print()
+            print("Description: Search by title or author")
+            print()
+            print("Usage:")
+            print("Coming soon")
         elif arg == "-f":
             print()
             print("Fix Author Command")

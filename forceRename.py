@@ -8,13 +8,14 @@ def main1(): #for when called from cmdline
     iNum = args.split(".")[1] #get issue number
     aNum = args.split(".")[2] #get article number
     main(vNum, iNum, aNum)
-    confirm()     
+    confirm()
+    
 def main(vNum, iNum, aNum): #had to adjust this because of fixAuthor
     vNum = str(vNum)
     iNum = str(iNum)
     aNum = str(aNum)
     for vol in os.listdir(base): #list everything in volume directory(root)
-        if "Vol " + vNum in vol: #get into the right volume folder
+        if "Vol " + vNum + " " in vol: #get into the right volume folder
             path = base + vol    #set the path
             for issue in os.listdir(path): #run through the specific volume folder
                 if vNum + "." + iNum in issue: #find the right issue folder
