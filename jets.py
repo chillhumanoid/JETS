@@ -1,5 +1,5 @@
 import requests, urllib.request, time, win32api, win32print, subprocess, re, sys, os #all python wide imports
-import backend, issues, lister, forceRename, search, fixAuthor, helpcmd #all jets related imports
+import backend, issues, lister, forceRename, search, opener, fixAuthor, helpcmd, fixOut, authFolder #all jets related imports
 from clear_screen import clear #specific imports
 from shutil import copyfile
 from bs4 import BeautifulSoup
@@ -34,6 +34,12 @@ def main():
             forceRename.main1() #forces the rename of a specific file, user has to init.
         elif com == "-c": #confirm that the title and author are there
             forceRename.confirm()
+        elif com == "-fo":
+            fixOut.main()
+        elif com == "-ca":
+            authFolder.main()
+        elif com == "-o":
+            opener.getArgs()
         elif com == "-h": #help command
             helpcmd.help()
     

@@ -1,7 +1,7 @@
 ##imports
-import sys
-import os
-import forceRename
+import sys, os, forceRename
+from PyPDF2 import PdfFileReader, PdfFileWriter
+import re
 
 ##global variables
 base = "C:/Users/jonat/OneDrive/Documents/Jets/"
@@ -38,6 +38,8 @@ def main():                  #start of script
                     print("Correct Usage: jets -l -v (1-62) -i (1-4)")
             else:
                 listIssues(num) #display issues if only -v argument
+    elif sys.argv[2] == "-a":
+        listAuth()
     else:
         print("Correct Usage: jets -l -v (1-62)")
         
@@ -71,3 +73,42 @@ def listArticles(num):
                     nPath = path + issue + "/" 
                     for aNum in range(len(os.listdir(nPath))):
                         print(aNum)
+
+
+def listAuth():
+    authList = []
+    first = []
+    last = []
+    num = 0
+    for vol in os.listdir(base):
+        if "Vol " in vol:
+            path = base + vol + "/"
+            for issue in os.listdir(path):
+                nPath = path + issue + "/"
+                num = issue.split(" ")[1]
+                for article in os.listdir(nPath):
+                    x = article.find(") - ")
+                    aNum = article[:x]
+                    fNum = num + "." + aNum
+                    f = open (nPath + article, 'rb')
+                    pdf = PdfFileReader(f)
+                    info = pdf.getDocumentInfo()
+                    author = info.author
+                    if author == None:
+                        print(nPath + article)
+                    if author.startswith("Sung-Yul)"):
+                        print(fNum)
+                    else:
+                        if not author in authList:
+                            authList.append(author)
+    for author in authList:
+        if "," in author:
+            authList.remove(author)
+            x = author.split(",")
+            for item in x:
+                test = item.strip()
+                if "And " in test:
+                    test = test.replace("And ", "")
+                if not test in authList:
+                    authList.append(test)
+    
