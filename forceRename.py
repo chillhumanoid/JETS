@@ -1,11 +1,12 @@
-import sys, os, time
+import sys, os, time, subprocess
 from pathvalidate import ValidationError, validate_filename; from PyPDF2 import PdfFileReader, PdfFileWriter; from shutil import copyfile
 
 base = "C:/Users/jonat/OneDrive/Documents/JETS/"
-def main1(): #for when called from cmdline
+
+def argGet(): #for when called from cmdline
 
     if len(sys.argv) == 3:
-        args = sys.argv[2] #get the arguments after -fr
+        args = sys.argv[2] #get the arguments after -fr or -c
 
         if sys.argv[2].count(".") == 2:
             vNum = args.split(".")[0] #get volume number
@@ -13,7 +14,14 @@ def main1(): #for when called from cmdline
                 iNum = args.split(".")[1]
                 if int(iNum) >= 1 and int(iNum) <= 4:
                     aNum = args.split(".")[2]
-                    main(vNum, iNum, aNum)
+                    if sys.argv[1] == "-fr":
+                        main(vNum, iNum, aNum)
+                        confirm(vNum, iNum, aNum)
+                    elif sys.argv[1] == "-c":
+                        confirm(vNum, iNum, aNum)
+                    elif sys.argv[1] == "-fa":
+                        authOnly(vNum, iNum, aNum)
+                        confirm(vNum, iNum, aNum)
                 else:
                     print()
                     print("Invalid issue number")
@@ -121,17 +129,75 @@ def main(vNum, iNum, aNum): #had to adjust this because of fixAuthor
                             else:
                                 x = 1
 
-def confirm(): #displays author and title of new PDF (or given pdf, see below)
-    args = sys.argv[2]
-    vNum = args.split(".")[0]
-    iNum = args.split(".")[1]
-    aNum = args.split(".")[2]
+def authOnly(vNum, iNum, aNum):
     for vol in os.listdir(base):
-        if "Vol " + vNum in vol:
-            path = base + vol
+        if "Vol " +  vNum + " " in vol:
+            path = base + vol + "/"
             for issue in os.listdir(path):
                 if vNum + "." + iNum in issue:
-                    nPath = path +"/" + issue +"/"
+                    nPath = path + issue + "/"
+                    for article in os.listdir(nPath):
+                        if article.startswith(aNum + ") - "):
+                            acrobatPath = r'C:\Program Files (x86)\Adobe\Acrobat DC\Acrobat\Acrobat.exe'
+                            p = subprocess.Popen("%s %s" % (acrobatPath, nPath + article))
+                            os.startfile(nPath + article)
+                            f = open(nPath + article, 'rb')
+                            pdf = PdfFileReader(f)
+                            info = pdf.getDocumentInfo()
+                            title = info.title
+                            author = info.author
+                            writer = PdfFileWriter()
+                            for page in range(pdf.getNumPages()):
+                                writer.addPage(pdf.getPage(page))
+
+                            print("Title - " + title)
+                            nAuth = input("New Author Name: ")
+                            print()
+                            print("Old Author - " + author)
+                            print("New Author - " + nAuth)
+                            choice = input("Confirm(y/n): ")
+                            choice = choice.lower()
+                            if choice == "y":
+                                p.kill()
+                                time.sleep(.5)
+                                writer.addMetadata({
+                                    '/Author': nAuth,
+                                    '/Title': title
+                                })
+                                fout = open(nPath + article, 'ab')
+                                writer.write(fout)
+                                fout.close()
+                                f.close()
+                                fNum = vNum + "." + iNum + "." + aNum
+                                aName = article.replace(aNum + ") - ", fNum + " - ")
+                                aBase1 = base + "Authors/"
+                                aBase2 = base + "All/"
+                                #the following deletes the file from the author folder
+                                if os.path.exists(aBase1 + nAuth + "/"):
+                                    for file in os.listdir(aBase1 + author + "/"):
+                                        if file.startswith(fNum):
+                                            os.remove(aBase1 + author + "/" + file)
+                                            if not os.path.exists(aBase1 + nAuth + "/"):
+                                                os.mkdir(aBase1 + nAuth + "/")
+                                            copyfile(nPath + article, aBase1 + nAuth  + "/" + aName)
+                                else:
+                                    if not os.path.exists(aBase1 + nAuth + "/"):
+                                        os.mkdir(aBase1 + nAuth + "/")
+                                    copyfile(nPath + article, aBase1 + nAuth + "/" + aName)
+                                #the following deletes the existing file from the all folder
+                                for file in os.listdir(aBase2):
+                                    if file.startswith(fNum):
+                                        os.remove(aBase2 + file)
+                                        copyfile(nPath + article, aBase2 + aName)
+                            else:
+                                p.kill()
+def confirm(vNum, iNum, aNum): #displays author and title of new PDF (or given pdf, see below)
+    for vol in os.listdir(base):
+        if "Vol " + vNum + " " in vol:
+            path = base + vol + "/"
+            for issue in os.listdir(path):
+                if vNum + "." + iNum in issue:
+                    nPath = path + issue +"/"
                     for article in os.listdir(nPath):
                         if article.startswith("OUT " + aNum + ") - ") or article.startswith(aNum + ") - "):
                             wPath = nPath + article
@@ -142,6 +208,7 @@ def confirm(): #displays author and title of new PDF (or given pdf, see below)
                                 author = info.author
                                 f.close()
                             print()
+                            print("Article " + vNum + "." + iNum + "." + aNum)
                             if author == None:
                                 author = ""
                             print("Author: " + author)
@@ -149,7 +216,7 @@ def confirm(): #displays author and title of new PDF (or given pdf, see below)
                                 title = ""
                             print("Title: " + title)
                             
-def conf(num): #same as above, but used when other files are calling it(or it's being called directly, such as with -c
+def conf(num):
     vNum = num.split(".")[0]
     iNum = num.split(".")[1]
     aNum = num.split(".")[2]
