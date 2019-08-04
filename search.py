@@ -9,7 +9,42 @@ base = "C:/Users/jonat/OneDrive/Documents/JETS/"
 
 #functions
 
-def article():    #for searching articles
+def main():
+    if len(sys.argv) > 3:
+        arg = sys.argv[2]
+        if arg == "-t":
+            searchArticles()
+        if arg == "-a":
+            searchAuthors()
+def searchAuthors():
+    if len(sys.argv) < 4:
+        print()
+        print("Please enter a name")
+    else:
+        x = 0
+        listoNames = []
+        name = [sys.argv[3]]
+        if len(sys.argv) > 4:
+            for x in range(4, len(sys.argv)):
+                name.append(sys.argv[x])
+        for x in name:
+            for author in os.listdir(base + "Authors/"):
+                names = author.split(" ")
+                if x in names:
+                    if not author in listoNames:
+                        listoNames.append(author)
+                else:
+                    if author in listoNames:
+                        listoNames.remove(author)
+        for author in os.listdir(base + "Authors/"):
+            if author in listoNames:
+                print()
+                print(author)
+                print("---------------------------")
+                for article in os.listdir(base + "Authors/" + author):
+                    print(article)
+                
+def searchArticles():    #for searching articles
 
     if len(sys.argv) < 4:    #If under 4, no search term given
         print()   #for formatting
