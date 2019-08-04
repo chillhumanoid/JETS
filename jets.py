@@ -1,5 +1,5 @@
 import requests, urllib.request, time, win32api, win32print, subprocess, re, sys, os #all python wide imports
-import backend, issues, lister, forceRename, search, opener, fixAuthor, helpcmd, fixOut, authFolder #all jets related imports
+import backend, issues, lister, merger,forceRename, search, opener, fixAuthor, helpcmd, fixOut, authFolder #all jets related imports
 from clear_screen import clear #specific imports
 from shutil import copyfile
 from bs4 import BeautifulSoup
@@ -16,16 +16,7 @@ def main():
         com = sys.argv[1]
         com = com.lower()
         if com == "-s": #search command
-            if length < 3:
-                print("Insufficient arguments")
-            else:
-                term1 = sys.argv[2]
-                if term1 == "-a": #may move this to search.py
-                    print("FUTURE SEARCH AUTHOR TRY AGAIN LATER")
-                elif term1 == "-t":
-                    search.article()
-                else:
-                    print("ERROR: unknown command")
+            search.main()
         elif com == "-l": #lists based on arguments, see lister.py
             lister.main()
         elif com == "-f": #fix author command
@@ -42,6 +33,8 @@ def main():
             opener.getArgs()
         elif com == "-fa":
             forceRename.argGet()
+        elif com == "-m":
+            merger.main()
         elif com == "-h": #help command
             helpcmd.help()
     
