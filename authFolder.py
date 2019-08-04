@@ -66,39 +66,40 @@ def createFolders(vNum, iNum, aNum):
         if "Vol " + vNum + " " in vol or vNum == 0:
             p = base + vol + "/"
             for issue in os.listdir(p):
-                if vNum + "." + iNum in issue or iNum == 0:
-                    num = issue.split(" ")[1]
-                    np = p + issue + "/"
-                    for article in os.listdir(np):
-                        if article.startswith(aNum + ") - ") or aNum == 0:
-                            aNum2 = article.split(") - ")[0]
-                            fNum = num + "." + aNum2
-                            nArticle = article.replace(aNum2 + ")", fNum)
-                            f = open(np + article, 'rb')
-                            pdf = PdfFileReader(f)
-                            info = pdf.getDocumentInfo()
-                            author = info.author
-                            if "," in author:
-                                x = author.split(",")
-                                for item in x:
-                                    author = item.strip()
-                                    if "And " in author:
-                                        author = author.replace("And ", "")
-                                        nPath = path + author + "/"
-                                        if not os.path.exists(nPath):
-                                            os.mkdir(nPath)
-                                        copyfile(np + article, nPath + nArticle)
-                                    else:
-                                        nPath = path + author + "/"
-                                        if not os.path.exists(nPath):
-                                            os.mkdir(nPath)
-                                        copyfile(np + article, nPath + nArticle)
-                            else:
-                                nPath = path + author + "/"
-                                if not os.path.exists(nPath):
-                                    os.mkdir(nPath)
-                                copyfile(np + article, nPath + nArticle)
-                            x = x + 1
+                if os.path.isdir(p + issue):
+                    if vNum + "." + iNum in issue or iNum == 0:
+                        num = issue.split(" ")[1]
+                        np = p + issue + "/"
+                        for article in os.listdir(np):
+                            if article.startswith(aNum + ") - ") or aNum == 0:
+                                aNum2 = article.split(") - ")[0]
+                                fNum = num + "." + aNum2
+                                nArticle = article.replace(aNum2 + ")", fNum)
+                                f = open(np + article, 'rb')
+                                pdf = PdfFileReader(f)
+                                info = pdf.getDocumentInfo()
+                                author = info.author
+                                if "," in author:
+                                    x = author.split(",")
+                                    for item in x:
+                                        author = item.strip()
+                                        if "And " in author:
+                                            author = author.replace("And ", "")
+                                            nPath = path + author + "/"
+                                            if not os.path.exists(nPath):
+                                                os.mkdir(nPath)
+                                            copyfile(np + article, nPath + nArticle)
+                                        else:
+                                            nPath = path + author + "/"
+                                            if not os.path.exists(nPath):
+                                                os.mkdir(nPath)
+                                            copyfile(np + article, nPath + nArticle)
+                                else:
+                                    nPath = path + author + "/"
+                                    if not os.path.exists(nPath):
+                                        os.mkdir(nPath)
+                                    copyfile(np + article, nPath + nArticle)
+                                x = x + 1
     if x == 0:
         print()
         print("No article found")

@@ -36,13 +36,14 @@ def listInVol(vNum):
             if "Vol " + vNum + " " in vol:
                 path = base + vol + "/"
                 for issue in os.listdir(path):
-                    nPath = path + issue + "/"
-                    for article in os.listdir(nPath):
-                        aNum = article.split(") - ")[0]
-                        front = issue.split(" ")[1]
-                        num = front + "." + aNum
-                        print("Article " + str(num) + ":")
-                        forceRename.conf(num)
+                    if os.path.isdir(issue + path):
+                        nPath = path + issue + "/"
+                        for article in os.listdir(nPath):
+                            aNum = article.split(") - ")[0]
+                            front = issue.split(" ")[1]
+                            num = front + "." + aNum
+                            print("Article " + str(num) + ":")
+                            forceRename.conf(num)
     else:
         print()
         print("invalid volume")
@@ -54,15 +55,16 @@ def listInIssue(vNum, iNum):
             print()
             for vol in os.listdir(base):
                 if "Vol " + vNum + " " in vol:
-                    path = base + vol
+                    path = base + vol "/"
                     for issue in os.listdir(path):
-                        if vNum + "." + iNum in issue:
-                            nPath = path + "/" + issue + "/"
-                            for aNum in range(1,len(os.listdir(nPath))+1):
-                                front = issue.split(" ")[1]
-                                num = front + "." + str(aNum)
-                                print("Article " + str(num) + ":")
-                                forceRename.conf(num)
+                        if os.path.isdir(path + issue):
+                            if vNum + "." + iNum in issue:
+                                nPath = path + issue + "/"
+                                for aNum in range(1,len(os.listdir(nPath))+1):
+                                    front = issue.split(" ")[1]
+                                    num = front + "." + str(aNum)
+                                    print("Article " + str(num) + ":")
+                                    forceRename.conf(num)
         else:
             print()
             print("invalid issue")
@@ -82,23 +84,24 @@ def listAuth():
         if "Vol " in vol:
             path = base + vol + "/"
             for issue in os.listdir(path):
-                nPath = path + issue + "/"
-                num = issue.split(" ")[1]
-                for article in os.listdir(nPath):
-                    x = article.find(") - ")
-                    aNum = article[:x]
-                    fNum = num + "." + aNum
-                    f = open (nPath + article, 'rb')
-                    pdf = PdfFileReader(f)
-                    info = pdf.getDocumentInfo()
-                    author = info.author
-                    if author == None:
-                        print(nPath + article)
-                    if author.startswith("Sung-Yul)"):
-                        print(fNum)
-                    else:
-                        if not author in authList:
-                            authList.append(author)
+                if os.path.isdir(path + issue):
+                    nPath = path + issue + "/"
+                    num = issue.split(" ")[1]
+                    for article in os.listdir(nPath):
+                        x = article.find(") - ")
+                        aNum = article[:x]
+                        fNum = num + "." + aNum
+                        f = open (nPath + article, 'rb')
+                        pdf = PdfFileReader(f)
+                        info = pdf.getDocumentInfo()
+                        author = info.author
+                        if author == None:
+                            print(nPath + article)
+                        if author.startswith("Sung-Yul)"):
+                            print(fNum)
+                        else:
+                            if not author in authList:
+                                authList.append(author)
     for author in authList:
         if "," in author:
             authList.remove(author)

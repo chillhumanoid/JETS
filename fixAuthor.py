@@ -37,33 +37,35 @@ def fix(vNum, iNum):
             curPath = base + vol + "/"
             if iNum == 0:
                     for issue in os.listdir(curPath):
-                        t = issue.split(" ")[1]
-                        iNum = t.split(".")[1]
-                        curIssue = issue
-                        curPath = base + vol + "/" + issue + "/" #keep this way to avoid "errors"
-                        for article in os.listdir(curPath):
-                            if not article.startswith("OUT "):
-                                author = getAuthor(article, vNum, iNum)
-                                if not author == 0:
-                                    titles = getTitle(article)
-                                    nTitle = titles[0]
-                                    oTitle = titles[1]
-                                    output = getOutput(article, oTitle, nTitle)
-                                    setMetaData(nTitle, author, output, article)
+                        if os.path.isdir(curPath + issue):
+                            t = issue.split(" ")[1]
+                            iNum = t.split(".")[1]
+                            curIssue = issue
+                            curPath = base + vol + "/" + issue + "/" #keep this way to avoid "errors"
+                            for article in os.listdir(curPath):
+                                if not article.startswith("OUT "):
+                                    author = getAuthor(article, vNum, iNum)
+                                    if not author == 0:
+                                        titles = getTitle(article)
+                                        nTitle = titles[0]
+                                        oTitle = titles[1]
+                                        output = getOutput(article, oTitle, nTitle)
+                                        setMetaData(nTitle, author, output, article)
             else:
                 for issue in os.listdir(curPath):
-                    if vNum + "." + iNum in issue:
-                        curIssue = issue
-                        curPath = base + vol + "/" + issue + "/"
-                        for article in os.listdir(curPath):
-                            if not article.startswith("OUT "):
-                                author = getAuthor(article,vNum, iNum)
-                                if not author == 0:
-                                    titles = getTitle(article)
-                                    nTitle = titles[0]
-                                    oTitle = titles[1]
-                                    output = getOutput(article, oTitle, nTitle)
-                                    setMetaData(nTitle, author, output, article)
+                    if os.path.isdir(curPath + issue):
+                        if vNum + "." + iNum in issue:
+                            curIssue = issue
+                            curPath = base + vol + "/" + issue + "/"
+                            for article in os.listdir(curPath):
+                                if not article.startswith("OUT "):
+                                    author = getAuthor(article,vNum, iNum)
+                                    if not author == 0:
+                                        titles = getTitle(article)
+                                        nTitle = titles[0]
+                                        oTitle = titles[1]
+                                        output = getOutput(article, oTitle, nTitle)
+                                        setMetaData(nTitle, author, output, article)
 
     
 def getAuthor(article,vNum, iNum): #gets the author name)
@@ -142,37 +144,15 @@ def confirmNew(vNum, iNum):
             path = base + vol + "/"
             if iNum == 0:
                 for issue in os.listdir(path):
-                    iNum = issue.split(" ")[1]
-                    iNum = iNum.split(".")[1]
-                    curIssue = issue
-                    nPath = base + vol + "/" + issue + "/" #keep this way to avoid "errors"
-                    for article in os.listdir(nPath):
-                        if article.startswith("OUT "):
-                            x = article.find("T ")+2
-                            y = article.find(") - ")
-                            aNum = article[x:y]
-                            with open(nPath + article, 'rb') as f:
-                                pdf = PdfFileReader(f)
-                                info = pdf.getDocumentInfo()
-                                author = info.author
-                                if author == None:
-                                    author = ""
-                                title = info.title
-                                if title == None:
-                                    title = ""
-                                print()
-                                print(str(vNum) + "." + str(iNum) + "." + str(aNum))
-                                print("AUTHOR: " + author)
-                                print("TITLE: " + title)
-            else:
-                for issue in os.listdir(path):
-                    if vNum + "." + iNum in issue:
+                    if os.path.isdir(path + issue)
+                        iNum = issue.split(" ")[1]
+                        iNum = iNum.split(".")[1]
                         curIssue = issue
-                        nPath = base + vol + "/" + issue + "/"
+                        nPath = base + vol + "/" + issue + "/" #keep this way to avoid "errors"
                         for article in os.listdir(nPath):
-                            if article.startwith("OUT "):
-                                x = article.find("T ") + 2
-                                y = article.find(") -")
+                            if article.startswith("OUT "):
+                                x = article.find("T ")+2
+                                y = article.find(") - ")
                                 aNum = article[x:y]
                                 with open(nPath + article, 'rb') as f:
                                     pdf = PdfFileReader(f)
@@ -187,4 +167,30 @@ def confirmNew(vNum, iNum):
                                     print(str(vNum) + "." + str(iNum) + "." + str(aNum))
                                     print("AUTHOR: " + author)
                                     print("TITLE: " + title)
+                                    f.close()
+            else:
+                for issue in os.listdir(path):
+                    if os.path.isdir(path + issue):
+                        if vNum + "." + iNum in issue:
+                            curIssue = issue
+                            nPath = base + vol + "/" + issue + "/"
+                            for article in os.listdir(nPath):
+                                if article.startwith("OUT "):
+                                    x = article.find("T ") + 2
+                                    y = article.find(") -")
+                                    aNum = article[x:y]
+                                    with open(nPath + article, 'rb') as f:
+                                        pdf = PdfFileReader(f)
+                                        info = pdf.getDocumentInfo()
+                                        author = info.author
+                                        if author == None:
+                                            author = ""
+                                        title = info.title
+                                        if title == None:
+                                            title = ""
+                                        print()
+                                        print(str(vNum) + "." + str(iNum) + "." + str(aNum))
+                                        print("AUTHOR: " + author)
+                                        print("TITLE: " + title)
+                                        f.close()
 

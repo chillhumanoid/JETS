@@ -63,19 +63,21 @@ def searchArticles():    #for searching articles
                     path = base + folder + "/" #adjusts path
 
                     for issue in os.listdir(path): #goes through all issue folders in each volume
-                        nPath = path + issue + "/" #adjusts path, this is nPath because if path, breaks loop
 
-                        for file in os.listdir(nPath):  # checks every file in every issue folder
-                            term = term.lower()   #lower for checking purposes
-                            f = file.lower() #see above
+                        if os.path.isdir(path + issue):
+                            nPath = path + issue + "/" #adjusts path, this is nPath because if path, breaks loop
 
-                            if term in f:    #if term is found
-                                aNum = file.split(")")[0] #gets the article number
-                                title = file.split(") - ")[1] #gets the title
-                                vNum = folder.split(" ")[1] #gets the volume number
-                                iNum = issue.split(".")[1] #gets the issue number, technically could just use this for both vnum and inum
-                                x = x + 1 #adds 1 to x, lets script know that an article was found (but doesn't end loop)
-                                print(vNum + "." + iNum + "." + aNum + " - " + title) #display name of article
+                            for file in os.listdir(nPath):  # checks every file in every issue folder
+                                term = term.lower()   #lower for checking purposes
+                                f = file.lower() #see above
+
+                                if term in f:    #if term is found
+                                    aNum = file.split(")")[0] #gets the article number
+                                    title = file.split(") - ")[1] #gets the title
+                                    vNum = folder.split(" ")[1] #gets the volume number
+                                    iNum = issue.split(".")[1] #gets the issue number, technically could just use this for both vnum and inum
+                                    x = x + 1 #adds 1 to x, lets script know that an article was found (but doesn't end loop)
+                                    print(vNum + "." + iNum + "." + aNum + " - " + title) #display name of article
 
             if x == 0: #if, at end of loop, no article was found, let user know
 
@@ -94,19 +96,21 @@ def searchArticles():    #for searching articles
                     path = base + folder + "/"
 
                     for issue in os.listdir(path):
-                        nPath = path + issue + "/"
 
-                        for file in os.listdir(nPath):
-                            term = term.lower()
-                            f = file.lower()
+                        if os.path.isdir(path + issue):
+                            nPath = path + issue + "/"
 
-                            if term in f:
-                                aNum = file.split(")")[0]
-                                title = file.split(") - ")[1]
-                                vNum = folder.split(" ")[1]
-                                iNum = issue.split(".")[1]
-                                x = x + 1
-                                print(vNum + "." + iNum + "." + aNum + " - " + title)
+                            for file in os.listdir(nPath):
+                                term = term.lower()
+                                f = file.lower()
+
+                                if term in f:
+                                    aNum = file.split(")")[0]
+                                    title = file.split(") - ")[1]
+                                    vNum = folder.split(" ")[1]
+                                    iNum = issue.split(".")[1]
+                                    x = x + 1
+                                    print(vNum + "." + iNum + "." + aNum + " - " + title)
 
                                 #These are separated to allow for if search term was found with the full term, not to look at each individual word. If I had to guess, may never see the second part. Oh well.
 
@@ -118,25 +122,26 @@ def searchArticles():    #for searching articles
                         path = base + folder + "/"
 
                         for issue in os.listdir(path):
-                            nPath = path + issue + "/"
+                            if os.path.isdir(path + issue):
+                                nPath = path + issue + "/"
 
-                            for file in os.listdir(nPath):
-                                found = []
-                                f = file.lower()
+                                for file in os.listdir(nPath):
+                                    found = []
+                                    f = file.lower()
 
-                                for y in terms:   #gets each individual word in the search term
-                                    y = y.lower() #lowers for checking purposes, as above
+                                    for y in terms:   #gets each individual word in the search term
+                                        y = y.lower() #lowers for checking purposes, as above
 
-                                    if y == "the" or y == "of" or y == "a" or y == "and" or y == "or" or y == "if" or y == "&" or y == "is" or y == "on": #ignores major key words, otherwise everything would be displayed
-                                        kl = 0 #does nothing, but makes the if statement work
+                                        if y == "the" or y == "of" or y == "a" or y == "and" or y == "or" or y == "if" or y == "&" or y == "is" or y == "on": #ignores major key words, otherwise everything would be displayed
+                                            kl = 0 #does nothing, but makes the if statement work
 
-                                    elif y in f: 
-                                        aNum = file.split(")")[0]
-                                        title = file.split(") - ")[1]
-                                        vNum = folder.split(" ")[1]
-                                        iNum = issue.split(".")[1]
-                                        x = x + 1
-                                        d = vNum + "." + iNum + "." + aNum + " - " + title #instead of printing out immediately, adds to function
+                                        elif y in f: 
+                                            aNum = file.split(")")[0]
+                                            title = file.split(") - ")[1]
+                                            vNum = folder.split(" ")[1]
+                                            iNum = issue.split(".")[1]
+                                            x = x + 1
+                                            d = vNum + "." + iNum + "." + aNum + " - " + title #instead of printing out immediately, adds to function
 
                                         if not d in found:                                 #this allows for if the same article has two of the keywords not together(it'd have been printed already in the above)
                                             found.append(d)                                #adds any articles not already added to a found list
