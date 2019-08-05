@@ -55,7 +55,7 @@ def listInIssue(vNum, iNum):
             print()
             for vol in os.listdir(base):
                 if "Vol " + vNum + " " in vol:
-                    path = base + vol "/"
+                    path = base + vol + "/"
                     for issue in os.listdir(path):
                         if os.path.isdir(path + issue):
                             if vNum + "." + iNum in issue:
