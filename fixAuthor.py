@@ -144,7 +144,7 @@ def confirmNew(vNum, iNum):
             path = base + vol + "/"
             if iNum == 0:
                 for issue in os.listdir(path):
-                    if os.path.isdir(path + issue)
+                    if os.path.isdir(path + issue):
                         iNum = issue.split(" ")[1]
                         iNum = iNum.split(".")[1]
                         curIssue = issue
