@@ -226,7 +226,7 @@ def conf(num):
         if "Vol " + vNum in vol:
             path = base + vol + "/"
             for issue in os.listdir(path):
-                if os.path.isdir(path + issue)
+                if os.path.isdir(path + issue):
                     if vNum + "." + iNum in issue:
                         nPath = path + issue + "/"
                         for article in os.listdir(nPath):
