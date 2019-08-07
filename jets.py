@@ -1,13 +1,18 @@
-import requests, urllib.request, time, win32api, win32print, subprocess, re, sys, os #all python wide imports
+import requests, argparse, click urllib.request, time, win32api, win32print, subprocess, re, sys, os #all python wide imports
 import backend, issues, lister, merger,forceRename, search, opener, fixAuthor, helpcmd, fixOut, authFolder #all jets related imports
 from clear_screen import clear #specific imports
 from shutil import copyfile
 from bs4 import BeautifulSoup
 from pathvalidate import ValidationError, validate_filename
+def main2():
+    parser = argparse.ArgumentParser()
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('-s', '--search', action='store_true')
+    group.add_argument('-l', '--list', action='store_true')
+    global curDirectory
 
 
 def main():
-    global curDirectory
     length = len(sys.argv)
     if length == 1:
         print()
@@ -41,5 +46,4 @@ def main():
 
 base = "C:/Users/jonat/OneDrive/Documents/Jets/" #currently unused       
 curDirectory = "C:/Users/jonat/OneDrive/Documents/Jets/" #currently unused
-main() #calls main()
-#menu(curDirectory) remnant from old menu, see old_menu.py
+main2() #calls main()
