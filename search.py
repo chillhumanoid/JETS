@@ -104,5 +104,44 @@ def printFiles(articles):
             pdf = PdfFileReader(f)
             info = pdf.getDocumentInfo()
             author = info.author
+            a = ''
+            if " And " in author:
+                authors = []
+                test = []
+                auths = author.split(" And ")
+                for a in auths:
+                    if "," in a:
+                        authos = a.split(",")
+                        for auth in authos:
+                            auth = auth.strip()
+                            if not auth == "":
+                                test.append(auth)
+                    else:
+                        test.append(a)
+                name = []
+                for po in test:
+                    first = po[0:1] + "."
+                    temp = po.split(" ")
+                    temp[0] = first
+                    if "Jr" in temp or "III" in temp:
+                        x = len(temp) - 2
+                    else:
+                        x = len(temp)-1
+                    last = temp[x]
+                    if not x == 1:
+                        x = x -1
+                        middle = temp[x]
+                        if not len(middle) == 2:
+                            middle = middle[0:1] + "."
+                            temp[x] = middle
+                            if not x <= 1:
+                                x = x - 1
+                                nMiddle = temp[x]
+                                if not len(nMiddle) == 2:
+                                    nMiddle = nMiddle[0:1]
+                                    temp[x] = nMiddle
+                    a = ' '.join(temp)
+                    name.append(a)
+                author = ', '.join(name)
             display = "{0:^11}|  {1:<{3}}|  {2}".format(num, title, author, u)
             click.echo(display)
