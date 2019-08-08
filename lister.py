@@ -1,10 +1,10 @@
 ##imports
-import sys, os, forceRename, re
+import sys, os, forceRename, re, search
 from PyPDF2 import PdfFileReader, PdfFileWriter
 from shutil import copyfile
 
 ##global variables
-base = "C:/Users/jonat/OneDrive/Documents/Jets/"
+base = "C:/Users/jonat/OneDrive/Documents/Jets/All"
 
 ##functions
 def main():                  #start of script
@@ -23,55 +23,35 @@ def main():                  #start of script
         print()
         print("Too many arguments")
         print("Correct Usage: jets -l (1-62).(1-4)")
-        
+
 def listAll():
-    print() #blank for formatting
-    for article in os.listdir(base + "All/"):
-        print(article)
+    articles = []
+    for article in os.listdir(base):
+        articles.append(article)
+    search.printFiles(articles)
 
 def listInVol(vNum):
     if int(vNum) >= 1 and int(vNum) <= 62:
-        print()
-        for vol in os.listdir(base):
-            if "Vol " + vNum + " " in vol:
-                path = base + vol + "/"
-                for issue in os.listdir(path):
-                    if os.path.isdir(issue + path):
-                        nPath = path + issue + "/"
-                        for article in os.listdir(nPath):
-                            aNum = article.split(") - ")[0]
-                            front = issue.split(" ")[1]
-                            num = front + "." + aNum
-                            print("Article " + str(num) + ":")
-                            forceRename.conf(num)
+        articles = []
+        for article in os.listdir(base):
+            if article.startswith(vNum + "."):
+                articles.append(article)
+        search.printFiles(articles)
     else:
         print()
-        print("invalid volume")
+        print("Invalid Volume")
         print("Correct Usage: jets -l (1-62)")
-        
+
 def listInIssue(vNum, iNum):
-    if int(vNum) >= 1 and int(vNum) <=62:
-        if int(iNum) >= 1 and int(iNum) <= 4:
-            print()
-            for vol in os.listdir(base):
-                if "Vol " + vNum + " " in vol:
-                    path = base + vol + "/"
-                    for issue in os.listdir(path):
-                        if os.path.isdir(path + issue):
-                            if vNum + "." + iNum in issue:
-                                nPath = path + issue + "/"
-                                for aNum in range(1,len(os.listdir(nPath))+1):
-                                    front = issue.split(" ")[1]
-                                    num = front + "." + str(aNum)
-                                    print("Article " + str(num) + ":")
-                                    forceRename.conf(num)
-        else:
-            print()
-            print("invalid issue")
-            print("Correct Usage: jets -l (1-62).(1-4)")
+    if int(vNum) >= 1 and int(vNum) <=62 and int(iNum) >=1 and int(iNum) <= 4:
+        articles = []
+        for article in os.listdir(base):
+            if article.startswith(vNum + "." + iNum + "."):
+                articles.append(article)
+        search.printFiles(articles)
     else:
         print()
-        print("invalid volume")
+        print("invalid volume or issue")
         print("Correct Usage: jets -l (1-62).(1-4)")
 
 
@@ -112,4 +92,3 @@ def listAuth():
                     test = test.replace("And ", "")
                 if not test in authList:
                     authList.append(test)
-    
