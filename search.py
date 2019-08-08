@@ -30,8 +30,8 @@ def searchAuthors():
                 name.append(sys.argv[x])
         for x in name:
             for author in os.listdir(base + "Authors/"):
-                names = author.split(" ")
-                if x in names:
+                names = author.lower().split(" ")
+                if x.lower() in names:
                     if not author in listoNames:
                         listoNames.append(author)
                 else:
@@ -87,12 +87,12 @@ def printFiles(articles):
             z = len(title)
             if z > u:
                 u = z + 2
-        header = "{0:^8} | {1:^{3}} |  {2:^}".format("ARTICLE", " TITLE", "AUTHOR", u)
+        header = "{0:^11}| {1:^{3}} |{2:^16}".format("ARTICLE", " TITLE", "AUTHOR", u)
         click.echo(header)
         lChar = u"\u2015"
         line = ""
-        for x in range(len(header) + 7): #seems self explanatory
-            if x == 9 or x == 11 + u:
+        for x in range(len(header)): #seems self explanatory
+            if x == 11 or x == 13 + u:
                 line = line + "|"
             line = line + lChar
         click.echo(line)
@@ -104,5 +104,5 @@ def printFiles(articles):
             pdf = PdfFileReader(f)
             info = pdf.getDocumentInfo()
             author = info.author
-            display = "{0:<8} |  {1:<{3}}|  {2}".format(num, title, author, u)
+            display = "{0:^11}|  {1:<{3}}|  {2}".format(num, title, author, u)
             click.echo(display)
