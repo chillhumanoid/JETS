@@ -1,4 +1,5 @@
 import click, downloader, configparser, os, sys
+import search as searcher
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 rPath = os.path.realpath(__file__)
@@ -17,27 +18,22 @@ def cli(ctx):
 #This is the search command
 
 @cli.command()
-@click.option('-t','title', default=False, help="Search by title")
-@click.option('-a','author', default=False, help="Search by author")
+@click.option('-t','title', default=False, help="Search by title", count=True)
+@click.option('-a','author', default=False, help="Search by author", count=True)
 @click.argument('term', nargs=-1)
 def search(title, author, term):
     """Search by title or author
 
     Usage: jets search -t|-a TERM"""
-    if len(term) == 0:
-        p("Please enter a search term")
-    else:
-        term = ' '.join(term)
-    if (author and title) or title == '-a' or author == '-t':
+    term = ' '.join(term)
+    if author == 1 and title == 1 or author > 1 or title > 1:
         p("Only One Option Allowed")
-    elif title:
-        term = title + " " + term
-        p("Title: " + term)
-    elif author:
-        term = author + " " + term
-        p("Author: " + term)
+    elif title == 1:
+        searcher.searchArticles(term)
+    elif author == 1:
+        searcher.searchAuthors(term)
     else:
-        p("Title: " + term)
+        searcher.searchArticles(term)
 
 #this is the rename command
 
