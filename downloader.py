@@ -6,11 +6,13 @@ from shutil import copyfile
 
 bUrl = "https://www.etsjets.org"
 url = "https://www.etsjets.org/JETS_Online_Archive"
-rPath = os.path.realpath(__file__)
-rPath = rPath.replace("downloader.py","")
 
-def get_volume(vNum, iNum, aNum, force):
-    if vNum == 0:
+path = os.path.realpath(__file__)
+path = path.replace("downloader.py","")
+path = path + "Articles/"
+
+def downloading(vNum, iNum, aNum, force):
+    if vNum == '0':
         check = "Vol "
     else:
         check = " " + vNum + " "
@@ -32,7 +34,7 @@ def get_issues(vNum, vUrl, iNum, aNum, force):
     link_list = soup.findAll('a')
     for link in link_list:
         link = str(link)
-        if not iNum == 0:
+        if not iNum == '0':
             if " " + vNum + "." + iNum in link and "Go to" not in link:
                 x = link.find('"') + 1
                 y = link.find('"', x)
@@ -57,7 +59,7 @@ def get_article(vNum, iUrl, iNum, aNum, force):
     z = 0
     for link in link_list:
         link = str(link)
-        if aNum == 0:
+        if aNum == '0':
             if ".pdf" in link and "Purchase Articles" not in link and "Purchase Back Issue(s)" not in link:
                 z = z + 1
                 x = link.find('>') + 1
@@ -146,17 +148,17 @@ def title_fixer(title, vNum, iNum, aNum, aUrl, force):
 
 
 def download(title, author, aUrl, force):
-    path = rPath + "/Articles/All/"
+    dPath = path + "All/"
     fName = title + ".pdf"
-    if os.path.exists(path + fName) and force == "False":
+    if os.path.exists(dPath + fName) and force == False:
         jets.p(fName)
         click.echo("This File Already Exists")
     else:
         jets.p(title + " | " + author)
         r = requests.get(aUrl, stream=True)
-        with open(path + "temp.pdf", 'wb') as f:
+        with open(dPath + "temp.pdf", 'wb') as f:
             f.write(r.content)
-        with open(path + "temp.pdf", 'rb') as f: #open file again
+        with open(dPath + "temp.pdf", 'rb') as f: #open file again
             pdf = PdfFileReader(f)
             writer = PdfFileWriter() #open pdfwriter
 
@@ -168,18 +170,18 @@ def download(title, author, aUrl, force):
                 '/Title': title
             })
 
-            fout = open(path + fName, 'ab') #open the output file
+            fout = open(dPath + fName, 'ab') #open the output file
             writer.write(fout) #write the new pdf to the output
             fout.close()
         f.close()
-        os.remove(path + "temp.pdf")
+        os.remove(dPath + "temp.pdf")
         authCreator(fName, author, force)
         time.sleep(1)
 
 def authCreator(fName, author, force):
-    for file in os.listdir(rPath + "/Articles/All"):
+    for file in os.listdir(path + "All/"):
         if fName == file:
-            f = open(rPath + "/Articles/All/" + file, 'rb')
+            f = open(path + "All/" + file, 'rb')
             pdf = PdfFileReader(f)
             info = pdf.getDocumentInfo()
             author = info.author
@@ -223,24 +225,24 @@ def authCreator(fName, author, force):
                     name.append(a)
                 author = ", ".join(name)
                 for n in name:
-                    path = rPath + "/Articles/Authors/" + n
-                    if not os.path.exists(path):
-                        os.mkdir(path)
-                    nPath = path + "/" + fName
-                    if os.path.exists(nPath) and force == "False":
+                    aPath = path  +  "Authors/" + n
+                    if not os.path.exists(aPath):
+                        os.mkdir(aPath)
+                    aPath = aPath + "/" + fName
+                    if os.path.exists(aPath) and force == False:
                         jets.p("Authors/" + n  + "/" + fName)
                         click.echo("Already exists")
                     else:
-                        copyfile(rPath + "Articles/All/" + fName, nPath)
+                        copyfile(path + "All/" + fName, aPath)
                 jets.p("Downloaded")
             else:
-                path = rPath + "/Articles/Authors/" + author
-                if not os.path.exists(path):
-                    os.mkdir(path)
-                nPath = path + "/" + fName
-                if os.path.exists(nPath) and force == "False":
+                aPath = path + "Authors/" + author
+                if not os.path.exists(aPath):
+                    os.mkdir(aPath)
+                aPath = aPath + "/" + fName
+                if os.path.exists(aPath) and force == False:
                     jets.p("Authors/" + author +  "/" + fName)
                     click.echo("Already Exists")
                 else:
-                    copyfile(rPath + "Articles/All/" + fName, nPath)
+                    copyfile(path + "All/" + fName, aPath)
                     jets.p("Downloaded")
