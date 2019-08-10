@@ -119,6 +119,37 @@ def merge(term):
 
 
     p("Merge")
+
+@cli.command()
+@click.option("-n", "new", default=False, help="Download all new/undownloaded articles", required=False)
+@click.option("-v", "vol", type=int, help="Download from a specific volume", required=False)
+@click.option("-i", "issue", type=int, help="Download from a specific issue", required=False)
+@click.option("-a", "article", type=int, help="Download the specified article", required=False)
+@click.argument("term", nargs=1, required=False)
+def download(new, vol, issue, article, term):
+    """Downloads articles
+
+       -n will download any articles not currently had
+       -v will download all articles in a volume
+       -i will download all articles in an issue (-v required)
+       -a will download the given article in an issue (-v and -i required)
+
+       Usage: jets -n|-v|-i|-a|1-62.1-4.articlenum"""
+    if new:
+        p("Download new articles")
+    else:
+        if vol == None and issue == None and article == None:
+            if term == None:
+                p("Please enter an article number")
+            else:
+                p("downloading article number")
+        else:
+            if not issue == None and vol == None:
+                p("Please enter a volume number")
+            elif article == None:
+                p("Downloading Issue")
+            if not article == None and issue == None:
+                p("Please enter an issue number")
 #init
 if __name__ == '__main__':
     cli()
