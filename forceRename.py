@@ -134,14 +134,16 @@ def authOnly(vNum, iNum, aNum):
         if "Vol " +  vNum + " " in vol:
             path = base + vol + "/"
             for issue in os.listdir(path):
-                if os.path.isdir(issue + path):
-                    if vNum + "." + iNum in issue:
+                if vNum + "." + iNum in issue:
+                    if os.path.isdir(path + issue):
+                        print("YES")
                         nPath = path + issue + "/"
+                        print(nPath)
                         for article in os.listdir(nPath):
                             if article.startswith(aNum + ") - "):
+                                print("YES")
                                 acrobatPath = r'C:\Program Files (x86)\Adobe\Acrobat DC\Acrobat\Acrobat.exe'
                                 p = subprocess.Popen("%s %s" % (acrobatPath, nPath + article))
-                                os.startfile(nPath + article)
                                 f = open(nPath + article, 'rb')
                                 pdf = PdfFileReader(f)
                                 info = pdf.getDocumentInfo()

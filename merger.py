@@ -35,12 +35,12 @@ def main():
     else:
         print()
         print("too many arguments")
-        print("Correct Usage: jets -m (1-62).(1-4).##")
+        print("Correct Usage: jets -m (1-62).(1-4)")
 
 def merge(vNum, iNum):
     for vol in os.listdir(base):
-        if vol.startswith("Vol " + vNum + " "):
-            path = base + vol + "/" 
+        if vol.startswith("Vol " + vNum + " ") or vNum == "0" and vol.startswith("Vol "):
+            path = base + vol + "/"
             for issue in os.listdir(path):
                 if os.path.isdir(path + issue):
                     if iNum == "0":
@@ -53,12 +53,12 @@ def merge(vNum, iNum):
     
 def mergeVol(vNum, iNum):
     for vol in os.listdir(base):
-        if vol.startswith("Vol " + vNum + " "):
+        if vol.startswith("Vol " + vNum + " ") or vNum == "0" and vol.startswith("Vol "):
             path = base + vol + "/"
             fout = open(path + vol + ".pdf",'ab')
             writer = PdfFileWriter()
             for issue in os.listdir(path):
-                if not os.path.isdir(path + issue) and not vol + ".pdf" == issue:
+                if not os.path.isdir(path + issue) and not vol + ".pdf" == issue: 
                     f = open(path + issue, 'rb')
                     pdf = PdfFileReader(f)
                     for page in range(pdf.getNumPages()):
@@ -73,13 +73,13 @@ def mergeIssue(vol, issue, nPath):
     fout = open(iPath + issue + ".pdf", 'ab')
     writer = PdfFileWriter()
     for article in os.listdir(nPath):
-        f = open(nPath + article, 'rb')
-        pdf = PdfFileReader(f)
-        for page in range(pdf.getNumPages()):
-            writer.addPage(pdf.getPage(page))
-        writer.write(fout)
-        f.close()
-    #writer.write(fout)
+        if not os.path.exists(nPath + article):
+            f = open(nPath + article, 'rb')
+            pdf = PdfFileReader(f)
+            for page in range(pdf.getNumPages()):
+                writer.addPage(pdf.getPage(page))
+            writer.write(fout)
+            f.close()
     fout.close()
         
         
