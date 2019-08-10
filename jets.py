@@ -25,7 +25,7 @@ def search(title, author, term):
 
     Usage: jets search -t|-a TERM"""
     if len(term) == 0:
-        term = ""
+        p("Please enter a search term")
     else:
         term = ' '.join(term)
     if (author and title) or title == '-a' or author == '-t':
@@ -141,7 +141,7 @@ def download(new, vol, issue, article, term, force):
     force = ''.join(force)
     if new == 1:
         if force == "":
-            p("-n and -f can't be used together)
+            p("-n and -f can't be used together")
         else:
             downloader.get_volume("0", "0", "0", force)
     else:
