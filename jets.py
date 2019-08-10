@@ -1,6 +1,8 @@
-import click
+import click, downloader, configparser, os, sys
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
+rPath = os.path.realpath(__file__)
+rPath = rPath.replace("jets.py","")
 
 def p(msg):
     click.echo()
@@ -94,7 +96,7 @@ def info(term):
 @cli.command()
 @click.option("-a", 'author', default=False, help="Search by author name")
 @click.argument("term", nargs=1, required=False)
-def open(term, author):
+def opener(term, author):
     """Open the given article, or all articles by given author
 
     Usage: jets open 1-62.1-4.articlenum
@@ -121,12 +123,13 @@ def merge(term):
     p("Merge")
 
 @cli.command()
-@click.option("-n", "new", default=False, help="Download all new/undownloaded articles", required=False)
+@click.option("-n", "new", default=False, help="Download all new/undownloaded articles", count=True)
 @click.option("-v", "vol", type=int, help="Download from a specific volume", required=False)
 @click.option("-i", "issue", type=int, help="Download from a specific issue", required=False)
 @click.option("-a", "article", type=int, help="Download the specified article", required=False)
+@click.option("-f", "force", default="False", help="Force redownload if problem with pdf", nargs = 0)
 @click.argument("term", nargs=1, required=False)
-def download(new, vol, issue, article, term):
+def download(new, vol, issue, article, term, force):
     """Downloads articles
 
        -n will download any articles not currently had
@@ -135,21 +138,64 @@ def download(new, vol, issue, article, term):
        -a will download the given article in an issue (-v and -i required)
 
        Usage: jets -n|-v|-i|-a|1-62.1-4.articlenum"""
-    if new:
-        p("Download new articles")
+    force = ''.join(force)
+    if new == 1:
+        if force == "":
+            p("-n and -f can't be used together)
+        else:
+            downloader.get_volume("0", "0", "0", force)
     else:
         if vol == None and issue == None and article == None:
             if term == None:
                 p("Please enter an article number")
             else:
-                p("downloading article number")
+                cDot = term.count(".")
+                vNum = "0"
+                iNum = "0"
+                aNum = "0"
+                if not cDot == 0 or cDot == 3:
+                    vNum = term.split(".")[0]
+                    if not (vNum.isdigit()):
+                        p("Please Enter 1-62 for volume")
+                        sys.exit()
+                if cDot > 0 and cDot < 3:
+                    iNum = term.split(".")[1]
+                    if not (iNum.isdigit()):
+                        p("Please Enter 1-4 for issue")
+                        sys.exit()
+                    if cDot == 2:
+                        aNum = term.split(".")[2]
+                        if not(aNum.isdigit()):
+                            p("Please enter an integer for article")
+                            sys.exit()
+                downloader.get_volume(vNum, iNum, aNum, force)
+                if cDot == 0:
+                    vNum = term
+                    if not(vNum.isdigit()):
+                        p("Please Enter 1-62 for volume")
+                        sys.exit()
+                downloader.get_volume(vNum, iNum, aNum, force)
+                if cDot > 3:
+                    p("Correct usage: jets download (1-62).(1-4).(aNum)")
         else:
-            if not issue == None and vol == None:
+            if issue != None and vol == None:
                 p("Please enter a volume number")
-            elif article == None:
-                p("Downloading Issue")
             if not article == None and issue == None:
                 p("Please enter an issue number")
+            if not vol == None and article == None and issue == None:
+                downloader.get_volume(str(vol), 0, 0, force)
+            if not vol == None and not issue == None and article == None:
+                downloader.get_volume(str(vol), str(issue),0, force)
+            if not vol == None and not issue == None and not article == None:
+                downloader.get_volume(str(vol), str(issue), str(article), force)
 #init
 if __name__ == '__main__':
+    if not os.path.exists(rPath + "Articles/"):
+        os.mkdir(rPath + "Articles")
+    if not os.path.exists(rPath + "Articles/All"):
+        os.mkdir(rPath + "Articles/All")
+    if not os.path.exists(rPath + "Articles/Authors/"):
+        os.mkdir(rPath + "Articles/Authors/")
+    if not os.path.exists(rPath + "Articles/Merged/"):
+        os.mkdir(rPath + "Articles/Merged/")
     cli()
