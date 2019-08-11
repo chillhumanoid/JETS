@@ -1,6 +1,6 @@
 import os, click, sys
-
-
+from PyPDF2 import PdfFileReader, PdfFileWriter
+from shutil import copyfile
 path = os.path.realpath(__file__)
 path = path.replace("util.py","")
 path = path + "Articles/"
@@ -27,7 +27,28 @@ def check_issue(issue):
     if not issue >= 0 and vol <= 4:
         p("Please enter 1-4 for Issue")
         sys.exit()
-
+def getInfo(pdf):
+    f = open(pdf, 'rb') #open the right article as "f"
+    pdf = PdfFileReader(f)
+    info = pdf.getDocumentInfo() #gets metadata
+    f.close()
+    return info
+def writeInfo(pPath, name, author):
+    f = open(pPath, 'rb')
+    pdf = PdfFileReader(f)
+    writer = PdfFileWriter()
+    for page in range(pdf.getNumPages()):
+        writer.addPage(pdf.getPage(page))
+    writer.addMetadata({
+        '/Author': author,
+        '/Title': name
+    })
+    fout = open(path + 'temp.pdf', 'ab')
+    writer.write(fout)
+    fout.close()
+    f.close()
+    copyfile(path + "temp.pdf", pPath)
+    os.remove(path + "temp.pdf")
 def getNumbers(term):
     cDot = term.count(".")
     vNum = "0"
