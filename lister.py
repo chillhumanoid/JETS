@@ -1,34 +1,28 @@
 ##imports
-import sys, os, forceRename, re, search
+import sys, os, rename, re, search
 from PyPDF2 import PdfFileReader, PdfFileWriter
 from shutil import copyfile
+from util import display_info as display
 
 ##global variables
-base = "C:/Users/jonat/OneDrive/Documents/Jets/All"
+path = os.path.realpath(__file__)
+path = path.replace("lister.py","")
+path = path + "Articles/All/"
 
 ##functions
-def main():                  #start of script
-    if len(sys.argv) < 3:    # if the user only entered "jets -l"
-        listAll()        #list all articles
-    elif len(sys.argv) == 3:   #only correct way if not just -l
-        arg = sys.argv[2]
-        if "." in arg:
-            vNum = arg.split(".")[0]
-            iNum = arg.split(".")[1]
-            listInIssue(vNum, iNum)
-        else:
-            vNum = arg
-            listInVol(vNum)
-    else:
-        print()
-        print("Too many arguments")
-        print("Correct Usage: jets -l (1-62).(1-4)")
+def listing(vNum, iNum):
+    if vNum == 0 and iNum == 0:
+        listAll()
+    if not vNum == 0 and iNum == 0:
+        listInVol(vNum)
+    if not vNum == 0 and not iNum == 0:
+        listInIssue(vNum, iNum)
 
 def listAll():
     articles = []
-    for article in os.listdir(base):
+    for article in os.listdir(path):
         articles.append(article)
-    search.printFiles(articles)
+    display(articles)
 
 def listInVol(vNum):
     if int(vNum) >= 1 and int(vNum) <= 62:
@@ -36,7 +30,7 @@ def listInVol(vNum):
         for article in os.listdir(base):
             if article.startswith(vNum + "."):
                 articles.append(article)
-        search.printFiles(articles)
+        display(articles)
     else:
         print()
         print("Invalid Volume")
@@ -48,7 +42,7 @@ def listInIssue(vNum, iNum):
         for article in os.listdir(base):
             if article.startswith(vNum + "." + iNum + "."):
                 articles.append(article)
-        search.printFiles(articles)
+        display(articles)
     else:
         print()
         print("invalid volume or issue")
