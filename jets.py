@@ -1,6 +1,6 @@
 import click, configparser, os, sys, search as searcher, rename as r, lister as l
 #import search as searcher
-from util import p, start, getNumbers, check_vol, check_issue; from rename import rename as r
+from util import p, start, getNumbers, check_vol, check_issue, display_info as display; from rename import rename as r
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 path = os.path.realpath(__file__)
@@ -76,8 +76,13 @@ def info(term):
     """Show title and author for a given article
 
     Usage: jets info 1-62.1-4.articlenum"""
-    p("Show info")
-
+    num = getNumbers(term)
+    vNum,iNum,aNum=[num[0], num[1], num[2]]
+    articles = []
+    for article in os.listdir(path + "All/"):
+        if article.startswith(vNum + "." + iNum + "." + aNum):
+            articles.append(article)
+    display(articles)
 
 #OPEN COMMAND
 @cli.command()
