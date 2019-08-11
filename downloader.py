@@ -187,7 +187,6 @@ def authCreator(fName, author, force):
             f.close()
             if " And " in author:
                 authors = []
-                test = []
                 auths = author.split(" And ")
                 for a in auths:
                     if "," in a:
@@ -195,35 +194,12 @@ def authCreator(fName, author, force):
                         for auth in authos:
                             auth = auth.strip()
                             if not auth == "":
-                                test.append(auth)
+                                authors.append(auth)
                     else:
-                        test.append(a)
-                name = []
-                for po in test:
-                    first = po[0:1] + "."
-                    temp = po.split(" ")
-                    temp[0] = first
-                    if "Jr" in temp or "III" in temp:
-                        x = len(temp - 2)
-                    else:
-                        x = len(temp - 1)
-                    last = temp[x]
-                    if not x == 1:
-                        x = x-1
-                        middle = temp[x]
-                        if not len(middle) == 2:
-                            middle = middle[0:1] + "."
-                            temp[x] = middle
-                            if not x <= 1:
-                                x = x -1
-                                nMiddle = temp[x]
-                                if not len(nMiddle) == 2:
-                                    nMiddle = nMiddle[0:1] + "."
-                                    temp[x] = nMiddle
-                    a = ' '.join(temp)
-                    name.append(a)
-                author = ", ".join(name)
-                for n in name:
+                        a = a.strip()
+                        a = a.strip() #just in case
+                        authors.append(a)
+                for n in authors:
                     aPath = path  +  "Authors/" + n
                     if not os.path.exists(aPath):
                         os.mkdir(aPath)
