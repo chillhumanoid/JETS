@@ -1,4 +1,4 @@
-import click, configparser, os, sys, search as searcher, rename as r, lister as l
+import click, configparser, os, sys, search as searcher, rename as r, lister as l, opener as o
 #import search as searcher
 from util import p, start, getNumbers, check_vol, check_issue, display_info as display; from rename import rename as r
 
@@ -85,22 +85,22 @@ def info(term):
     display(articles)
 
 #OPEN COMMAND
-@cli.command()
-@click.option("-a", 'author', default=False, help="Specify Author to Open")
+@cli.command("open")
+@click.option("-a", 'author', default=False, help="Specify Author to Open", count=True)
 @click.argument("term", nargs=1, required=False)
 def opener(term, author):
     """Open the given article, or all articles by given author
 
     Usage: jets open 1-62.1-4.articlenum
          OR     jets open -a author"""
-    if author:
-        if not term == None:
-            author = author + " " + term
-        p("Open all by " + author)
-    elif term == None:
-        p("Please enter an article number")
+    if author == 1:
+        o.openAuth(term)
+    elif author == False:
+        num = getNumbers(term)
+        fNum = num[0] + "." + num[1] + "." + num[2]
+        o.openFile(fNum)
     else:
-        p("Open " + term)
+        p("Please enter an article number or author name")
 
 
 #MERGE COMMAND
