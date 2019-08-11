@@ -143,13 +143,12 @@ def title_fixer(title, vNum, iNum, aNum, aUrl, force):
     except ValidationError as e:
         jets.p("{}\n".format(e), file=sys.stderr)
     num = vNum + "." + str(iNum) + "." + str(aNum)
-    title = num + " - " +title
-    download(title, author, aUrl, force)
+    fName = num + " - " +title + ".pdf"
+    download(title, fName, author, aUrl, force)
 
 
-def download(title, author, aUrl, force):
+def download(title, fName, author, aUrl, force):
     dPath = path + "All/"
-    fName = title + ".pdf"
     if os.path.exists(dPath + fName) and force == False:
         jets.p(fName)
         click.echo("This File Already Exists")
