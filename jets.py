@@ -1,7 +1,6 @@
-import click, configparser, os, sys, search as searcher, rename as r
+import click, configparser, os, sys, search as searcher, rename as r, lister as l
 #import search as searcher
-from util import p, start, getNumbers, check_vol, check_issue
-from rename import rename as r
+from util import p, start, getNumbers, check_vol, check_issue; from rename import rename as r
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 path = os.path.realpath(__file__)
@@ -26,12 +25,10 @@ def search(title, author, term):
     term = ' '.join(term)
     if author == 1 and title == 1 or author > 1 or title > 1:
         p("Only One Option Allowed")
-    elif title == 1:
-        searcher.searchArticles(term)
+    elif title == 1 or author == False:
+        searcher.articleSearch(term)
     elif author == 1:
-        searcher.searchAuthors(term)
-    else:
-        searcher.searchArticles(term)
+        searcher.authSearch(term)
 
 
 #RENAME COMMAND
@@ -65,17 +62,11 @@ def list(term):
 
     Usage: jets list (optional) 1-62.1-4"""
     if term == None:
-        p("List All")
+        l.listing(0,0)
     else:
-        p("List Some")
-
-
-#DEPRECATED
-@cli.command()
-@click.argument("term", nargs=1, required=True)
-def fixauth(term):
-    """Fix author names in a given folder (Defunct?)"""
-    p("Fix Author")
+        num = getNumbers(term)
+        vNum,iNum=[num[0], num[1]]
+        l.listing(vNum, iNum)
 
 
 #INFO COMMAND
