@@ -1,7 +1,7 @@
-import click, configparser, os, sys
-import search as searcher
-from util import p, start, getNumbers
-
+import click, configparser, os, sys, search as searcher, rename as r
+#import search as searcher
+from util import p, start, getNumbers, check_vol, check_issue
+from rename import rename as r
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 path = os.path.realpath(__file__)
@@ -36,32 +36,27 @@ def search(title, author, term):
 
 #RENAME COMMAND
 @cli.command()
-@click.option('-t', 'title',default=False, help="Rename title")
-@click.option('-a', 'author',default=False, help="Rename author")
-@click.option('-b', 'both',default=False, help="Rename both title and author")
-@click.argument('term', nargs=-1)
+@click.option('-t', 'title',default=False, help="Rename title", count=True)
+@click.option('-a', 'author',default=False, help="Rename author", count=True)
+@click.option('-b', 'both',default=False, help="Rename both title and author", count=True)
+@click.argument("term", nargs=1, required=True)
 def rename(title, author, both, term):
     """Rename title/author/both of article
 
     Usage: jets rename -t|-a|-b 1-62.1-4.articlenum"""
-
-    if len(term) == 0:
-        term = ""
-    else:
-        term = ' '.join(term)
-    if (title and both) or (title and author) or (both and author) or (title and author and both):
-        p("Only One Option Allowed")
-    elif title == '-a' or title == '-b' or author == '-t' or author == '-b' or both == '-a' or both == '-t':
-        p("Only One Option Allowed")
-    elif title:
-        p("Rename Title Only")
-    elif author:
-        p("Rename Author Only")
-    elif both:
-        p("Rename Title & Author")
-    else:
-        p("Rename Title & Author")
-
+    num = getNumbers(term)
+    vNum,iNum,aNum=[num[0], num[1], num[2]]
+    id = 0
+    if (title == 1 and (author == 1 or both == 1)) or (author == 1 and both == 1):
+        p("One Command Only")
+        sys.exit()
+    elif title == 1:
+        id = 2
+    elif author == 1:
+        id = 1
+    elif both == 1:
+        id = 0
+    r(vNum, iNum, aNum, id)
 #LIST COMMAND
 @cli.command()
 @click.argument("term", nargs=1, required=False)
@@ -146,11 +141,8 @@ def download(new, vol, issue, article, term, force):
     from downloader import downloading as download
     vNum = aNum = iNum = "0"
     if new >= 1:
-        if force >= 1:
-            p("-n and -f can't be used together")
-            sys.exit()
-        if new > 1:
-            p("Only One Command Please")
+        if force >= 1 or new > 1:
+            p("-n can't be used with any other command")
             sys.exit()
     else:
         if vol == 0 and issue == 0 and article == 0:
@@ -159,9 +151,7 @@ def download(new, vol, issue, article, term, force):
                 sys.exit()
             else:
                 num = getNumbers(term)
-                vNum = num[0]
-                iNum = num[1]
-                aNum = num[2]
+                vNum,iNum,aNum=[num[0], num[1], num[2]]
         else:
             if not issue == 0 and vol == 0:
                 p("Please enter a volume number")
@@ -170,10 +160,11 @@ def download(new, vol, issue, article, term, force):
                 p("Please enter an issue number")
                 sys.exit()
             else:
+                check_vol(vol)
+                check_issue(issue)
                 vNum = str(vol)
                 iNum = str(issue)
                 aNum = str(article)
-
     download(vNum, iNum, aNum, force)
 #init
 if __name__ == '__main__':
