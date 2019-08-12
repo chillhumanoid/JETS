@@ -1,8 +1,8 @@
-from jets_cli import search as searcher; from jets_cli import rename as r; from jets_cli import lister as l; from jets_cli import open as o
+from jets_cli import search as s; from jets_cli import lister as l; from jets_cli import open as o; from jets_cli import merge as m
+from jets_cli.rename import rename as r; from jets_cli import downloader as dl; from jets_cli import util
 import click, configparser, os, sys
+
 #import search as searcher
-from jets_cli.util import p, start, getNumbers, check_vol, check_issue, check_digit, display_info as display; from jets_cli.rename import rename as r; from jets_cli.merge import merge as m
-from jets_cli.downloader import start as dl
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
 path = os.path.realpath(__file__)
@@ -25,11 +25,11 @@ def search(title, author, term):
     Usage: jets search -t|-a TERM"""
     term = ' '.join(term)
     if author == 1 and title == 1 or author > 1 or title > 1:
-        p("Only One Option Allowed")
+        util.p("Only One Option Allowed")
     elif title == 1 or author == False:
-        searcher.articleSearch(term)
+        s.articleSearch(term)
     elif author == 1:
-        searcher.authSearch(term)
+        s.authSearch(term)
 
 
 #RENAME COMMAND
@@ -42,7 +42,7 @@ def rename(title, author, both, term):
     """Rename title/author/both of article
 
     Usage: jets rename -t|-a|-b 1-62.1-4.articlenum"""
-    num = getNumbers(term)
+    num = util.getNumbers(term)
     vNum,iNum,aNum=[num[0], num[1], num[2]]
     id = 0
     if title == 1:
@@ -61,10 +61,9 @@ def list(term):
     if term == None:
         l.listing("0","0")
     else:
-        num = getNumbers(term)
+        num = util.getNumbers(term)
         vNum,iNum=[num[0], num[1]]
         l.listing(vNum, iNum)
-
 
 #INFO COMMAND
 @cli.command()
@@ -73,13 +72,13 @@ def info(term):
     """Show title and author for a given article
 
     Usage: jets info 1-62.1-4.articlenum"""
-    num = getNumbers(term)
+    num = util.getNumbers(term)
     vNum,iNum,aNum=[num[0], num[1], num[2]]
     articles = []
     for article in os.listdir(path + "All/"):
         if article.startswith(vNum + "." + iNum + "." + aNum):
             articles.append(article)
-    display(articles)
+    util.display(articles)
 
 #OPEN COMMAND
 @cli.command("open")
@@ -93,11 +92,11 @@ def opener(term, author):
     if author == 1:
         o.openAuth(term)
     elif author == False:
-        num = getNumbers(term)
+        num = util.getNumbers(term)
         fNum = num[0] + "." + num[1] + "." + num[2]
         o.openFile(fNum)
     else:
-        p("Please enter an article number or author name")
+        util.p("Please enter an article number or author name")
 
 
 #MERGE COMMAND
@@ -110,10 +109,10 @@ def merge(term):
 
     Usage: jets merge 1-62.1-4"""
 
-    num = getNumbers(term)
+    num = util.getNumbers(term)
     vNum = num[0]
     iNum = num[1]
-    m(vNum, iNum)
+    m.merge(vNum, iNum)
 
 #DOWNLOAD COMMAND
 @cli.command()
@@ -135,29 +134,29 @@ def download(new, vol, issue, article, term, force):
     vNum = aNum = iNum = "0"
     if new >= 1:
         if force >= 1:
-            p("-n can't be used with any other command")
+            util.p("-n can't be used with any other command")
             sys.exit()
     else:
         if vol == 0 and issue == 0 and article == 0:
             if term == None:
-                p("Please enter an article number")
+                util.p("Please enter an article number")
                 sys.exit()
             else:
-                num = getNumbers(term)
+                num = util.getNumbers(term)
                 vNum,iNum,aNum=[num[0], num[1], num[2]]
         else:
             if not vol == 0 and issue == 0 and article == 0:
-                check_vol(vol)
+                util.check_vol(vol)
             if not issue == 0 and vol == 0:
-                p("Please enter a volume number")
+                util.p("Please enter a volume number")
                 sys.exit()
             if not article == 0 and issue == 0:
-                p("Please enter an issue number")
+                util.p("Please enter an issue number")
                 sys.exit()
             else:
-                check_vol(vol)
-                check_issue(issue)
+                util.check_vol(vol)
+                util.check_issue(issue)
             vNum = str(vol)
             iNum = str(issue)
             aNum = str(article)
-    dl(vNum, iNum, aNum, force)
+    dl.start(vNum, iNum, aNum, force)

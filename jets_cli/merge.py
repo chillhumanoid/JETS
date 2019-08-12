@@ -38,6 +38,7 @@ def mergeIssue(vNum, iNum):
             writer.write(fout)
             f.close()
     fout.close()
+
 def mergeVol(vNum):
     for folders in os.listdir(mPath):
         if folders == "Vol " + vNum:
