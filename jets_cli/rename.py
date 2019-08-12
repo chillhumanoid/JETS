@@ -1,14 +1,17 @@
 import sys, os, time, subprocess, click
-from pathvalidate import ValidationError, validate_filename; from shutil import copyfile
-from jets_cli.util import p, getInfo, writeInfo
-
+from pathvalidate import ValidationError, validate_filename; from shutil import copyfile, move
+from jets_cli.util import p, getInfo, writeInfo, check_digit
 path = os.path.realpath(__file__)
 path = path.replace("rename.py","")
 path = path + "Articles/"
+fPath = path + "All/"
+aPath = path + "Authors/"
 
 def rename(vNum, iNum, aNum, id): #had to adjust this because of fixAuthor
-    fPath = path + "All/"
-    aPath = path + "Authors/"
+    global aPath
+    vNum = check_digit(vNum)
+    iNum = check_digit(iNum)
+    aNum = check_digit(aNum)
     num = vNum + "." + iNum + "." + aNum
     name = ""
     nAuth = ""
@@ -46,68 +49,11 @@ def rename(vNum, iNum, aNum, id): #had to adjust this because of fixAuthor
                     nAuth = author
                 writeInfo(fPath + file, name, nAuth)
                 oAPath = aPath + author + "/"
-                aPath = aPath + nAuth + "/"
-                if not os.path.exists(aPath):
-                    os.mkdir(aPath)
-                os.rename(oAPath + file, aPath + file)
+                nAPath = aPath + nAuth + "/"
+                if not os.path.exists(nAPath):
+                    os.mkdir(nAPath)
+                move(oAPath + file, nAPath + file)
                 if len(os.listdir(oAPath)) == 0:
                     os.rmdir(oAPath)
             else:
                 i.kill()
-
-
-def confirm(vNum, iNum, aNum): #displays author and title of new PDF (or given pdf, see below)
-    for vol in os.listdir(base):
-        if "Vol " + vNum + " " in vol:
-            path = base + vol + "/"
-            for issue in os.listdir(path):
-                if os.path.isdir(path + issue):
-                    if vNum + "." + iNum in issue:
-                        nPath = path + issue +"/"
-                        for article in os.listdir(nPath):
-                            if article.startswith("OUT " + aNum + ") - ") or article.startswith(aNum + ") - "):
-                                wPath = nPath + article
-                                with open(wPath, 'rb') as f:
-                                    pdf = PdfFileReader(f)
-                                    info = pdf.getDocumentInfo()
-                                    title = info.title
-                                    author = info.author
-                                    f.close()
-                                print()
-                                print("Article " + vNum + "." + iNum + "." + aNum)
-                                if author == None:
-                                    author = ""
-                                print("Author: " + author)
-                                if title == None:
-                                    title = ""
-                                print("Title: " + title)
-
-def conf(num):
-    vNum = num.split(".")[0]
-    iNum = num.split(".")[1]
-    aNum = num.split(".")[2]
-    for vol in os.listdir(base):
-        if "Vol " + vNum in vol:
-            path = base + vol + "/"
-            for issue in os.listdir(path):
-                if os.path.isdir(path + issue):
-                    if vNum + "." + iNum in issue:
-                        nPath = path + issue + "/"
-                        for article in os.listdir(nPath):
-                            if article.startswith(aNum + ") - "):
-                                wPath = nPath + article
-                                with open(wPath, 'rb') as f:
-                                    pdf = PdfFileReader(f)
-                                    info = pdf.getDocumentInfo()
-                                    title = info.title
-                                    author = info.author
-                                    f.close()
-                                if author == None:
-                                    author = ""
-                                    print(num)
-                                print("Author: " + author)
-                                if title == None:
-                                    title = ""
-                                    print(num)
-                                print("Title: " + title)
-                                print()
