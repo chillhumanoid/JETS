@@ -1,6 +1,6 @@
 import sys, os, time, subprocess, click
 from pathvalidate import ValidationError, validate_filename; from shutil import copyfile, move
-from jets_cli.util import p, getInfo, writeInfo, check_digit
+from util import p, getInfo, writeInfo, check_digit
 path = os.path.realpath(__file__)
 path = path.replace("rename.py","")
 path = path + "Articles/"

@@ -1,5 +1,5 @@
-from jets_cli import search as s; from jets_cli import lister as l; from jets_cli import open as o; from jets_cli import merge as m
-from jets_cli.rename import rename as r; from jets_cli import downloader as dl; from jets_cli import util
+import search as s, lister as l, open as o, merge as m, util, downloader as dl
+from rename import rename as r
 import click, configparser, os, sys
 
 #import search as searcher

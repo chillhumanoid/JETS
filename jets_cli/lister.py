@@ -1,6 +1,6 @@
 ##imports
 import sys, os, re
-from jets_cli import search, util
+import search, util
 from PyPDF2 import PdfFileReader, PdfFileWriter
 from shutil import copyfile
 

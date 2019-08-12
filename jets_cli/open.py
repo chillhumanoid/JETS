@@ -1,5 +1,5 @@
 import os, sys, subprocess, click
-from jets_cli.util import display_info as d
+from util import display_info as d
 path = os.path.realpath(__file__)
 path = path.replace("opener.py","")
 fPath = path + "Articles/All/"

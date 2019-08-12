@@ -2,7 +2,7 @@
 
 import os, sys, click
 from PyPDF2 import PdfFileReader, PdfFileWriter
-from jets_cli.util import display_info as display
+from util import display_info as display
 #global variables
 
 rPath = os.path.realpath(__file__)

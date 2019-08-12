@@ -1,9 +1,7 @@
 import requests, urllib.request, time, os, sys, click
 from bs4 import BeautifulSoup
 from pathvalidate import ValidationError, validate_filename
-from PyPDF2 import PdfFileReader, PdfFileWriter
-from shutil import copyfile
-from jets_cli.util import getNum, p
+from PyPDF2 import PdfFileReader, PdfFileWriter; from shutil import copyfile; from util import getNum, p
 
 bUrl = "https://www.etsjets.org"
 url = "https://www.etsjets.org/JETS_Online_Archive"
