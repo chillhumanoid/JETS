@@ -2,7 +2,7 @@ from jets_cli import search as searcher; from jets_cli import rename as r; from 
 import click, configparser, os, sys
 #import search as searcher
 from jets_cli.util import p, start, getNumbers, check_vol, check_issue, check_digit, display_info as display; from jets_cli.rename import rename as r; from jets_cli.merge import merge as m
-from jets_cli.downloader import start as download
+from jets_cli.downloader import start as dl
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
 path = os.path.realpath(__file__)
@@ -160,4 +160,4 @@ def download(new, vol, issue, article, term, force):
             vNum = str(vol)
             iNum = str(issue)
             aNum = str(article)
-    download(vNum, iNum, aNum, force)
+    dl(vNum, iNum, aNum, force)
