@@ -95,6 +95,7 @@ def get_article(vNum, iUrl, iNum, aNum, force):
 def title_fixer(title, vNum, iNum, aNum, aUrl, force):
     orig_title = title
     x = title.count(". . .")
+    author = ""
     if not x == 0:
         author = title.split(". . .")[x]
         if not x == 1:
@@ -111,10 +112,9 @@ def title_fixer(title, vNum, iNum, aNum, aUrl, force):
     title = title.replace("”", "'")
     title = title.replace('"', "'")
     title = title.replace("/", "-")
-    title = tStrip(title)
+    title = sStrip(title)
     title = title.replace("?", ' - ')
-    if author.endswith(".") or author.endswith(" "):
-        author = author[:-1]
+    author = sStrip(author)
     title = title.title()
     title = title.replace("'S", "'s")
     title = title.replace("&Amp;", "And")
@@ -127,12 +127,13 @@ def title_fixer(title, vNum, iNum, aNum, aUrl, force):
     fName = getNum(str(vNum), str(iNum), str(aNum)) + " - " +title + ".pdf"
     download(title, fName, author, aUrl, force)
 
-def tStrip(title):
-    if title.endswith(" ") or title.endswith(".") or title.endswith("?"):
-        title = title[:-1]
-        return tStrip(title)
+def sStrip(string):
+    if string.endswith(" ") or string.endswith(".") or string.endswith("?"):
+        string = string[:-1]
+        return sStrip(string)
     else:
-        return title
+        string = string.strip()
+        return string
 
 def download(title, fName, author, aUrl, force):
     dPath = path + "All/"
