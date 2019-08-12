@@ -5,28 +5,40 @@ path = os.path.realpath(__file__)
 path = path.replace("util.py","")
 path = path + "Articles/"
 fPath = path + "All/"
+mPath = path + "Merged/"
+aPath = path + "Authors/"
 numbers = re.compile(r'(\d+)')
 
 def start():
     if not os.path.exists(path):
         os.mkdir(path)
-    if not os.path.exists(path + "All"):
-        os.mkdir(path + "All")
-    if not os.path.exists(path + "Authors/"):
-        os.mkdir(path + "Authors/")
-    if not os.path.exists(path + "Merged/"):
-        os.mkdir(path + "Merged/")
+    if not os.path.exists(fPath):
+        os.mkdir(fPath)
+    if not os.path.exists(aPath):
+        os.mkdir(aPath)
+    if not os.path.exists(mPath):
+        os.mkdir(mPath)
+
 def p(msg):
     click.echo()
     click.echo(msg)
 
 def check_vol(vol):
+    if not vol.isdigit():
+        p("Please enter an integer for volume")
+        sys.exit()
+    vol = int(vol)
     if not vol >= 0 and vol <= 62:
         p("Please enter 1-62 for Volume")
         sys.exit()
 
+
 def check_issue(issue):
-    if not issue >= 0 and vol <= 4:
+    if not issue.isdigit():
+        p("Please eneter an integer for issue")
+        sys.exit()
+    issue = int(issue)
+    if not issue >= 0 and issue <= 4:
         p("Please enter 1-4 for Issue")
         sys.exit()
 
@@ -36,6 +48,7 @@ def getInfo(pdf):
     pdf = PdfFileReader(f)
     info = pdf.getDocumentInfo() #gets metadata
     f.close()
+    info = [info.title, info.author]
     return info
 
 def getNum(vNum, iNum, aNum):
@@ -69,28 +82,18 @@ def check_digit(num):
 
 def getNumbers(term):
     cDot = term.count(".")
-    vNum = "0"
-    iNum = "0"
-    aNum = "0"
+    vNum = iNum = aNum = "0"
     if cDot >= 0:
         vNum = term.split(".")[0]
-        if vNum.isdigit():
-            check_vol(int(vNum))
-        else:
-            p("Please enter a number for volume")
-            sys.exit()
+        check_vol(int(vNum))
     if cDot >= 1:
         iNum = term.split(".")[1]
-        if iNum.isdigit():
-            check_issue(int(iNum))
-        else:
-            p("Please enter a number for issue")
-            sys.exit()
+        check_issue(int(iNum))
     if cDot == 2:
         aNum = term.split(".")[2]
-        if not aNum.isdigit():
-            p("please enter a number for article")
-            sys.exit()
+    if not aNum.isdigit():
+        p("Please enter an integer for article")
+        sys.exit()
     return (vNum, iNum, aNum)
 
 def get_nums(article):
@@ -131,7 +134,7 @@ def display_info(articles):
         iNum = check_digit(iNum)
         aNum = check_digit(aNum)
         info = getInfo(fPath + article)
-        author = info.author
+        author = info[1]
         a = ''
         if " And " in author:
             authors = []
