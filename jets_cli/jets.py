@@ -161,4 +161,4 @@ def download(new, vol, issue, article, term, force):
             vNum = str(vol)
             iNum = str(issue)
             aNum = str(article)
-    dl.start(vNum, iNum, aNum, force)
+    dl.start([vNum, iNum, aNum, force])
