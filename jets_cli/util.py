@@ -103,12 +103,12 @@ def get_nums(article):
 def display_info(articles):
     u = 0
     for article in articles:
-        title = article.split(" - ")[1]
-        title = article.split(".pdf")[0]
+        title = article.split(" - ", 1)[1]
+        title = title.split(".pdf")[0]
         z = len(title)
         if z > u:
             u = z + 2
-    header = "{0:^11}| {1:^{3}} |{2:^16}".format("ARTICLE", " TITLE", "AUTHOR", u)
+    header = "{0:^11}|  {1:^{3}}|{2:^16}".format("ARTICLE", " TITLE", "AUTHOR", u)
     lChar = u"\u2015"
     line = ""
     line2 = ""
@@ -121,11 +121,11 @@ def display_info(articles):
     p(line2)
     click.echo(header)
     click.echo(line)
-    
+
     for article in articles:
         payload = get_nums(article)
         num,vNum,iNum,aNum = [payload[0], payload[1], payload[2], payload[3]]
-        title = article.split(" - ")[1]
+        title = article.split(" - ", 1)[1]
         title = title.split(".pdf")[0]
         vNum = check_digit(vNum)
         iNum = check_digit(iNum)
