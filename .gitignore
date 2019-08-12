@@ -1,1 +1,4 @@
 __pycache__/
+Articles/
+venv/
+jets_cli/JETS.egg-info/
