@@ -11,31 +11,31 @@ path = path.replace("lister.py","")
 path = path + "Articles/All"
 
 ##functions
-def listing(vNum, iNum):
+def start(vNum, iNum):
     if vNum == "0" and iNum == "0":
-        listAll()
+        list_all()
     if not vNum == "0" and iNum == "0":
         vNum = util.check_digit(vNum)
-        listInVol(vNum)
+        list_vol(vNum)
     if not vNum == "0" and not iNum == "0":
         vNum = util.check_digit(vNum)
         iNum = util.check_digit(iNum)
-        listInIssue(vNum, iNum)
+        list_issue(vNum, iNum)
 
-def listAll():
+def list_all():
     articles = []
     for article in os.listdir(path):
         articles.append(article)
     display(articles)
 
-def listInVol(vNum):
+def list_vol(vNum):
     articles = []
     for article in os.listdir(path):
         if article.startswith(vNum + "."):
             articles.append(article)
     display(articles)
 
-def listInIssue(vNum, iNum):
+def list_issue(vNum, iNum):
     articles = []
     for article in os.listdir(path):
         if article.startswith(vNum + "." + iNum + "."):

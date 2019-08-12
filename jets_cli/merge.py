@@ -1,55 +1,55 @@
 import os, sys
-import sys
 from PyPDF2 import PdfFileReader, PdfFileWriter
+
 path = os.path.realpath(__file__)
 path = path.replace("merge.py","")
-path = path + "Articles/"
-fPath = path + "All/"
-mPath = path + "Merged/"
+merge_path = path + "Articles/Merged/"
+path = path + "Articles/All/"
 
-def merge(vNum, iNum):
-    folder = "Vol " + vNum +"/"
-    if iNum == "0":
+
+def merge(vol_num, issue_num):
+    folder = "Vol " + vol_num +"/"
+    if issue_num == "0":
         issues = []
-        for file in os.listdir(fPath):
-            if file.startswith(vNum + "."):
-                title = file.split(" - ", 1)[0]
-                num = title.split(".")[1]
+        for file in os.listdir(path):
+            if file.startswith(vol_num + "."):
+                title = util.getInfo(path + file)[0]
+                num = util.get_nums(file)[0]
                 issues.append(num)
-        for iNum in issues:
-            mergeIssue(vNum, iNum)
-        mergeVol(vNum)
+        for issue_num in issues:
+            merge_issues(vol_num, issue_num)
+        merge_vol(vol_num)
     else:
-        mergeIssue(vNum, iNum)
+        merge_issues(vol_num, issue_num)
 
-def mergeIssue(vNum, iNum):
-    vPath = mPath + "Vol " + vNum + "/"
-    if not os.path.exists(vPath):
-        os.mkdir(vPath)
-    out = vPath + "Issue " + str(iNum) + ".pdf"
-    fout = open(out, 'ab')
+def merge_issues(vol_num, issue_num):
+    merge_path = merge_path + "Vol " + vol_num + "/"
+    if not os.path.exists(merge_path):
+        os.mkdir(merge_path)
+    output = merge_path + "Issue " + str(issue_num) + ".pdf"
+    file_out = open(output, 'ab')
     writer = PdfFileWriter()
-    for article in os.listdir(fPath):
-        if article.startswith(vNum + "." + iNum):
-            f = open(fPath + article, 'rb')
-            pdf = PdfFileReader(f)
+    for article in os.listdir(path):
+        if article.startswith(vol_num + "." + issue_num):
+            file = open(fPath + article, 'rb')
+            pdf = PdfFileReader(file)
             for page in range(pdf.getNumPages()):
                 writer.addPage(pdf.getPage(page))
-            writer.write(fout)
-            f.close()
-    fout.close()
+            writer.write(file_out)
+            file.close()
+    file_out.close()
 
-def mergeVol(vNum):
-    for folders in os.listdir(mPath):
-        if folders == "Vol " + vNum:
-            out = mPath + folders + "/" + "Vol " + vNum + ".pdf"
-            fout = open(out, 'ab')
+def merge_vol(vol_num):
+    for folder in os.listdir(merge_path):
+        if folder == "Vol " + vol_num:
+            output = merge_path + folder + "/Vol " + vol_num + ".pdf"
+            file_out = open(output, 'ab')
             writer = PdfFileWriter()
-            for file in os.listdir(mPath + folders):
-                f = open(mPath + folders + "/" + file, 'rb')
-                pdf = PdfFileReader(f)
+            for file in os.listdir(merge_path + folder):
+                pdf_file = open(merge_path + folders + "/" + file, 'rb')
+                pdf = PdfFileReader(pdf_file)
                 for page in range(pdf.getNumPages()):
                     writer.addPage(pdf.getPage(page))
-                writer.write(fout)
-                f.close()
-            fout.close()
+                writer.write(file_out)
+                pdf_file.close()
+            file_out.close()

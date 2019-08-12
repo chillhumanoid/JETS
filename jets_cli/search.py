@@ -9,7 +9,7 @@ rPath = os.path.realpath(__file__)
 rPath = rPath.replace("search.py","")
 
 #functions
-def authSearch(author):
+def auth_search(author):
     name = author.split(" ")
     x = 0
     listoNames = []
@@ -29,7 +29,7 @@ def authSearch(author):
                     articles.append(article)
     display(articles)
 
-def articleSearch(term):    #for searching articles
+def article_search(term):    #for searching articles
     path = rPath + "Articles/All/"
     found = []
     click.echo() #for formatting

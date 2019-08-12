@@ -6,7 +6,7 @@ path = path.replace("opener.py","")
 fPath = path + "Articles/All/"
 aPath = path + "Articles/Authors/"
 
-def openAuth(auth):
+def open_author(auth):
     articles = []
     aPaths = []
     x = 0
@@ -23,7 +23,7 @@ def openAuth(auth):
     if x==0:
         print("Author Not Found")
 
-def openFile(num):
+def open_file(num):
     x = 0
     for article in os.listdir(fPath):
         if num in article:

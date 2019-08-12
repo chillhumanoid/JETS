@@ -1,5 +1,5 @@
-import search as s, lister as l, open as o, merge as m, util, downloader as dl
-from rename import rename as r
+import search as s, lister as l, open as o, merge, util, downloader as dl
+from rename import rename as r; from display import display
 import click, configparser, os, sys
 
 #import search as searcher
@@ -27,9 +27,9 @@ def search(title, author, term):
     if author == 1 and title == 1 or author > 1 or title > 1:
         util.p("Only One Option Allowed")
     elif title == 1 or author == False:
-        s.articleSearch(term)
+        s.article_search(term)
     elif author == 1:
-        s.authSearch(term)
+        s.auth_search(term)
 
 
 #RENAME COMMAND
@@ -59,11 +59,11 @@ def list(term):
 
     Usage: jets list (optional) 1-62.1-4"""
     if term == None:
-        l.listing("0","0")
+        l.start("0","0")
     else:
         num = util.getNumbers(term)
         vNum,iNum=[num[0], num[1]]
-        l.listing(vNum, iNum)
+        l.start(vNum, iNum)
 
 #INFO COMMAND
 @cli.command()
@@ -78,7 +78,7 @@ def info(term):
     for article in os.listdir(path + "All/"):
         if article.startswith(vNum + "." + iNum + "." + aNum):
             articles.append(article)
-    util.display(articles)
+    display(articles)
 
 #OPEN COMMAND
 @cli.command("open")
@@ -90,11 +90,11 @@ def opener(term, author):
     Usage: jets open 1-62.1-4.articlenum
          OR     jets open -a author"""
     if author == 1:
-        o.openAuth(term)
+        o.open_author(term)
     elif author == False:
         num = util.getNumbers(term)
         fNum = num[0] + "." + num[1] + "." + num[2]
-        o.openFile(fNum)
+        o.open_file(fNum)
     else:
         util.p("Please enter an article number or author name")
 
@@ -112,7 +112,7 @@ def merge(term):
     num = util.getNumbers(term)
     vNum = num[0]
     iNum = num[1]
-    m.merge(vNum, iNum)
+    merge.start(vNum, iNum)
 
 #DOWNLOAD COMMAND
 @cli.command()

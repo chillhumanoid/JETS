@@ -4,14 +4,13 @@ from util import p, getInfo, writeInfo, check_digit
 path = os.path.realpath(__file__)
 path = path.replace("rename.py","")
 path = path + "Articles/"
-fPath = path + "All/"
-aPath = path + "Authors/"
+all_path = path + "All/"
+author_path = path + "Authors/"
 
-def rename(vNum, iNum, aNum, id): #had to adjust this because of fixAuthor
-    global aPath
-    vNum = check_digit(vNum)
-    iNum = check_digit(iNum)
-    aNum = check_digit(aNum)
+def rename(vol_num, issue_num, article_num, id): #had to adjust this because of fixAuthor
+    vol_num = check_digit(vol_num)
+    issue_num = check_digit(issue_num)
+    article_num = check_digit(article_num)
     num = vNum + "." + iNum + "." + aNum
     name = ""
     nAuth = ""
