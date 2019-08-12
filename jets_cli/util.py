@@ -93,83 +93,82 @@ def getNumbers(term):
             sys.exit()
     return (vNum, iNum, aNum)
 
-def numericalSort(value):
-    parts = numbers.split(value)
-    parts[1::2] = map(int, parts[1::2])
-    return parts
+def get_nums(article):
+    num = article.split(" - ")[0]
+    a = num.split(".")
+    vNum,iNum, aNum = [a[0], a[1], a[2]]
+    payload = [num, vNum, iNum, aNum]
+    return payload
 
 def display_info(articles):
+    u = 0
     for article in articles:
-        num = article.split(" - ")[0]
+        title = article.split(" - ")[1]
+        title = article.split(".pdf")[0]
+        z = len(title)
+        if z > u:
+            u = z + 2
+    header = "{0:^11}| {1:^{3}} |{2:^16}".format("ARTICLE", " TITLE", "AUTHOR", u)
+    lChar = u"\u2015"
+    line = ""
+    line2 = ""
+    for x in range(len(header) + 8): #seems self explanatory
+        if x == 11 or x == 13 + u:
+            line = line + "|"
+            line2 = line2 + lChar
+        line = line + lChar
+        line2 = line2 + lChar
+    p(line2)
+    click.echo(header)
+    click.echo(line)
+    for article in articles:
+        payload = get_nums(article)
+        num,vNum,iNum,aNum = [payload[0], payload[1], payload[2], payload[3]]
         title = article.split(" - ")[1]
         title = title.split(".pdf")[0]
-        vNum = num.split(".")[0]
         vNum = check_digit(vNum)
-        iNum = num.split(".")[1]
         iNum = check_digit(iNum)
-        aNum = num.split(".")[2]
         aNum = check_digit(aNum)
-        u = 0
-        for x in articles:
-            title = x.split(" - ", 1)[1]
-            title = title.split(".pdf")[0]
-            z = len(title)
-            if z > u:
-                u = z + 2
-        header = "{0:^11}| {1:^{3}} |{2:^16}".format("ARTICLE", " TITLE", "AUTHOR", u)
-        lChar = u"\u2015"
-        line = ""
-        line2 = ""
-        for x in range(len(header) + 8): #seems self explanatory
-            if x == 11 or x == 13 + u:
-                line = line + "|"
-                line2 = line2 + lChar
-            line = line + lChar
-            line2 = line2 + lChar
-        p(line2)
-        click.echo(header)
-        click.echo(line)
-        for article in articles:
-            info = getInfo(fPath + article)
-            author = info.author
-            a = ''
-            if " And " in author:
-                authors = []
-                test = []
-                auths = author.split(" And ")
-                for a in auths:
-                    if "," in a:
-                        authos = a.split(",")
-                        for auth in authos:
-                            auth = auth.strip()
-                            if not auth == "":
-                                test.append(auth)
-                    else:
-                        test.append(a)
-                name = []
-                for po in test:
-                    first = po[0:1] + "."
-                    temp = po.split(" ")
-                    temp[0] = first
-                    if "Jr" in temp or "III" in temp:
-                        x = len(temp) - 2
-                    else:
-                        x = len(temp)-1
-                    last = temp[x]
-                    if not x == 1:
-                        x = x -1
-                        middle = temp[x]
-                        if not len(middle) == 2:
-                            middle = middle[0:1] + "."
-                            temp[x] = middle
-                            if not x <= 1:
-                                x = x - 1
-                                nMiddle = temp[x]
-                                if not len(nMiddle) == 2:
-                                    nMiddle = nMiddle[0:1]
-                                    temp[x] = nMiddle
-                    a = ' '.join(temp)
-                    name.append(a)
-                author = ', '.join(name)
-            display = "{0:^11}|  {1:<{3}}|  {2}".format(num, title, author, u)
-            click.echo(display)
+        info = getInfo(fPath + article)
+        author = info.author
+        a = ''
+        if " And " in author:
+            authors = []
+            test = []
+            auths = author.split(" And ")
+            for a in auths:
+                if "," in a:
+                    authos = a.split(",")
+                    for auth in authos:
+                        auth = auth.strip()
+                        if not auth == "":
+                            test.append(auth)
+                else:
+                    test.append(a)
+            name = []
+            for po in test:
+                first = po[0:1] + "."
+                temp = po.split(" ")
+                temp[0] = first
+                if "Jr" in temp or "III" in temp:
+                    x = len(temp) - 2
+                else:
+                    x = len(temp)-1
+                last = temp[x]
+                if not x == 1:
+                    x = x -1
+                    middle = temp[x]
+                    if not len(middle) == 2:
+                        middle = middle[0:1] + "."
+                        temp[x] = middle
+                        if not x <= 1:
+                            x = x - 1
+                            nMiddle = temp[x]
+                            if not len(nMiddle) == 2:
+                                nMiddle = nMiddle[0:1]
+                                temp[x] = nMiddle
+                a = ' '.join(temp)
+                name.append(a)
+            author = ', '.join(name)
+        display = "{0:^11}|  {1:<{3}}|  {2}".format(num, title, author, u)
+        click.echo(display)

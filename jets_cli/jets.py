@@ -7,13 +7,12 @@ CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
 path = os.path.realpath(__file__)
 path = path.replace("jets.py","")
-path = path + "jets_cli/Articles/"
+path = path + "Articles/"
 
 @click.group(context_settings=CONTEXT_SETTINGS)
 @click.pass_context
 def cli(ctx):
     pass
-
 
 #SEARCH COMMAND
 @cli.command()
@@ -60,7 +59,7 @@ def list(term):
 
     Usage: jets list (optional) 1-62.1-4"""
     if term == None:
-        l.listing(0,0)
+        l.listing("0","0")
     else:
         num = getNumbers(term)
         vNum,iNum=[num[0], num[1]]
