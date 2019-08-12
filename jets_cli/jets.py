@@ -1,11 +1,13 @@
-import click, configparser, os, sys, search as searcher, rename as r, lister as l, opener as o
+from jets_cli import search as searcher; from jets_cli import rename as r; from jets_cli import lister as l; from jets_cli import open as o
+import click, configparser, os, sys
 #import search as searcher
-from util import p, start, getNumbers, check_vol, check_issue, display_info as display; from rename import rename as r
+from jets_cli.util import p, start, getNumbers, check_vol, check_issue, check_digit, display_info as display; from jets_cli.rename import rename as r; from jets_cli.merge import merge as m
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
+
 path = os.path.realpath(__file__)
 path = path.replace("jets.py","")
-path = path + "Articles/"
+path = path + "jets_cli/Articles/"
 
 @click.group(context_settings=CONTEXT_SETTINGS)
 @click.pass_context
@@ -44,16 +46,12 @@ def rename(title, author, both, term):
     num = getNumbers(term)
     vNum,iNum,aNum=[num[0], num[1], num[2]]
     id = 0
-    if (title == 1 and (author == 1 or both == 1)) or (author == 1 and both == 1):
-        p("One Command Only")
-        sys.exit()
-    elif title == 1:
-        id = 2
-    elif author == 1:
-        id = 1
-    elif both == 1:
-        id = 0
+    if title == 1:
+        id = id + 2
+    if author == 1:
+        id = id + 1
     r(vNum, iNum, aNum, id)
+
 #LIST COMMAND
 @cli.command()
 @click.argument("term", nargs=1, required=False)
@@ -105,7 +103,7 @@ def opener(term, author):
 
 #MERGE COMMAND
 @cli.command()
-@click.argument("term", nargs=1, required=True)
+@click.argument("term",nargs=1, required=True)
 def merge(term):
     """Merge a full volume or a given issue.
 
@@ -113,9 +111,10 @@ def merge(term):
 
     Usage: jets merge 1-62.1-4"""
 
-
-    p("Merge")
-
+    num = getNumbers(term)
+    vNum = num[0]
+    iNum = num[1]
+    m(vNum, iNum)
 
 #DOWNLOAD COMMAND
 @cli.command()
@@ -134,10 +133,10 @@ def download(new, vol, issue, article, term, force):
        -a will download the given article in an issue (-v and -i required)
 
        Usage: jets -n|-v|-i|-a|1-62.1-4.articlenum"""
-    from downloader import downloading as download
+    from jets_cli.downloader import start as download
     vNum = aNum = iNum = "0"
     if new >= 1:
-        if force >= 1 or new > 1:
+        if force >= 1:
             p("-n can't be used with any other command")
             sys.exit()
     else:
@@ -149,6 +148,8 @@ def download(new, vol, issue, article, term, force):
                 num = getNumbers(term)
                 vNum,iNum,aNum=[num[0], num[1], num[2]]
         else:
+            if not vol == 0 and issue == 0 and article == 0:
+                check_vol(vol)
             if not issue == 0 and vol == 0:
                 p("Please enter a volume number")
                 sys.exit()
@@ -158,11 +159,7 @@ def download(new, vol, issue, article, term, force):
             else:
                 check_vol(vol)
                 check_issue(issue)
-                vNum = str(vol)
-                iNum = str(issue)
-                aNum = str(article)
+            vNum = str(vol)
+            iNum = str(issue)
+            aNum = str(article)
     download(vNum, iNum, aNum, force)
-#init
-if __name__ == '__main__':
-    start()
-    cli()

@@ -1,6 +1,6 @@
 import sys, os, time, subprocess, click
 from pathvalidate import ValidationError, validate_filename; from shutil import copyfile
-from util import p, getInfo, writeInfo
+from jets_cli.util import p, getInfo, writeInfo
 
 path = os.path.realpath(__file__)
 path = path.replace("rename.py","")
@@ -27,14 +27,14 @@ def rename(vNum, iNum, aNum, id): #had to adjust this because of fixAuthor
                author = ""
             p("Current Title: " + title)
             click.echo("Current Author: " + author)
-            if id == 0 or id == 2:
+            if id == 0 or id == 2 or id == 3:
                 name = click.prompt("Enter New Article Title") #gets new article title
-            if id == 0 or id == 1:
+            if id == 0 or id == 1 or id == 3:
                 nAuth = click.prompt("Enter New Author Name")
-            if id == 0 or id == 2:
+            if id == 0 or id == 2 or id == 3:
                 p("Old Title - " + title) #display old title
                 click.echo("New Title - " + name)
-            if id == 0 or id == 1:
+            if id == 0 or id == 1 or id == 3:
                 p("Old Author - " + author) #display old author
                 click.echo("New Author - " + nAuth) #display new author
             if click.confirm("Confirm title and/or author change?"): #confirm

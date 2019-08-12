@@ -1,9 +1,10 @@
-import os, click, sys
+import os, click, sys, re
 from PyPDF2 import PdfFileReader, PdfFileWriter
 from shutil import copyfile
 path = os.path.realpath(__file__)
 path = path.replace("util.py","")
 path = path + "Articles/"
+numbers = re.compile(r'(\d+)')
 
 def start():
     if not os.path.exists(path):
@@ -36,6 +37,12 @@ def getInfo(pdf):
     f.close()
     return info
 
+def getNum(vNum, iNum, aNum):
+    vNum = check_digit(vNum)
+    iNum = check_digit(iNum)
+    aNum = check_digit(aNum)
+    num = vNum + "." + iNum + "." + aNum
+    return num
 
 def writeInfo(pPath, name, author):
     f = open(pPath, 'rb')
@@ -54,6 +61,10 @@ def writeInfo(pPath, name, author):
     copyfile(path + "temp.pdf", pPath)
     os.remove(path + "temp.pdf")
 
+def check_digit(num):
+    if len(str(num)) == 1:
+        num = "0" + str(num)
+    return num
 
 def getNumbers(term):
     cDot = term.count(".")
@@ -80,8 +91,20 @@ def getNumbers(term):
             p("please enter a number for article")
             sys.exit()
     return (vNum, iNum, aNum)
+
+def numericalSort(value):
+    parts = numbers.split(value)
+    parts[1::2] = map(int, parts[1::2])
+    return parts
+
 def display_info(articles):
     aPath = path + "All/"
+    vNum = articles[0]
+    iNum = articles[1]
+    aNum = articles[2]
+    title = articles[3]
+    full = articles[4]
+    num = vNum + "." + iNum + "." + aNum
     if not len(articles) == 0:
         u = 0
         for x in articles:
@@ -104,8 +127,6 @@ def display_info(articles):
         click.echo(header)
         click.echo(line)
         for article in articles:
-            num = article.split(" - ", 1)[0]
-            title = article.split(" - ", 1)[1]
             title = title.split(".pdf")[0]
             info = getInfo(aPath + article)
             author = info.author

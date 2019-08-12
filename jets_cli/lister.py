@@ -1,14 +1,18 @@
 ##imports
-import sys, os, rename, re, search
+import sys, os, re
+from jets_cli import search
 from PyPDF2 import PdfFileReader, PdfFileWriter
 from shutil import copyfile
-from util import display_info as display
-
+numbers = re.compile(r'(\d+)')
 ##global variables
 path = os.path.realpath(__file__)
 path = path.replace("lister.py","")
-path = path + "Articles/All/"
+path = path + "Articles/"
 
+def numericalSort(value):
+    parts = numbers.split(value)
+    parts[1::2] = map(int, parts[1::2])
+    return parts
 ##functions
 def listing(vNum, iNum):
     if vNum == 0 and iNum == 0:
@@ -20,9 +24,10 @@ def listing(vNum, iNum):
 
 def listAll():
     articles = []
-    for article in os.listdir(path):
+    for article in os.listdir(path + "All/"):
         articles.append(article)
-    display(articles)
+    for file in sorted(glob.glob(articles), key=numericalSort):
+        print(article)
 
 def listInVol(vNum):
     if int(vNum) >= 1 and int(vNum) <= 62:
@@ -30,7 +35,7 @@ def listInVol(vNum):
         for article in os.listdir(base):
             if article.startswith(vNum + "."):
                 articles.append(article)
-        display(articles)
+        search.printFiles(articles)
     else:
         print()
         print("Invalid Volume")
@@ -42,7 +47,7 @@ def listInIssue(vNum, iNum):
         for article in os.listdir(base):
             if article.startswith(vNum + "." + iNum + "."):
                 articles.append(article)
-        display(articles)
+        search.printFiles(articles)
     else:
         print()
         print("invalid volume or issue")

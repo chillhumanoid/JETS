@@ -1,0 +1,7 @@
+PyPDF2>=1.26.0
+click
+configparser
+pathvalidate
+requests
+bs4
+appdirs
