@@ -1,9 +1,13 @@
-import util
+import util, click, os
+
+path = os.path.realpath(__file__)
+path = path.replace("display.py","")
+path = path + "Articles/All/"
 
 def display(articles):
     title_display_len = get_longest(articles) + 2
     display_header(title_display_len)
-    display_articles(articles)
+    display_articles(articles, title_display_len)
 
 def get_longest(articles):
     u = 0
@@ -17,31 +21,31 @@ def get_longest(articles):
 
 def display_header(title_len):
     header = "{0:^11}|  {1:^{3}}|{2:^16}".format("ARTICLE", " TITLE", "AUTHOR", title_len)
-    lines = get_lines(header)
+    lines = get_lines(header, title_len)
     line, line2 = lines[0], lines[1]
     util.p(line)
     click.echo(header)
     click.echo(line2)
 
-def get_lines(header):
+def get_lines(header, title_len):
     lChar = u"\u2015"
     line = ""
     line2 = ""
     for x in range(len(header) + 8): #seems self explanatory
-        if x == 11 or x == 13 + u:
+        if x == 11 or x == 13 + title_len:
             line2 = line2 + "|"
             line = line + lChar
         line = line + lChar
         line2 = line2 + lChar
     return (line, line2)
 
-def display_articles(articles):
+def display_articles(articles, title_len):
+    title_len = int(title_len)
     for article in articles:
-            num = get_nums(article)[0]
-            title = util.get_title(article)
-            author = util.getInfo(fPath + article)[1]
-            author = get_authors(author)
-            display = "{0:^11}|  {1:<{3}}|  {2}".format(num, title, author, u)
+            num = util.get_nums(article)[0]
+            title = util.getInfo(path + article)[0]
+            author = util.getInfo(path + article)[1]
+            display = "{0:^11}|  {1:<{3}}|  {2}".format(num, title, author, title_len)
             click.echo(display)
 
 def get_authors(author):
