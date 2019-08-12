@@ -121,6 +121,7 @@ def display_info(articles):
     p(line2)
     click.echo(header)
     click.echo(line)
+    
     for article in articles:
         payload = get_nums(article)
         num,vNum,iNum,aNum = [payload[0], payload[1], payload[2], payload[3]]
