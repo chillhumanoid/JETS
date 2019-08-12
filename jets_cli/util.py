@@ -93,10 +93,10 @@ def get_numbers(term, canAppend=True):
     vol_num = issue_num = article_num = "0"
     if cDot >= 0:
         vol_num = term.split(".")[0]
-        check_vol(int(vol_num))
+        check_vol(vol_num)
     if cDot >= 1:
         issue_num = term.split(".")[1]
-        check_issue(int(issue_num))
+        check_issue(issue_num)
     if cDot == 2:
         article_num = term.split(".")[2]
     if not article_num.isdigit():
