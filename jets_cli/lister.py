@@ -1,6 +1,7 @@
 ##imports
 import sys, os, re
 import search, util
+from display import display
 from PyPDF2 import PdfFileReader, PdfFileWriter
 from shutil import copyfile
 
@@ -25,18 +26,18 @@ def listAll():
     articles = []
     for article in os.listdir(path):
         articles.append(article)
-    util.display_info(articles)
+    display(articles)
 
 def listInVol(vNum):
     articles = []
     for article in os.listdir(path):
         if article.startswith(vNum + "."):
             articles.append(article)
-    util.display_info(articles)
+    display(articles)
 
 def listInIssue(vNum, iNum):
     articles = []
     for article in os.listdir(path):
         if article.startswith(vNum + "." + iNum + "."):
             articles.append(article)
-    util.display_info(articles)
+    display(articles)

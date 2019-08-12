@@ -1,5 +1,6 @@
 import os, sys, subprocess, click
-from util import display_info as d
+from display import display
+
 path = os.path.realpath(__file__)
 path = path.replace("opener.py","")
 fPath = path + "Articles/All/"
