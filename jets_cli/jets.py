@@ -8,6 +8,9 @@ CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 path = os.path.realpath(__file__)
 path = path.replace("jets.py","")
 path = path + "Articles/"
+all_path = path + "All/"
+author_path = path + "Author/"
+merge_path = path + "Merged/"
 
 @click.group(context_settings=CONTEXT_SETTINGS)
 @click.pass_context
@@ -61,7 +64,7 @@ def list(term):
     if term == None:
         l.start("0","0")
     else:
-        num = util.getNumbers(term)
+        num = util.getNumbers(term) #CAN BE 0 APPENDED
         vNum,iNum=[num[0], num[1]]
         l.start(vNum, iNum)
 
@@ -72,11 +75,11 @@ def info(term):
     """Show title and author for a given article
 
     Usage: jets info 1-62.1-4.articlenum"""
-    num = util.getNumbers(term)
-    vNum,iNum,aNum=[num[0], num[1], num[2]]
+    num = util.getNumbers(term) #CAN BE 0 APPENDED
+    full_num=num[0] + "." + num[1] + "." + num[2]
     articles = []
-    for article in os.listdir(path + "All/"):
-        if article.startswith(vNum + "." + iNum + "." + aNum):
+    for article in os.listdir(all_path):
+        if article.startswith(full_num):
             articles.append(article)
     display(articles)
 
@@ -92,9 +95,9 @@ def opener(term, author):
     if author == 1:
         o.open_author(term)
     elif author == False:
-        num = util.getNumbers(term)
-        fNum = num[0] + "." + num[1] + "." + num[2]
-        o.open_file(fNum)
+        num = util.getNumbers(term) #can be 0 appended
+        full_num = num[0] + "." + num[1] + "." + num[2]
+        o.open_file(full_num)
     else:
         util.p("Please enter an article number or author name")
 
@@ -109,10 +112,10 @@ def merge(term):
 
     Usage: jets merge 1-62.1-4"""
 
-    num = util.getNumbers(term)
-    vNum = num[0]
-    iNum = num[1]
-    merge.start(vNum, iNum)
+    nums = util.getNumbers(term) #can be 0 appended
+    vol_num = nums[0]
+    issue_num = nums[1]
+    merge.start(vol_num, issue_num)
 
 #DOWNLOAD COMMAND
 @cli.command()
@@ -131,18 +134,15 @@ def download(new, vol, issue, article, term, force):
        -a will download the given article in an issue (-v and -i required)
 
        Usage: jets -n|-v|-i|-a|1-62.1-4.articlenum"""
-    vNum = aNum = iNum = "0"
+    vol_num = article_num = issue_num = "0"
     if new >= 1:
         if force >= 1:
             util.p("-n can't be used with any other command")
             sys.exit()
     else:
         if vol == 0 and issue == 0 and article == 0:
-            if term == None:
-                util.p("Please enter an article number")
-                sys.exit()
-            else:
-                num = util.getNumbers(term)
+            if not term == None:
+                num = util.get_numbers(term, False) #CANT be 0 appended
                 vNum,iNum,aNum=[num[0], num[1], num[2]]
         else:
             if not vol == 0 and issue == 0 and article == 0:

@@ -1,28 +1,28 @@
-import os, click, sys, re
+import os, click, sys
 from PyPDF2 import PdfFileReader, PdfFileWriter
 from shutil import copyfile
+
 path = os.path.realpath(__file__)
 path = path.replace("util.py","")
 path = path + "Articles/"
-fPath = path + "All/"
-mPath = path + "Merged/"
-aPath = path + "Authors/"
-numbers = re.compile(r'(\d+)')
+all_path = path + "All/"
+merge_path = path + "Merged/"
+author_path = path + "Authors/"
 
 def start():
     if not os.path.exists(path):
         os.mkdir(path)
-    if not os.path.exists(fPath):
-        os.mkdir(fPath)
-    if not os.path.exists(aPath):
-        os.mkdir(aPath)
-    if not os.path.exists(mPath):
-        os.mkdir(mPath)
+    if not os.path.exists(all_path):
+        os.mkdir(all_path)
+    if not os.path.exists(author_path):
+        os.mkdir(author_path)
+    if not os.path.exists(merge_path):
+        os.mkdir(merge_path)
 
-def sStrip(string):
+def string_strip(string):
     if string.endswith(" ") or string.endswith(".") or string.endswith("?"):
         string = string[:-1]
-        return sStrip(string)
+        return string_strip(string)
     else:
         string = string.strip()
         return string
@@ -51,7 +51,7 @@ def check_issue(issue):
         sys.exit()
 
 
-def getInfo(pdf):
+def get_info(pdf):
     f = open(pdf, 'rb') #open the right article as "f"
     pdf = PdfFileReader(f)
     info = pdf.getDocumentInfo() #gets metadata
@@ -59,14 +59,14 @@ def getInfo(pdf):
     info = [info.title, info.author]
     return info
 
-def getNum(vNum, iNum, aNum):
+def get_num(vNum, iNum, aNum):
     vNum = check_digit(vNum)
     iNum = check_digit(iNum)
     aNum = check_digit(aNum)
     num = vNum + "." + iNum + "." + aNum
     return num
 
-def writeInfo(pPath, name, author):
+def write_info(pPath, name, author):
     f = open(pPath, 'rb')
     pdf = PdfFileReader(f)
     writer = PdfFileWriter()
@@ -88,21 +88,25 @@ def check_digit(num):
         num = "0" + str(num)
     return num
 
-def getNumbers(term):
+def get_numbers(term, canAppend=True):
     cDot = term.count(".")
-    vNum = iNum = aNum = "0"
+    vol_num = issue_num = article_num = "0"
     if cDot >= 0:
-        vNum = term.split(".")[0]
-        check_vol(int(vNum))
+        vol_num = term.split(".")[0]
+        check_vol(int(vol_num))
     if cDot >= 1:
-        iNum = term.split(".")[1]
-        check_issue(int(iNum))
+        issue_num = term.split(".")[1]
+        check_issue(int(issue_num))
     if cDot == 2:
-        aNum = term.split(".")[2]
-    if not aNum.isdigit():
+        article_num = term.split(".")[2]
+    if not article_num.isdigit():
         p("Please enter an integer for article")
         sys.exit()
-    return (vNum, iNum, aNum)
+    if canAppend == 1:
+        vol_num = check_digit(vol_num)
+        issue_num = check_digit(issue_num)
+        article_num = check_digit(article_num)
+    return (vol_num, issue_num, article_num)
 
 def get_nums(article):
     num = article.split(" - ")[0]
