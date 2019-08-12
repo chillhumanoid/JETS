@@ -4,6 +4,7 @@ from shutil import copyfile
 path = os.path.realpath(__file__)
 path = path.replace("util.py","")
 path = path + "Articles/"
+fPath = path + "All/"
 numbers = re.compile(r'(\d+)')
 
 def start():
@@ -98,14 +99,16 @@ def numericalSort(value):
     return parts
 
 def display_info(articles):
-    aPath = path + "All/"
-    vNum = articles[0]
-    iNum = articles[1]
-    aNum = articles[2]
-    title = articles[3]
-    full = articles[4]
-    num = vNum + "." + iNum + "." + aNum
-    if not len(articles) == 0:
+    for article in articles:
+        num = article.split(" - ")[0]
+        title = article.split(" - ")[1]
+        title = title.split(".pdf")[0]
+        vNum = num.split(".")[0]
+        vNum = check_digit(vNum)
+        iNum = num.split(".")[1]
+        iNum = check_digit(iNum)
+        aNum = num.split(".")[2]
+        aNum = check_digit(aNum)
         u = 0
         for x in articles:
             title = x.split(" - ", 1)[1]
@@ -127,8 +130,7 @@ def display_info(articles):
         click.echo(header)
         click.echo(line)
         for article in articles:
-            title = title.split(".pdf")[0]
-            info = getInfo(aPath + article)
+            info = getInfo(fPath + article)
             author = info.author
             a = ''
             if " And " in author:
