@@ -43,8 +43,8 @@ def display_articles(articles, title_len):
     title_len = int(title_len)
     for article in articles:
             num = util.get_nums(article)[0]
-            title = util.getInfo(path + article)[0]
-            author = util.getInfo(path + article)[1]
+            title = util.get_info(path + article)[0]
+            author = util.get_info(path + article)[1]
             display = "{0:^11}|  {1:<{3}}|  {2}".format(num, title, author, title_len)
             click.echo(display)
 
@@ -57,7 +57,7 @@ def get_authors(author):
             if "," in name:
                 auth_split_again = a.split(",")
                 for auth in auth_split_again:
-                    auth = util.sStrip()
+                    auth = util.string_strip()
                     if not auth == "":
                         authors.append(auth)
                     else:
