@@ -2,7 +2,7 @@ from jets_cli import search as searcher; from jets_cli import rename as r; from 
 import click, configparser, os, sys
 #import search as searcher
 from jets_cli.util import p, start, getNumbers, check_vol, check_issue, check_digit, display_info as display; from jets_cli.rename import rename as r; from jets_cli.merge import merge as m
-
+from jets_cli.downloader import start as download
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
 path = os.path.realpath(__file__)
@@ -133,7 +133,6 @@ def download(new, vol, issue, article, term, force):
        -a will download the given article in an issue (-v and -i required)
 
        Usage: jets -n|-v|-i|-a|1-62.1-4.articlenum"""
-    from jets_cli.downloader import start as download
     vNum = aNum = iNum = "0"
     if new >= 1:
         if force >= 1:
