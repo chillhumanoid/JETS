@@ -1,7 +1,7 @@
 import requests, urllib.request, time, os, sys, click
 from bs4 import BeautifulSoup
 from pathvalidate import ValidationError, validate_filename
-from PyPDF2 import PdfFileReader, PdfFileWriter; from shutil import copyfile; from util import getNum, p
+from PyPDF2 import PdfFileReader, PdfFileWriter; from shutil import copyfile; from util import getNum, p, sStrip
 
 bUrl = "https://www.etsjets.org"
 url = "https://www.etsjets.org/JETS_Online_Archive"
@@ -125,13 +125,7 @@ def title_fixer(title, vNum, iNum, aNum, aUrl, force):
     fName = getNum(str(vNum), str(iNum), str(aNum)) + " - " +title + ".pdf"
     download(title, fName, author, aUrl, force)
 
-def sStrip(string):
-    if string.endswith(" ") or string.endswith(".") or string.endswith("?"):
-        string = string[:-1]
-        return sStrip(string)
-    else:
-        string = string.strip()
-        return string
+
 
 def download(title, fName, author, aUrl, force):
     dPath = path + "All/"
