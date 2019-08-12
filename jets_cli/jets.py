@@ -45,14 +45,16 @@ def rename(title, author, both, term):
     """Rename title/author/both of article
 
     Usage: jets rename -t|-a|-b 1-62.1-4.articlenum"""
-    num = util.getNumbers(term)
-    vNum,iNum,aNum=[num[0], num[1], num[2]]
+    nums = util.get_numbers(term)
+    full_num = nums[0] + "." + nums[1] + "." + nums[2]
     id = 0
+    change_title = False
+    change_author = False
     if title == 1:
-        id = id + 2
+        change_title = True
     if author == 1:
-        id = id + 1
-    r(vNum, iNum, aNum, id)
+        change_author = True
+    r(full_num, change_title, change_author)
 
 #LIST COMMAND
 @cli.command()
@@ -64,7 +66,7 @@ def list(term):
     if term == None:
         l.start("0","0")
     else:
-        num = util.getNumbers(term) #CAN BE 0 APPENDED
+        num = util.get_numbers(term) #CAN BE 0 APPENDED
         vNum,iNum=[num[0], num[1]]
         l.start(vNum, iNum)
 
@@ -75,7 +77,7 @@ def info(term):
     """Show title and author for a given article
 
     Usage: jets info 1-62.1-4.articlenum"""
-    num = util.getNumbers(term) #CAN BE 0 APPENDED
+    num = util.get_numbers(term) #CAN BE 0 APPENDED
     full_num=num[0] + "." + num[1] + "." + num[2]
     articles = []
     for article in os.listdir(all_path):
@@ -95,7 +97,7 @@ def opener(term, author):
     if author == 1:
         o.open_author(term)
     elif author == False:
-        num = util.getNumbers(term) #can be 0 appended
+        num = util.get_numbers(term) #can be 0 appended
         full_num = num[0] + "." + num[1] + "." + num[2]
         o.open_file(full_num)
     else:
@@ -112,7 +114,7 @@ def merge(term):
 
     Usage: jets merge 1-62.1-4"""
 
-    nums = util.getNumbers(term) #can be 0 appended
+    nums = util.get_numbers(term) #can be 0 appended
     vol_num = nums[0]
     issue_num = nums[1]
     merge.start(vol_num, issue_num)
