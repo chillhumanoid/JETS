@@ -115,6 +115,7 @@ def fix_author(author):
     if ", Jr" in author:
         author = author.replace(", Jr", " Jr")
     author = util.string_strip(author)
+    author = author.replace("  ", " ")
     return author
 def fix_title(title):
     title = title.replace('\n', ' ')
@@ -126,6 +127,11 @@ def fix_title(title):
     title = title.replace('"', "'")
     title = title.replace("/", "-")
     title = util.string_strip(title)
+    if title.endswith("?"):
+        title = title[:-1]
+    if title.endswith("?'"):
+        title = title[:-2]
+        title = title + "'"
     title = title.replace("?", ' -')
     title = title.title()
     title = title.replace("Iii", "III")
@@ -134,6 +140,7 @@ def fix_title(title):
     title = title.replace("Nt", "NT")
     title = title.replace("'S", "'s")
     title = title.replace("&Amp;", "And")
+    title = title.replace("  ", " ")
     return title
 
 
@@ -154,7 +161,7 @@ def download(title, full_name, author, article_url, data, full_num):
                 file.write(r.content)
             util.write_info(all_path + "temp.pdf", title, author)
             move(all_path + "temp.pdf", all_path + full_name)
-            author_creator(full_name, author, force)
+            author_creator(full_name, author, force, title)
             time.sleep(1)
         else:
             value = click.prompt("Change (A)uthor or (T)itle or (N)either?", default="n")
@@ -166,10 +173,10 @@ def download(title, full_name, author, article_url, data, full_num):
             elif value == "t":
                 util.p("Current Title: " + title)
                 new_title = click.prompt("New Title: ")
-                download(new_title, full_name, auth, article_url, data, full_num)
+                download(new_title, full_name, author, article_url, data, full_num)
 
 
-def author_creator(full_name, author, force):
+def author_creator(full_name, author, force, title):
     aPath = ""
     for file in os.listdir(all_path):
         if full_name == file:
@@ -216,9 +223,7 @@ def author_creator(full_name, author, force):
                             if author_last == last:
                                 if click.confirm("Author Folder Possible: Articles/Authors/" + author_name):
                                     aPath = author_path + author_name
-                                    break
-                    else:
-                        break
+                                    util.write_info(all_path + full_name, title, author_name) #change author name to folder name
                 if aPath == "":
                     aPath = author_path + name
                 if not os.path.exists(aPath):
