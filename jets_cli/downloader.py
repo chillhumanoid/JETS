@@ -67,6 +67,9 @@ def get_article_url(data, issue_url):
         if ".pdf" in link and "Purchase Articles" not in link and "Purchase Back Issue(s)" not in link:
             z = z + 1
             if str(z) == article_num or article_num == '0':
+                if "<em>" in link:
+                    link = link.replace("<em>", "")
+                    link = link.replace("</em>", "")
                 title_start = link.find('>') + 1
                 title_end = link.find('<', title_start)
                 link_start = link.find('"') + 1
@@ -85,6 +88,7 @@ def get_article_url(data, issue_url):
 
 def get_title_and_author(data, title, article_url):
     orig_title = title
+    print(orig_title)
     count = title.count(". . .")
     if not count == 0:
         author = title.split(". . .")[count]
@@ -96,8 +100,8 @@ def get_title_and_author(data, title, article_url):
     else:
         author = "JETS"
 
-    title = fix(title)
-    author = util.string_strip(author)
+    title = fix_title(title)
+    author = fix_author(author)
     try:
         validate_filename(author)
         validate_filename(title)
@@ -108,26 +112,30 @@ def get_title_and_author(data, title, article_url):
     full_num = util.check_digit(data[0]) + "." + util.check_digit(data[1]) + "." + util.check_digit(data[2])
     full_name =  full_num + " - " + title + ".pdf"
     download(title, full_name, author, article_url, data, full_num)
-
-def fix(string):
-    string = string.replace('\n', ' ')
-    string = string.replace(": ", " - ")
-    string = string.replace(":", "_")
-    string = string.replace("’", "'")
-    string = string.replace("“", "'")
-    string = string.replace("”", "'")
-    string = string.replace('"', "'")
-    string = string.replace("/", "-")
-    string = util.string_strip(string)
-    string = string.replace("?", ' - ')
-    string = string.title()
-    string = string.replace("Iii", "III")
-    string = string.replace("Iv", "IV")
-    string = string.replace("Ot", "OT")
-    string = string.replace("Nt", "NT")
-    string = string.replace("'S", "'s")
-    string = string.replace("&Amp;", "And")
-    return string
+def fix_author(author):
+    if ", Jr" in author:
+        author = author.replace(", Jr", " Jr")
+    author = util.string_strip(author)
+    return author
+def fix_title(title):
+    title = title.replace('\n', ' ')
+    title = title.replace(": ", " - ")
+    title = title.replace(":", "_")
+    title = title.replace("’", "'")
+    title = title.replace("“", "'")
+    title = title.replace("”", "'")
+    title = title.replace('"', "'")
+    title = title.replace("/", "-")
+    title = util.string_strip(title)
+    title = title.replace("?", ' - ')
+    title = title.title()
+    title = title.replace("Iii", "III")
+    title = title.replace("Iv", "IV")
+    title = title.replace("Ot", "OT")
+    title = title.replace("Nt", "NT")
+    title = title.replace("'S", "'s")
+    title = title.replace("&Amp;", "And")
+    return title
 
 
 def download(title, full_name, author, article_url, data, full_num):
@@ -149,18 +157,30 @@ def download(title, full_name, author, article_url, data, full_num):
             move(all_path + "temp.pdf", all_path + full_name)
             author_creator(full_name, author, force)
             time.sleep(1)
+        else:
+            value = click.prompt("Change (A)uthor or (T)itle or (N)either?", default="n")
+            value = value.lower()
+            if value == "a":
+                util.p("Current Author: " + author)
+                new_auth = click.prompt("New Author Name: ")
+                download(title, full_name, new_auth, article_url, data, full_num)
+            elif value == "t":
+                util.p("Current Title: " + title)
+                new_title = click.prompt("New Title: ")
+                download(title, full_name, new_auth, article_url, data, full_num)
+
 
 def author_creator(full_name, author, force):
+    aPath = ""
     for file in os.listdir(all_path):
         if full_name == file:
             f = open(path + "All/" + file, 'rb')
             pdf = PdfFileReader(f)
             info = pdf.getDocumentInfo()
-            author = info.author
             f.close()
-            if " And " in author:
-                authors = []
-                auths = author.split(" And ")
+            authors = []
+            if " and " in author:
+                auths = author.split(" and ")
                 for a in auths:
                     if "," in a:
                         authos = a.split(",")
@@ -172,25 +192,44 @@ def author_creator(full_name, author, force):
                         a = a.strip()
                         a = a.strip() #just in case
                         authors.append(a)
-                for n in authors:
-                    aPath = author_path + n
-                    if not os.path.exists(aPath):
-                        os.mkdir(aPath)
-                    aPath = aPath + "/" + full_name
-                    if os.path.exists(aPath) and not force:
-                        util.p("Authors/" + n  + "/" + full_name)
-                        click.echo("Already exists")
-                    else:
-                        copyfile(all_path + full_Name, aPath)
-                util.p("Downloaded")
             else:
-                aPath = author_path + author
+                authors.append(author)
+            for name in authors:
+                print(name)
+                full_name_split = name.split(" ")
+                first = full_name_split[0]
+                first_initial = first[0:1]
+                if "Jr" in full_name_split or "III" in full_name_split:
+                    last_location = len(full_name_split) - 2
+                else:
+                    last_location = len(full_name_split) - 1
+                last = full_name_split[last_location]
+                for author_name in os.listdir(author_path):
+                    if not author_name == name:
+                        author_split = author_name.split(" ")
+                        author_first = author_split[0]
+                        author_first_initial = author_first[0:1]
+                        if author_first == first or author_first_initial == first_initial:
+                            if "Jr" in author_split or "III" in author_split:
+                                last_name_location = len(author_split) - 2
+                            else:
+                                last_name_location = len(author_split) - 1
+                            author_last = author_split[last_name_location]
+                            if author_last == last:
+                                if click.confirm("Author Folder Possible: Articles/Authors/" + author_name):
+                                    aPath = author_path + author_name
+                                    break
+                    else:
+                        break
+                if aPath == "":
+                    aPath = author_path + name
                 if not os.path.exists(aPath):
                     os.mkdir(aPath)
                 aPath = aPath + "/" + full_name
                 if os.path.exists(aPath) and not force:
-                    util.p("Authors/" + author +  "/" + full_name)
-                    click.echo("Already Exists")
+                    util.p("Authors/" + name  + "/" + full_name)
+                    click.echo("Already exists")
                 else:
                     copyfile(all_path + full_name, aPath)
-                    util.p("Downloaded")
+                aPath = ""
+                util.p("Downloaded")
