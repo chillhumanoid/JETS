@@ -2,7 +2,6 @@ import requests, urllib.request, time, os, sys, click, util
 from bs4 import BeautifulSoup
 from pathvalidate import ValidationError, validate_filename
 from PyPDF2 import PdfFileReader, PdfFileWriter; from shutil import copyfile, move
-from pynput.keyboard import Key, Listener
 
 bUrl = "https://www.etsjets.org"
 url = "https://www.etsjets.org/JETS_Online_Archive"
@@ -88,12 +87,12 @@ def get_article_url(data, issue_url):
 
 def get_title_and_author(data, title, article_url):
     orig_title = title
-    print(orig_title)
+    util.p(orig_title)
     count = title.count(". . .")
     if not count == 0:
         author = title.split(". . .")[count]
         if not count == 1:
-            title = title.split(". . .")[0:count-1]
+            title = title.split(". . .")[:count]
         else:
             title = title.split(". . .")[0]
         title = ''.join(title)
@@ -127,7 +126,7 @@ def fix_title(title):
     title = title.replace('"', "'")
     title = title.replace("/", "-")
     title = util.string_strip(title)
-    title = title.replace("?", ' - ')
+    title = title.replace("?", ' -')
     title = title.title()
     title = title.replace("Iii", "III")
     title = title.replace("Iv", "IV")
@@ -167,7 +166,7 @@ def download(title, full_name, author, article_url, data, full_num):
             elif value == "t":
                 util.p("Current Title: " + title)
                 new_title = click.prompt("New Title: ")
-                download(title, full_name, new_auth, article_url, data, full_num)
+                download(new_title, full_name, auth, article_url, data, full_num)
 
 
 def author_creator(full_name, author, force):
