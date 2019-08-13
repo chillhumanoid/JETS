@@ -67,6 +67,9 @@ def get_article_url(data, issue_url):
         if ".pdf" in link and "Purchase Articles" not in link and "Purchase Back Issue(s)" not in link:
             z = z + 1
             if str(z) == article_num or article_num == '0':
+                if "<em>" in link:
+                    link = link.replace("<em>", "")
+                    link = link.replace("</em>", "")
                 title_start = link.find('>') + 1
                 title_end = link.find('<', title_start)
                 link_start = link.find('"') + 1
@@ -85,6 +88,7 @@ def get_article_url(data, issue_url):
 
 def get_title_and_author(data, title, article_url):
     orig_title = title
+    print(orig_title)
     count = title.count(". . .")
     if not count == 0:
         author = title.split(". . .")[count]
@@ -151,15 +155,15 @@ def download(title, full_name, author, article_url, data, full_num):
             time.sleep(1)
 
 def author_creator(full_name, author, force):
+    aPath = ""
     for file in os.listdir(all_path):
         if full_name == file:
             f = open(path + "All/" + file, 'rb')
             pdf = PdfFileReader(f)
             info = pdf.getDocumentInfo()
-            author = info.author
             f.close()
+            authors = []
             if " And " in author:
-                authors = []
                 auths = author.split(" And ")
                 for a in auths:
                     if "," in a:
@@ -172,25 +176,42 @@ def author_creator(full_name, author, force):
                         a = a.strip()
                         a = a.strip() #just in case
                         authors.append(a)
-                for n in authors:
-                    aPath = author_path + n
-                    if not os.path.exists(aPath):
-                        os.mkdir(aPath)
-                    aPath = aPath + "/" + full_name
-                    if os.path.exists(aPath) and not force:
-                        util.p("Authors/" + n  + "/" + full_name)
-                        click.echo("Already exists")
-                    else:
-                        copyfile(all_path + full_Name, aPath)
-                util.p("Downloaded")
             else:
-                aPath = author_path + author
+                authors.append(author)
+            for name in authors:
+                full_name_split = name.split(" ")
+                first = full_name_split[0]
+                first_initial = first[0:1]
+                if "Jr" in full_name_split or "III" in full_name_split:
+                    last_location = len(full_name_split) - 2
+                else:
+                    last_location = len(full_name_split) - 1
+                last = full_name_split[last_location]
+                for author_name in os.listdir(author_path):
+                    if not author_name == name:
+                        author_split = author_name.split(" ")
+                        author_first = author_split[0]
+                        author_first_initial = author_first[0:1]
+                        if author_first == first or author_first_initial == first_initial:
+                            if "Jr" in author_split or "III" in author_split:
+                                last_name_location = len(author_split) - 2
+                            else:
+                                last_name_location = len(author_split) - 1
+                            author_last = author_split[last_name_location]
+                            if author_last == last:
+                                if click.confirm("Author Folder Possible: Articles/Authors/" + author_name):
+                                    aPath = author_path + author_name
+                                    break
+                    else:
+                        break
+                if aPath == "":
+                    aPath = author_path + name
                 if not os.path.exists(aPath):
                     os.mkdir(aPath)
                 aPath = aPath + "/" + full_name
                 if os.path.exists(aPath) and not force:
-                    util.p("Authors/" + author +  "/" + full_name)
-                    click.echo("Already Exists")
+                    util.p("Authors/" + name  + "/" + full_name)
+                    click.echo("Already exists")
                 else:
                     copyfile(all_path + full_name, aPath)
-                    util.p("Downloaded")
+                util.p("Downloaded")
