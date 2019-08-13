@@ -2,7 +2,7 @@ import os, sys, subprocess, click
 from display import display
 
 path = os.path.realpath(__file__)
-path = path.replace("opener.py","")
+path = path.replace("open.py","")
 fPath = path + "Articles/All/"
 aPath = path + "Articles/Authors/"
 

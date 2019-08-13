@@ -76,12 +76,12 @@ def write_info(pPath, name, author):
         '/Author': author,
         '/Title': name
     })
-    fout = open(path + 'temp.pdf', 'ab')
+    fout = open(path + 'tem.pdf', 'ab')
     writer.write(fout)
     fout.close()
     f.close()
-    copyfile(path + "temp.pdf", pPath)
-    os.remove(path + "temp.pdf")
+    copyfile(path + "tem.pdf", pPath)
+    os.remove(path + "tem.pdf")
 
 def check_digit(num):
     if len(str(num)) == 1:
