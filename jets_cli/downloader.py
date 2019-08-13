@@ -195,6 +195,7 @@ def author_creator(full_name, author, force):
             else:
                 authors.append(author)
             for name in authors:
+                print(name)
                 full_name_split = name.split(" ")
                 first = full_name_split[0]
                 first_initial = first[0:1]
