@@ -179,7 +179,7 @@ def author_creator(full_name, author, force):
             info = pdf.getDocumentInfo()
             f.close()
             authors = []
-            if " And " in author:
+            if " and " in author:
                 auths = author.split(" and ")
                 for a in auths:
                     if "," in a:
@@ -195,6 +195,7 @@ def author_creator(full_name, author, force):
             else:
                 authors.append(author)
             for name in authors:
+                print(name)
                 full_name_split = name.split(" ")
                 first = full_name_split[0]
                 first_initial = first[0:1]
@@ -230,4 +231,5 @@ def author_creator(full_name, author, force):
                     click.echo("Already exists")
                 else:
                     copyfile(all_path + full_name, aPath)
+                aPath = ""
                 util.p("Downloaded")
