@@ -2,6 +2,7 @@ import requests, urllib.request, time, os, sys, click, util
 from bs4 import BeautifulSoup
 from pathvalidate import ValidationError, validate_filename
 from PyPDF2 import PdfFileReader, PdfFileWriter; from shutil import copyfile, move
+from pynput.keyboard import Key, Listener
 
 bUrl = "https://www.etsjets.org"
 url = "https://www.etsjets.org/JETS_Online_Archive"
@@ -53,6 +54,7 @@ def get_issue_url(data, vol_url):
                 data[1] = str(i)
                 get_article_url(data, issue_url)
                 data[1] = issue_num_orig
+
 def get_article_url(data, issue_url):
     article_num_orig = data[2]
     article_num = data[2]
@@ -129,7 +131,6 @@ def fix(string):
 
 
 def download(title, full_name, author, article_url, data, full_num):
-    all_path = path + "All/"
     force = data[3]
     if os.path.exists(all_path + full_name) and force == False:
         util.p(full_name)
@@ -139,17 +140,12 @@ def download(title, full_name, author, article_url, data, full_num):
         click.echo("Title: " + title)
         click.echo("Author: " + author)
         if click.confirm("Download File?"):
+            if "&amp;" in article_url:
+                article_url = article_url.replace("&amp;", "&")
             r = requests.get(article_url, stream=True)
             with open(all_path + "temp.pdf", 'wb') as file:
                 file.write(r.content)
-                writer = PdfFileWriter()
-                writer.addMetadata({
-                    '/Author': author,
-                    '/Title': title
-                })
-                writer.write(file)
-            file.close()
-
+            util.write_info(all_path + "temp.pdf", title, author)
             move(all_path + "temp.pdf", all_path + full_name)
             author_creator(full_name, author, force)
             time.sleep(1)
