@@ -100,8 +100,8 @@ def get_title_and_author(data, title, article_url):
     else:
         author = "JETS"
 
-    title = fix(title)
-    author = util.string_strip(author)
+    title = fix_title(title)
+    author = fix_author(author)
     try:
         validate_filename(author)
         validate_filename(title)
@@ -112,26 +112,30 @@ def get_title_and_author(data, title, article_url):
     full_num = util.check_digit(data[0]) + "." + util.check_digit(data[1]) + "." + util.check_digit(data[2])
     full_name =  full_num + " - " + title + ".pdf"
     download(title, full_name, author, article_url, data, full_num)
-
-def fix(string):
-    string = string.replace('\n', ' ')
-    string = string.replace(": ", " - ")
-    string = string.replace(":", "_")
-    string = string.replace("’", "'")
-    string = string.replace("“", "'")
-    string = string.replace("”", "'")
-    string = string.replace('"', "'")
-    string = string.replace("/", "-")
-    string = util.string_strip(string)
-    string = string.replace("?", ' - ')
-    string = string.title()
-    string = string.replace("Iii", "III")
-    string = string.replace("Iv", "IV")
-    string = string.replace("Ot", "OT")
-    string = string.replace("Nt", "NT")
-    string = string.replace("'S", "'s")
-    string = string.replace("&Amp;", "And")
-    return string
+def fix_author(author):
+    if ", Jr" in author:
+        author = author.replace(", Jr", " Jr")
+    author = util.string_strip(author)
+    return author
+def fix_title(title):
+    title = title.replace('\n', ' ')
+    title = title.replace(": ", " - ")
+    title = title.replace(":", "_")
+    title = title.replace("’", "'")
+    title = title.replace("“", "'")
+    title = title.replace("”", "'")
+    title = title.replace('"', "'")
+    title = title.replace("/", "-")
+    title = util.string_strip(title)
+    title = title.replace("?", ' - ')
+    title = title.title()
+    title = title.replace("Iii", "III")
+    title = title.replace("Iv", "IV")
+    title = title.replace("Ot", "OT")
+    title = title.replace("Nt", "NT")
+    title = title.replace("'S", "'s")
+    title = title.replace("&Amp;", "And")
+    return title
 
 
 def download(title, full_name, author, article_url, data, full_num):
@@ -153,6 +157,18 @@ def download(title, full_name, author, article_url, data, full_num):
             move(all_path + "temp.pdf", all_path + full_name)
             author_creator(full_name, author, force)
             time.sleep(1)
+        else:
+            value = click.prompt("Change (A)uthor or (T)itle or (N)either?", default="n")
+            value = value.lower()
+            if value == "a":
+                util.p("Current Author: " + author)
+                new_auth = click.prompt("New Author Name: ")
+                download(title, full_name, new_auth, article_url, data, full_num)
+            elif value == "t":
+                util.p("Current Title: " + title)
+                new_title = click.prompt("New Title: ")
+                download(title, full_name, new_auth, article_url, data, full_num)
+
 
 def author_creator(full_name, author, force):
     aPath = ""
@@ -164,7 +180,7 @@ def author_creator(full_name, author, force):
             f.close()
             authors = []
             if " And " in author:
-                auths = author.split(" And ")
+                auths = author.split(" and ")
                 for a in auths:
                     if "," in a:
                         authos = a.split(",")
