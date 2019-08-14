@@ -16,9 +16,9 @@ def prompt(title, author, new_title, new_author):
         click.echo("New Author - " + new_author) #display new author
 
 def change(name):
-    name = get_name(name)
+    old_name = get_old_name(name)
     print(name)
-def get_name(name):
+    for article in os.listdir(specific_path):
     found_names = []
     click.echo()
     for x in name:
