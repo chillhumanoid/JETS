@@ -111,7 +111,7 @@ def get_numbers(term, canAppend=True):
 def get_nums(article):
     num = article.split(" - ")[0]
     a = num.split(".")
-    vNum,iNum, aNum = [a[0], a[1], a[2]]
+    vNum, iNum, aNum = [a[0], a[1], a[2]]
     payload = [num, vNum, iNum, aNum]
     return payload
 
