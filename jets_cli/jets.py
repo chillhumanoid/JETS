@@ -34,6 +34,12 @@ def search(title, author, term):
     elif author == 1:
         s.auth_search(term)
 
+#CHANGE COMMAND
+@cli.command()
+@click.option('-n', 'name', default=False, help="Authors name", nargs=0, required=True)
+@click.argument("name", nargs=-1, required=True)
+def change(name):
+    print(name)
 
 #RENAME COMMAND
 @cli.command()
@@ -54,6 +60,8 @@ def rename(title, author, both, term):
         change_title = True
     if author == 1:
         change_author = True
+
+
     r(full_num, change_title, change_author)
 
 #LIST COMMAND
