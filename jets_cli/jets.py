@@ -1,4 +1,4 @@
-import search as s, lister as l, open as o, merge, util, downloader as dl
+import search as s, lister as l, open as o, merge, util, downloader as dl, rename as ren
 from rename import rename as r; from display import display
 import click, configparser, os, sys
 
@@ -36,15 +36,20 @@ def search(title, author, term):
 
 #CHANGE COMMAND
 @cli.command()
-@click.option('-n', 'name', default=False, help="Authors name", nargs=0, required=True)
-@click.argument("name", nargs=-1, required=True)
-def change(name):
-    print(name)
+@click.option('-a', 'article', default=False, help="Change for specific article", count=True)
+@click.option('-n', 'name', default=False, help="Change all articles with a given name", count=True)
+@click.argument("term", nargs=-1, required=True)
+def change(article, name, term):
+    if article == 1 and name == False:
+        nums = util.get_numbers(term)
+        full_num = nums[0] + "." + nums[1] + nums[2]
+        r(full_num, False, True)
+    if name == 1 and article == False:
+        ren.change(term)
 
 #RENAME COMMAND
 @cli.command()
 @click.option('-t', 'title',default=False, help="Rename title", count=True)
-@click.option('-a', 'author',default=False, help="Rename author", count=True)
 @click.option('-b', 'both',default=False, help="Rename both title and author", count=True)
 @click.argument("term", nargs=1, required=True)
 def rename(title, author, both, term):
@@ -58,11 +63,11 @@ def rename(title, author, both, term):
     change_author = False
     if title == 1:
         change_title = True
-    if author == 1:
+    if both == 1:
+        change_title = True
         change_author = True
-
-
     r(full_num, change_title, change_author)
+
 
 #LIST COMMAND
 @cli.command()
