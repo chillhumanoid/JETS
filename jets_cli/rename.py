@@ -17,8 +17,30 @@ def prompt(title, author, new_title, new_author):
 
 def change(name):
     old_name = get_old_name(name)
-    print(name)
-    for article in os.listdir(specific_path):
+    util.p("Selected Author: " + old_name)
+    new_name = click.prompt("Enter New Author Name")
+    prompt("", old_name, "", new_name)
+    if click.confirm("Confirm author change?"):
+        change_name(old_name, new_name)
+
+
+def change_name(old_name, new_name):
+    old_author_path = author_path + old_name + "/" #get the specific path to the old author name
+    new_author_path = author_path + new_name + "/"
+    if not os.path.exists(new_author_path):
+        os.mkdir(new_author_path)
+    for article in os.listdir(old_author_path): #every file in old author directory
+        title = util.get_info(old_author_path + article)[0] #get the title for given article
+        util.write_info(old_author_path + article, title, new_name) #move the file
+        move(old_author_path + article, new_author_path + article) #move the given file
+        if len(os.listdir(old_author_path)) == 0:  #if the old author path is empty
+            os.rmdir(old_author_path)  #delete that sucker
+        full_num = util.get_nums(article)[0] #get the number for the given artictles
+        for article in os.listdir(all_path):
+            if article.startswith(full_num):
+                util.write_info(all_path + article, title, new_name)
+
+def get_old_name(name):
     found_names = []
     click.echo()
     for x in name:
