@@ -5,48 +5,49 @@ from PyPDF2 import PdfFileReader, PdfFileWriter
 from display import display
 #global variables
 
-rPath = os.path.realpath(__file__)
-rPath = rPath.replace("search.py","")
-
+path = os.path.realpath(__file__)
+path = path.replace("search.py","")
+path = path + "Articles/"
+all_path = path + "All/"
+author_path = path + "Authors/"
 #functions
 def auth_search(author):
     name = author.split(" ")
     x = 0
-    listoNames = []
+    found_names = []
     articles = []
     for x in name:
-        for author in os.listdir(rPath + "Articles/Authors/"):
-            names = author.lower().split(" ")
+        for author in os.listdir(author_path):
+            names = author.lower()
             if x.lower() in names:
-                if not author in listoNames:
-                    listoNames.append(author)
+                if not author in found_names:
+                    found_names.append(author)
                 else:
-                    if author in listoNames:
-                        listoNames.remove(author)
-        for author in os.listdir(rPath + "Articles/Authors/"):
-            if author in listoNames:
-                for article in os.listdir(rPath + "Articles/Authors/" + author):
+                    if author in found_names:
+                        found_names.remove(author)
+        for author in os.listdir(author_path):
+            if author in found_names:
+                for article in os.listdir(author_path + author):
                     articles.append(article)
     display(articles)
 
 def article_search(term):    #for searching articles
-    path = rPath + "Articles/All/"
     found = []
     click.echo() #for formatting
     x = 0   #used in loop iterations
     term = term.lower()
     if len(term) == 1:  #if the length is 4 exactly
-        for article in os.listdir(path):  #goes through all folders in base
+        for article in os.listdir(all_path):  #goes through all folders in base
             f = article.lower()
             if term in f:
                 found.append(article)
     elif len(term) > 1:
-        for article in os.listdir(path):
+        for article in os.listdir(all_path):
             f = article.lower()
             if term in f:    #if term is found
                 found.append(article)
         if len(found) == 0:
-            for article in os.listdir(path):
+            for article in os.listdir(all_path):
                 terms = term.split(" ")
                 f = article.lower()
                 run = 1
