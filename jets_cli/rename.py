@@ -41,7 +41,7 @@ def get_name(name):
         if int(value) == x+2:
             sys.exit()
         else:
-            name = found_names[x-1]
+            name = found_names[value -1]
             return name
 
 
