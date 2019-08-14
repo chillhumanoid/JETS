@@ -15,6 +15,36 @@ def prompt(title, author, new_title, new_author):
         util.p("Old Author - " + author) #display old author
         click.echo("New Author - " + new_author) #display new author
 
+def change(name):
+    name = get_name(name)
+    print(name)
+def get_name(name):
+    found_names = []
+    click.echo()
+    for x in name:
+        for author in os.listdir(author_path):
+            names = author.lower()
+            if x.lower() in names:
+                if not author in found_names:
+                    found_names.append(author)
+                else:
+                    if author in found_names:
+                        found_names.remove(author)
+    if len(found_names) > 0:
+        click.echo("Found Possibilities: "  + str(len(found_names)))
+        click.echo()
+        for x, author in enumerate(found_names):
+            click.echo(str(x + 1) + " - " + author)
+        click.echo(str(x + 2) + " - Cancel")
+        click.echo()
+        value = click.prompt("Option", type = click.IntRange(1, len(found_names)+1))
+        if int(value) == x+2:
+            sys.exit()
+        else:
+            name = found_names[x-1]
+            return name
+
+
 def rename(full_num, change_title, change_author):
     new_title = ""
     new_author = ""
