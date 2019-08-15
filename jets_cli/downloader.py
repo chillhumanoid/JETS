@@ -1,4 +1,4 @@
-import requests, urllib.request, time, os, sys, click, util
+import requests, urllib.request, time, os, sys, click, util, rename as ren
 from bs4 import BeautifulSoup
 from pathvalidate import ValidationError, validate_filename
 from PyPDF2 import PdfFileReader, PdfFileWriter; from shutil import copyfile, move
