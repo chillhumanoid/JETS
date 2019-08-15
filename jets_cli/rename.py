@@ -39,7 +39,7 @@ def change_name(old_name, new_name):
         for article in os.listdir(all_path):
             if article.startswith(full_num):
                 util.write_info(all_path + article, title, new_name)
-                
+
 def get_old_name(name):
     found_names = []
     click.echo()

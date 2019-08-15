@@ -41,9 +41,14 @@ def search(title, author, term):
 @click.argument("term", nargs=-1, required=True)
 def change(article, name, term):
     if article == 1 and name == False:
-        nums = util.get_numbers(term)
-        full_num = nums[0] + "." + nums[1] + nums[2]
-        r(full_num, False, True)
+        if len(term) == 1:
+            term = term[0]
+            nums = util.get_numbers(term)
+            full_num = nums[0] + "." + nums[1] + "." + nums[2]
+            r(full_num, False, True)
+        else:
+            p("Only one argument for article")
+            sys.exit()
     if name == 1 and article == False:
         ren.change(term)
 
