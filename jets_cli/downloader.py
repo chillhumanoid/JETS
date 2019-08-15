@@ -86,8 +86,9 @@ def get_article_url(data, issue_url):
                 data[2] = article_num_orig
 
 def get_title_and_author(data, title, article_url):
-    orig_title = title
-    util.p(orig_title)
+    original_file_name = title
+    file_name = "" #Adding the option for file_name to be different than title
+    util.p(original_file_name)
     count = title.count(". . .")
     if not count == 0:
         author = title.split(". . .")[count]
@@ -98,60 +99,73 @@ def get_title_and_author(data, title, article_url):
         title = ''.join(title)
     else:
         author = "JETS"
-
-    title = fix_title(title)
+    file_name = title
+    title = util.string_strip(title)
+    title = title.title()
+    title = fix_titled(title)
+    file_name = fix_file_name(file_name)
     author = fix_author(author)
     try:
         validate_filename(author)
-        validate_filename(title)
+        validate_filename(file_name)
     except ValidationError as e:
         click.echo()
         click.echo("{}\n".format(e), file=sys.stderr)
         sys.exit()
     full_num = util.check_digit(data[0]) + "." + util.check_digit(data[1]) + "." + util.check_digit(data[2])
-    full_name =  full_num + " - " + title + ".pdf"
-    download(title, full_name, author, article_url, data, full_num)
+    full_name =  full_num + " - " + file_name + ".pdf"
+    download(title, file_name, full_name, author, article_url, data, full_num)
+
+
 def fix_author(author):
     if ", Jr" in author:
         author = author.replace(", Jr", " Jr")
     author = util.string_strip(author)
     author = author.replace("  ", " ")
     return author
-    
-def fix_title(title):
-    title = title.replace('\n', ' ')
-    title = title.replace(": ", " - ")
-    title = title.replace(":", "_")
-    title = title.replace("’", "'")
-    title = title.replace("“", "'")
-    title = title.replace("”", "'")
-    title = title.replace('"', "'")
-    title = title.replace("/", "-")
-    title = util.string_strip(title)
-    if title.endswith("?"):
-        title = title[:-1]
-    if title.endswith("?'"):
-        title = title[:-2]
-        title = title + "'"
-    title = title.replace("?", ' -')
-    title = title.title()
-    title = title.replace("Iii", "III")
-    title = title.replace("Iv", "IV")
-    title = title.replace("Ot", "OT")
-    title = title.replace("Nt", "NT")
-    title = title.replace("'S", "'s")
-    title = title.replace("&Amp;", "And")
-    title = title.replace("  ", " ")
-    return title
+
+def fix_titled(string):
+    string = string.replace("Iii", "III")
+    string = string.replace("Iv", "IV")
+    string = string.replace("Ot", "OT")
+    string = string.replace("Nt", "NT")
+    string = string.replace("'S", "'s")
+    string = string.replace("’S", "’s")
+    string = string.replace("Bc", "BC")
+    string = string.replace("Ad", "AD")
+    string = string.replace("&Amp;", "And")
+    string = string.replace("  ", " ")
+    return string
+
+def fix_file_name(file_name):
+    file_name = file_name.replace('\n', ' ')
+    file_name = file_name.replace(": ", " - ")
+    file_name = file_name.replace(":", "_")
+    file_name = file_name.replace("’", "'")
+    file_name = file_name.replace("“", "'")
+    file_name = file_name.replace("”", "'")
+    file_name = file_name.replace('"', "'")
+    file_name = file_name.replace("/", "-")
+    file_name = util.string_strip(file_name)
+    if file_name.endswith("?"):
+        file_name = file_name[:-1]
+    if file_name.endswith("?'"):
+        file_name = file_name[:-2]
+        file_name = file_name + "'"
+    file_name = file_name.replace("?", ' -')
+    file_name = file_name.title()
+    file_name = fix_titled(file_name)
+    return file_name
 
 
-def download(title, full_name, author, article_url, data, full_num):
+def download(title, file_name, full_name, author, article_url, data, full_num):
     force = data[3]
     if os.path.exists(all_path + full_name) and force == False:
         util.p(full_name)
         click.echo("This File Already Exists")
     else:
         util.p(full_num)
+        click.echo("File Name: " + file_name)
         click.echo("Title: " + title)
         click.echo("Author: " + author)
         if click.confirm("Download File?"):
@@ -170,11 +184,11 @@ def download(title, full_name, author, article_url, data, full_num):
             if value == "a":
                 util.p("Current Author: " + author)
                 new_auth = click.prompt("New Author Name: ")
-                download(title, full_name, new_auth, article_url, data, full_num)
+                download(title, file_name, full_name, new_auth, article_url, data, full_num)
             elif value == "t":
                 util.p("Current Title: " + title)
                 new_title = click.prompt("New Title: ")
-                download(new_title, full_name, author, article_url, data, full_num)
+                download(new_title,file_name, full_name, author, article_url, data, full_num)
 
 
 def author_creator(full_name, author, force, title):
