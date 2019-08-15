@@ -117,6 +117,7 @@ def fix_author(author):
     author = util.string_strip(author)
     author = author.replace("  ", " ")
     return author
+    
 def fix_title(title):
     title = title.replace('\n', ' ')
     title = title.replace(": ", " - ")
