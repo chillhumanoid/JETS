@@ -47,7 +47,7 @@ def change(article, name, term):
             full_num = nums[0] + "." + nums[1] + "." + nums[2]
             r(full_num, False, True)
         else:
-            p("Only one argument for article")
+            util.p("Only one argument for article")
             sys.exit()
     if name == 1 and article == False:
         ren.change(term)
