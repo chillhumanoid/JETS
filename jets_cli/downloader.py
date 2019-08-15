@@ -195,10 +195,6 @@ def author_creator(full_name, author, force, title):
     aPath = ""
     for file in os.listdir(all_path):
         if full_name == file:
-            f = open(path + "All/" + file, 'rb')
-            pdf = PdfFileReader(f)
-            info = pdf.getDocumentInfo()
-            f.close()
             authors = []
             if " and " in author:
                 auths = author.split(" and ")
@@ -216,29 +212,11 @@ def author_creator(full_name, author, force, title):
             else:
                 authors.append(author)
             for name in authors:
-                full_name_split = name.split(" ")
-                first = full_name_split[0]
-                first_initial = first[0:1]
-                if "Jr" in full_name_split or "III" in full_name_split:
-                    last_location = len(full_name_split) - 2
-                else:
-                    last_location = len(full_name_split) - 1
-                last = full_name_split[last_location]
-                for author_name in os.listdir(author_path):
-                    if not author_name == name:
-                        author_split = author_name.split(" ")
-                        author_first = author_split[0]
-                        author_first_initial = author_first[0:1]
-                        if author_first == first or author_first_initial == first_initial:
-                            if "Jr" in author_split or "III" in author_split:
-                                last_name_location = len(author_split) - 2
-                            else:
-                                last_name_location = len(author_split) - 1
-                            author_last = author_split[last_name_location]
-                            if author_last == last:
-                                if click.confirm("Author Folder Possible: Articles/Authors/" + author_name):
-                                    aPath = author_path + author_name
-                                    util.write_info(all_path + full_name, title, author_name) #change author name to folder name
+                author_name = util.get_possible_names(name)
+                if author_name == None:
+                    author_name = name
+                aPath = author_path + author_name
+                util.write_info(all_path + full_name, title, author_name) #change author name to folder name
                 if aPath == "":
                     aPath = author_path + name
                 if not os.path.exists(aPath):
