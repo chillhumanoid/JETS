@@ -43,7 +43,8 @@ def change_name(old_name, new_name):
 def get_old_name(name):
     found_names = []
     click.echo()
-    for x in name:
+    name_split = name.split(" ")
+    for x in name_split:
         for author in os.listdir(author_path):
             names = author.lower()
             if x.lower() in names:

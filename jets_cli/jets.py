@@ -50,6 +50,7 @@ def change(article, name, term):
             util.p("Only one argument for article")
             sys.exit()
     if name == 1 and article == False:
+        term = ' '.join(term)
         ren.change(term)
 
 #RENAME COMMAND
