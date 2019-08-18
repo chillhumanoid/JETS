@@ -1,4 +1,4 @@
-import requests, urllib.request, time, os, sys, click, util, rename as ren
+import requests, urllib.request, sqlite3, time, os, sys, click, util, rename as ren, fileparser as parsr, database
 from bs4 import BeautifulSoup
 from pathvalidate import ValidationError, validate_filename
 from PyPDF2 import PdfFileReader, PdfFileWriter; from shutil import copyfile, move
@@ -10,7 +10,6 @@ path = os.path.realpath(__file__)
 path = path.replace("downloader.py","")
 path = path + "/Articles/"
 all_path = path + "All/"
-author_path = path + "Authors/"
 
 def start(data):
     get_vol_url(data)
@@ -87,76 +86,21 @@ def get_article_url(data, issue_url):
 
 def get_title_and_author(data, title, article_url):
     original_file_name = title
-    file_name = "" #Adding the option for file_name to be different than title
     util.p(original_file_name)
     count = title.count(". . .")
-    if not count == 0:
-        author = title.split(". . .")[count]
-        if not count == 1:
-            title = title.split(". . .")[:count]
-        else:
-            title = title.split(". . .")[0]
-        title = ''.join(title)
-    else:
-        author = "JETS"
-    file_name = title
-    title = util.string_strip(title)
-    title = title.title()
-    title = fix_titled(title)
-    file_name = fix_file_name(file_name)
-    author = fix_author(author)
+    full_num = util.check_digit(data[0]) + "." + util.check_digit(data[1]) + "." + util.check_digit(data[2])
+    full_name =  full_num + " - " + file_name + ".pdf"
+    title = parsr.get_raw_title(full_name, count, original_file_name)
+    file_name = parsr.get_file_name(title)
+    author = parsr.get_raw_author(full_name, count, original_file_name)
     try:
-        validate_filename(author)
         validate_filename(file_name)
     except ValidationError as e:
         click.echo()
         click.echo("{}\n".format(e), file=sys.stderr)
         sys.exit()
-    full_num = util.check_digit(data[0]) + "." + util.check_digit(data[1]) + "." + util.check_digit(data[2])
-    full_name =  full_num + " - " + file_name + ".pdf"
-    download(title, file_name, full_name, author, article_url, data, full_num)
-
-
-def fix_author(author):
-    if ", Jr" in author:
-        author = author.replace(", Jr", " Jr")
-    author = util.string_strip(author)
-    author = author.replace("  ", " ")
-    return author
-
-def fix_titled(string):
-    string = string.replace("Iii", "III")
-    string = string.replace("Iv", "IV")
-    string = string.replace("Ot", "OT")
-    string = string.replace("Nt", "NT")
-    string = string.replace("'S", "'s")
-    string = string.replace("’S", "’s")
-    string = string.replace("Bc", "BC")
-    string = string.replace("Ad", "AD")
-    string = string.replace("&Amp;", "And")
-    string = string.replace("  ", " ")
-    return string
-
-def fix_file_name(file_name):
-    file_name = file_name.replace('\n', ' ')
-    file_name = file_name.replace(": ", " - ")
-    file_name = file_name.replace(":", "_")
-    file_name = file_name.replace("’", "'")
-    file_name = file_name.replace("“", "'")
-    file_name = file_name.replace("”", "'")
-    file_name = file_name.replace('"', "'")
-    file_name = file_name.replace("/", "-")
-    file_name = util.string_strip(file_name)
-    if file_name.endswith("?"):
-        file_name = file_name[:-1]
-    if file_name.endswith("?'"):
-        file_name = file_name[:-2]
-        file_name = file_name + "'"
-    file_name = file_name.replace("?", ' -')
-    file_name = file_name.title()
-    file_name = fix_titled(file_name)
-    return file_name
-
+    finally:
+        download(title, file_name, full_name, author, article_url, data, full_num)
 
 def download(title, file_name, full_name, author, article_url, data, full_num):
     force = data[3]
@@ -176,7 +120,7 @@ def download(title, file_name, full_name, author, article_url, data, full_num):
                 file.write(r.content)
             util.write_info(all_path + "temp.pdf", title, author)
             move(all_path + "temp.pdf", all_path + full_name)
-            author_creator(full_name, author, force, title)
+            author_database_worker  (full_name, full_num, author, force, title)
             time.sleep(1)
         else:
             value = click.prompt("Change (A)uthor or (T)itle or (N)either?", default="n")
@@ -191,36 +135,16 @@ def download(title, file_name, full_name, author, article_url, data, full_num):
                 download(new_title,file_name, full_name, author, article_url, data, full_num)
 
 
-def author_creator(full_name, author, force, title):
-    aPath = ""
+def author_database_worker(full_name, full_num, author, force, title):
     for file in os.listdir(all_path):
         if full_name == file:
-            authors = []
-            if " and " in author:
-                auths = author.split(" and ")
-                for a in auths:
-                    if "," in a:
-                        authos = a.split(",")
-                        for auth in authos:
-                            auth = auth.strip()
-                            if not auth == "":
-                                authors.append(auth)
-                    else:
-                        a = a.strip()
-                        a = a.strip() #just in case
-                        authors.append(a)
-            else:
-                authors.append(author)
+            authors = fileparser.get_authors(author)
+            full_nums = database.get_full_numbers()
             for name in authors:
                 author_name = util.get_possible_names(name)
                 if author_name == None:
                     author_name = name
-                aPath = author_path + author_name
                 util.write_info(all_path + full_name, title, author_name) #change author name to folder name
-                if aPath == "":
-                    aPath = author_path + name
-                if not os.path.exists(aPath):
-                    os.mkdir(aPath)
                 aPath = aPath + "/" + full_name
                 if os.path.exists(aPath) and not force:
                     util.p("Authors/" + name  + "/" + full_name)

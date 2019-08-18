@@ -1,6 +1,7 @@
-import os, click, sys
+import os, click, sys, database
 from PyPDF2 import PdfFileReader, PdfFileWriter
 from shutil import copyfile
+import sqlite3
 
 path = os.path.realpath(__file__)
 path = path.replace("util.py","")
@@ -10,12 +11,12 @@ merge_path = path + "Merged/"
 author_path = path + "Authors/"
 
 def start():
+    if not os.path.exists(path + "author.db"):
+        database.create_database()
     if not os.path.exists(path):
         os.mkdir(path)
     if not os.path.exists(all_path):
         os.mkdir(all_path)
-    if not os.path.exists(author_path):
-        os.mkdir(author_path)
     if not os.path.exists(merge_path):
         os.mkdir(merge_path)
 
