@@ -4,3 +4,4 @@ venv/
 jets_cli/JETS.egg-info/
 /env
 /.vs
+jetS_cli/tester.py
