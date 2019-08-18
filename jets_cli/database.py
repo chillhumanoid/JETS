@@ -4,9 +4,10 @@ path = path.replace("database.py","")
 path = path + "Articles/"
 
 def create_database():
+    print(path)
     conn = sqlite3.connect(path + 'author.db')
     c = conn.cursor()
-    exestatement = """CREATE TABLE IF NOT EXISTS articles (
+    exestatement = """CREATE TABLE IF NOT EXISTS authors (
         id integer PRIMARY KEY,
         name text NOT NULL,
         articlenums text
@@ -26,11 +27,51 @@ def search_table(author_name):
     conn.close()
     return value
 
+def sort_articles(new_number, existing_numbers):
+    new_vol = new_number.split(".")[0]
+    new_index = new_number.split(".")[1]
+    new_article = new_number.split(".")[2]
+    numbers = existing_numbers.split(";")
+    replace_position = -1
+    
+    for index, number in enumerate(numbers):
+
+        existing_vol = number.split(".")[0]
+        existing_index = number.split(".")[1]
+        existing_article = number.split(".")[2]
+        print(existing_vol)
+        if new_vol == existing_vol:
+            if new_index == existing_index:
+                if new_article == existing_article:
+                    click.echo("Article Already Added")
+                    replace_position = -2
+                    break
+                
+                elif new_article > existing_article:
+                    replace_position = index
+                    break
+            elif new_index > existing_index:
+                replace_position = index
+                break
+        elif new_vol > existing_vol:
+            replace_position = index
+            break
+    
+    if replace_position > -2:
+        if replace_position == -1:
+           numbers.append(new_number)
+           y = 0
+        else:
+            numbers.insert(replace_position, new_number)
+            y = 0
+    return numbers
 
 def add_to_table(author_name, article_nums):
     author_name = "'" + author_name + "'"
     if search_table(author_name):
-        full_num = "'" + get_numbers(author_name) + ";" + article_nums + "'"
+        full_num = sort_articles(article_nums, get_numbers(author_name))
+        full_num = ";".join(full_num)
+        full_num = "'" + full_num + "'"
         sql = "UPDATE authors SET articlenums = %s WHERE name = %s" % (full_num, author_name)
     else:
         article_nums = "'" + article_nums + "'"
@@ -50,7 +91,7 @@ def print_table():
     conn.close()
 
 def remove_author(author_name):
-    sql = "DELETE FROM authors WHERE name = %s" % author_name
+    sql = "DELETE FROM authors WHERE name = %s" % "'" + author_name + "'"
     conn = sqlite3.connect(path + "author.db")
     c = conn.cursor()
     c.execute(sql)
