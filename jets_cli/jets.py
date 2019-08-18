@@ -12,6 +12,7 @@ all_path = path + "All/"
 author_path = path + "Author/"
 merge_path = path + "Merged/"
 
+
 @click.group(context_settings=CONTEXT_SETTINGS)
 @click.pass_context
 def cli(ctx):
@@ -181,3 +182,6 @@ def download(new, vol, issue, article, term, force):
             iNum = str(issue)
             aNum = str(article)
     dl.start([vNum, iNum, aNum, force])
+if __name__ == '__main__':
+    util.start()
+    cli()
