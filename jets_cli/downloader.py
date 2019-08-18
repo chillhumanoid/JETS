@@ -86,13 +86,16 @@ def get_article_url(data, issue_url):
 
 def get_title_and_author(data, title, article_url):
     original_file_name = title
+    count              = title.count(". . .")
+    title              = parsr.get_raw_title(count, original_file_name)
+    file_name          = parsr.get_file_name(title)
+
     util.p(original_file_name)
-    count = title.count(". . .")
-    full_num = util.check_digit(data[0]) + "." + util.check_digit(data[1]) + "." + util.check_digit(data[2])
-    full_name =  full_num + " - " + file_name + ".pdf"
-    title = parsr.get_raw_title(full_name, count, original_file_name)
-    file_name = parsr.get_file_name(title)
-    author = parsr.get_raw_author(full_name, count, original_file_name)
+
+    full_num           = util.check_digit(data[0]) + "." + util.check_digit(data[1]) + "." + util.check_digit(data[2])
+    full_name          =  full_num + " - " + file_name + ".pdf"
+    
+    author             = parsr.get_raw_author(full_name, count, original_file_name)
     try:
         validate_filename(file_name)
     except ValidationError as e:
@@ -138,18 +141,10 @@ def download(title, file_name, full_name, author, article_url, data, full_num):
 def author_database_worker(full_name, full_num, author, force, title):
     for file in os.listdir(all_path):
         if full_name == file:
-            authors = fileparser.get_authors(author)
-            full_nums = database.get_full_numbers()
+            authors = parsr.get_authors(author)
             for name in authors:
                 author_name = util.get_possible_names(name)
                 if author_name == None:
                     author_name = name
-                util.write_info(all_path + full_name, title, author_name) #change author name to folder name
-                aPath = aPath + "/" + full_name
-                if os.path.exists(aPath) and not force:
-                    util.p("Authors/" + name  + "/" + full_name)
-                    click.echo("Already exists")
-                else:
-                    copyfile(all_path + full_name, aPath)
-                aPath = ""
-                util.p("Downloaded")
+                database.add_to_table(author_name, full_num)
+                database.print_table()

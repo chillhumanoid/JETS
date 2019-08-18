@@ -18,7 +18,7 @@ def get_raw_author(raw_file_name, count, title):
         author = author.replace("  ", " ") #get rid of double spaces.
     return author
 
-def get_raw_title(raw_file_name, count, title):
+def get_raw_title(count, title):
     if not count == 0:
         if not count == 1:
             title = title.split(". . .")[:count]

@@ -35,7 +35,6 @@ def sort_articles(new_number, existing_numbers):
     replace_position = -1
     
     for index, number in enumerate(numbers):
-
         existing_vol = number.split(".")[0]
         existing_index = number.split(".")[1]
         existing_article = number.split(".")[2]
@@ -83,10 +82,9 @@ def add_to_table(author_name, article_nums):
     conn.close()
 
 def print_table():
-    sql = """SELECT * FROM authors"""
     conn = sqlite3.connect(path + "author.db")
     c = conn.cursor()
-    for row in c.execute('SELECT * FROM authors'):
+    for row in c.execute('SELECT * FROM authors ORDER BY name ASC'):
         print(row)
     conn.close()
 
