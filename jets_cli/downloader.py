@@ -132,7 +132,7 @@ def download(title, file_name, full_name, author, article_url, data, full_number
                 file.write(r.content)
             util.write_info(all_path + "temp.pdf", title, author)
             move(all_path + "temp.pdf", all_path + full_name)
-            author_database_worker  (full_name, full_number, author, force, title)
+            author_database_worker(full_name, full_number, author, force, title)
             time.sleep(1)
         else:
             value = click.prompt("Change (A)uthor or (T)itle or (N)either?", default="n")
