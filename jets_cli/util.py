@@ -138,11 +138,10 @@ def get_numbers(term, canAppend=True):
     return (vol_num, issue_num, article_num)
 
 def get_nums(article):
-    num = article.split(" - ")[0]
-    a = num.split(".")
-    vNum, iNum, aNum = [a[0], a[1], a[2]]
-    payload = [num, vNum, iNum, aNum]
-    return payload
+    number = article.split(" - ")[0]
+    numbers = number.split(".")
+    volume_number, issue_number, article_number = [numbers[0], numbers[1], numbers[2]] 
+    return [number, volume_number, issue_number, article_number]
 
 def get_title(article):
     title = article.split(" - ", 1)[1]
