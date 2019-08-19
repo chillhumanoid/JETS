@@ -79,5 +79,6 @@ def fix_titled(string):
     string = string.replace("Bc", "BC")
     string = string.replace("Ad", "AD")
     string = string.replace("&Amp;", "And")
+    string = string.replace("Mattter", "Matter")
     string = string.replace("  ", " ")
     return string
