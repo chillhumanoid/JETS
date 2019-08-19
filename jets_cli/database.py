@@ -95,6 +95,7 @@ def print_table():
     for row in c.execute('SELECT * FROM authors ORDER BY name ASC'):
         print(row)
     conn.close()
+
 def remove_author(author_name):
     sql = "DELETE FROM authors WHERE name = %s" % "'" + author_name + "'"
     conn = sqlite3.connect(path + "author.db")
@@ -118,7 +119,8 @@ def get_full_numbers(author_name):
     sql = "SELECT articlenums FROM authors WHERE name = %s" % author_name
     conn = sqlite3.connect(path + "author.db")
     c = conn.cursor()
-    data = c.execute(sql).fetchall()
+    data = c.execute(sql)
+    data = data.fetchall()
     data = data[0]
     full_num = data[0]
     full_nums = full_num.split(";")
