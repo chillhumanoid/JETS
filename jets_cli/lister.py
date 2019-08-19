@@ -10,34 +10,14 @@ path = os.path.realpath(__file__)
 path = path.replace("lister.py","")
 path = path + "Articles/All"
 
-##functions
-def start(vNum, iNum):
-    if vNum == "0" and iNum == "0":
-        list_all()
-    if not vNum == "0" and iNum == "0":
-        vNum = util.check_digit(vNum)
-        list_vol(vNum)
-    if not vNum == "0" and not iNum == "0":
-        vNum = util.check_digit(vNum)
-        iNum = util.check_digit(iNum)
-        list_issue(vNum, iNum)
-
-def list_all():
-    articles = []
-    for article in os.listdir(path):
-        articles.append(article)
-    display(articles)
-
-def list_vol(vNum):
-    articles = []
-    for article in os.listdir(path):
-        if article.startswith(vNum + "."):
-            articles.append(article)
-    display(articles)
-
-def list_issue(vNum, iNum):
-    articles = []
-    for article in os.listdir(path):
-        if article.startswith(vNum + "." + iNum + "."):
-            articles.append(article)
-    display(articles)
+##function
+def start(volume_number, issue_number):
+    if volume_number == "0" and issue_number == "0":
+        display(os.listdir(path))
+    if not volume_number == "0" and issue_number == "0":
+        volume_number = util.check_digit(volume_number)
+        display([article for article in os.listdir(path) if article.startswith(volume_number + ".")])
+    if not volume_number == "0" and not issue_number == "0":
+        volume_number = util.check_digit(volume_number)
+        issue_number = util.check_digit(issue_number)
+        display([article for article in os.listdir(path) if article.startswith(volume_number + "." + issue_number + ".")])
