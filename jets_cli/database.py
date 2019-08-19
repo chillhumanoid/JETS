@@ -7,14 +7,24 @@ def create_database():
     print(path)
     conn = sqlite3.connect(path + 'author.db')
     c = conn.cursor()
-    exestatement = """CREATE TABLE IF NOT EXISTS authors (
+    sql = """CREATE TABLE IF NOT EXISTS authors (
         id integer PRIMARY KEY,
         name text NOT NULL,
         articlenums text
     );"""
-    c.execute(exestatement)
+    c.execute(sql)
     conn.close()
-
+    
+def get_names():
+    names = []
+    sql = "SELECT name FROM authors"
+    conn = sqlite3.connect(path + "author.db")
+    c = conn.cursor()
+    c.execute(sql)
+    for x in c:
+        names.append(x[0])
+    return names
+    
 def search_table(author_name):
     sql = "SELECT * FROM authors WHERE name = %s" % author_name
     conn = sqlite3.connect(path + "author.db")
@@ -59,10 +69,8 @@ def sort_articles(new_number, existing_numbers):
     if replace_position > -2:
         if replace_position == -1:
            numbers.append(new_number)
-           y = 0
         else:
             numbers.insert(replace_position, new_number)
-            y = 0
     return numbers
 
 def add_to_table(author_name, article_nums):
