@@ -24,7 +24,7 @@ def get_names():
     for x in c:
         names.append(x[0])
     return names
-    
+
 def search_table(author_name):
     sql = "SELECT * FROM authors WHERE name = %s" % author_name
     conn = sqlite3.connect(path + "author.db")
@@ -95,7 +95,6 @@ def print_table():
     for row in c.execute('SELECT * FROM authors ORDER BY name ASC'):
         print(row)
     conn.close()
-
 def remove_author(author_name):
     sql = "DELETE FROM authors WHERE name = %s" % "'" + author_name + "'"
     conn = sqlite3.connect(path + "author.db")
