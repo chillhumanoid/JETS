@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from pathvalidate import ValidationError, validate_filename
 from PyPDF2 import PdfFileReader, PdfFileWriter; from shutil import copyfile, move
 
-bUrl = "https://www.etsjets.org"
+base_url = "https://www.etsjets.org"
 url = "https://www.etsjets.org/JETS_Online_Archive"
 
 path = os.path.realpath(__file__)
@@ -12,59 +12,66 @@ path = path + "/Articles/"
 all_path = path + "All/"
 
 def start(data):
-    get_vol_url(data)
+    get_volume_url(data)
 
-def get_vol_url(data):
-    vol_num = data[0]
-    if vol_num == '0':
-        check = "Vol "
+def get_volume_url(data):
+    volume_number = data[0]
+    if volume_number == '0':
+        file_start = "Vol "
     else:
-        check = " " + vol_num + " "
+        file_start = " " + volume_number + " "
+
     response = requests.get(url)
     soup = BeautifulSoup(response.text,'html.parser')
-    link_list = soup.findAll('a')
+
+    link_list = soup.findAll('a') #finds the "a" tag on url
     for link in link_list:
         link = str(link)
-        if check in link:
+        if file_start in link: 
             link_start = link.find('"') + 1
             link_end = link.find('"', link_start)
             urlAppend = link[link_start:link_end]
-            vol_url = bUrl + urlAppend
-            get_issue_url(data, vol_url)
+            volume_url = base_url + urlAppend
+            get_issue_url(data, volume_url)
 
-def get_issue_url(data, vol_url):
-    issue_num_orig = data[1]
-    issue_num = data[1]
-    vol_num = data[0]
-    response = requests.get(vol_url)
+def get_issue_url(data, volume_url):
+    issue_number_original = data[1]
+    issue_number = data[1]
+    volume_number = data[0]
+
+    response = requests.get(volume_url)
     soup = BeautifulSoup(response.text, 'html.parser')
     link_list = soup.findAll('a')
+
     i = 0
+    
     for link in link_list:
         link = str(link)
-        if " " + vol_num + "." in link and "Go to" not in link:
+        if " " + volume_number + "." in link and "Go to" not in link:
             i = i + 1
             link_start = link.find('"') + 1
             link_end = link.find('"', link_start)
             url_append = link[link_start:link_end]
-            issue_url = bUrl + url_append
-            if issue_num == '0' or "." + issue_num in link:
+            issue_url = base_url + url_append
+            if issue_number == '0' or "." + issue_number in link:
                 data[1] = str(i)
                 get_article_url(data, issue_url)
-                data[1] = issue_num_orig
+                data[1] = issue_number_original
 
 def get_article_url(data, issue_url):
-    article_num_orig = data[2]
-    article_num = data[2]
+    article_number_original = data[2]
+    article_number = data[2]
+
     response = requests.get(issue_url)
     soup = BeautifulSoup(response.text, 'html.parser')
     link_list = soup.findAll('a')
+    
     z = 0
     for link in link_list:
         link = str(link)
         if ".pdf" in link and "Purchase Articles" not in link and "Purchase Back Issue(s)" not in link:
             z = z + 1
-            if str(z) == article_num or article_num == '0':
+            if str(z) == article_number or article_number == '0':
                 if "<em>" in link:
                     link = link.replace("<em>", "")
                     link = link.replace("</em>", "")
@@ -73,16 +80,16 @@ def get_article_url(data, issue_url):
                 link_start = link.find('"') + 1
                 link_end = link.find('"', link_start)
                 article_url = link[link_start:link_end]
-                article_url = bUrl + article_url
+                article_url = base_url + article_url
                 title = link[title_start:title_end]
                 if "http://www.etsjets.org/" in article_url:
                     article_url = article_url.replace("http://www.etsjets.org", "")
                 if "https://www.etsjets.org/" in article_url:
                     article_url = article_url.replace("https://www.etsjets.org", "")
-                article_url = bUrl + article_url
+                article_url = base_url + article_url
                 data[2] = str(z)
                 get_title_and_author(data, title, article_url)
-                data[2] = article_num_orig
+                data[2] = article_number_original
 
 def get_title_and_author(data, title, article_url):
     original_file_name = title
@@ -92,10 +99,11 @@ def get_title_and_author(data, title, article_url):
 
     util.p(original_file_name)
 
-    full_num           = util.check_digit(data[0]) + "." + util.check_digit(data[1]) + "." + util.check_digit(data[2])
-    full_name          =  full_num + " - " + file_name + ".pdf"
+    full_number        = util.check_digit(data[0]) + "." + util.check_digit(data[1]) + "." + util.check_digit(data[2])
+    full_name          =  full_number + " - " + file_name + ".pdf"
     
     author             = parsr.get_raw_author(full_name, count, original_file_name)
+    
     try:
         validate_filename(file_name)
     except ValidationError as e:
@@ -103,15 +111,16 @@ def get_title_and_author(data, title, article_url):
         click.echo("{}\n".format(e), file=sys.stderr)
         sys.exit()
     finally:
-        download(title, file_name, full_name, author, article_url, data, full_num)
+        download(title, file_name, full_name, author, article_url, data, full_number)
 
-def download(title, file_name, full_name, author, article_url, data, full_num):
-    force = data[3]
+def download(title, file_name, full_name, author, article_url, data, full_number):
+    force              = data[3]
+    
     if os.path.exists(all_path + full_name) and force == False:
         util.p(full_name)
         click.echo("This File Already Exists")
     else:
-        util.p(full_num)
+        util.p(full_number)
         click.echo("File Name: " + file_name)
         click.echo("Title: " + title)
         click.echo("Author: " + author)
@@ -123,7 +132,7 @@ def download(title, file_name, full_name, author, article_url, data, full_num):
                 file.write(r.content)
             util.write_info(all_path + "temp.pdf", title, author)
             move(all_path + "temp.pdf", all_path + full_name)
-            author_database_worker  (full_name, full_num, author, force, title)
+            author_database_worker  (full_name, full_number, author, force, title)
             time.sleep(1)
         else:
             value = click.prompt("Change (A)uthor or (T)itle or (N)either?", default="n")
@@ -131,11 +140,11 @@ def download(title, file_name, full_name, author, article_url, data, full_num):
             if value == "a":
                 util.p("Current Author: " + author)
                 new_auth = click.prompt("New Author Name: ")
-                download(title, file_name, full_name, new_auth, article_url, data, full_num)
+                download(title, file_name, full_name, new_auth, article_url, data, full_number)
             elif value == "t":
                 util.p("Current Title: " + title)
                 new_title = click.prompt("New Title: ")
-                download(new_title,file_name, full_name, author, article_url, data, full_num)
+                download(new_title,file_name, full_name, author, article_url, data, full_number)
 
 
 def author_database_worker(full_name, full_num, author, force, title):
