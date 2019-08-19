@@ -1,4 +1,4 @@
-import sys, os, time, subprocess, click
+import sys, os, time, subprocess, click, database
 from pathvalidate import ValidationError, validate_filename; from shutil import copyfile, move
 import util
 path = os.path.realpath(__file__)
@@ -21,38 +21,24 @@ def change(name):
     new_name = click.prompt("Enter New Author Name")
     prompt("", old_name, "", new_name)
     if click.confirm("Confirm author change?"):
-        change_name(old_name, new_name)
+        id = database.get_id(old_name)
+        database.rename_author(id, new_name)
 
-
-def change_name(old_name, new_name):
-    old_author_path = author_path + old_name + "/" #get the specific path to the old author name
-    new_author_path = author_path + new_name + "/"
-    if not os.path.exists(new_author_path):
-        os.mkdir(new_author_path)
-    for article in os.listdir(old_author_path): #every file in old author directory
-        title = util.get_info(old_author_path + article)[0] #get the title for given article
-        util.write_info(old_author_path + article, title, new_name) #move the file
-        move(old_author_path + article, new_author_path + article) #move the given file
-        if len(os.listdir(old_author_path)) == 0:  #if the old author path is empty
-            os.rmdir(old_author_path)  #delete that sucker
-        full_num = util.get_nums(article)[0] #get the number for the given artictles
-        for article in os.listdir(all_path):
-            if article.startswith(full_num):
-                util.write_info(all_path + article, title, new_name)
 
 def get_old_name(name):
     found_names = []
     click.echo()
     name_split = name.split(" ")
+    full_authors = database.get_names()
     for x in name_split:
-        for author in os.listdir(author_path):
+        for author in full_authors:
             names = author.lower()
             if x.lower() in names:
                 if not author in found_names:
                     found_names.append(author)
-                else:
-                    if author in found_names:
-                        found_names.remove(author)
+            else:
+                if author in found_names:
+                    found_names.remove(author)
     if len(found_names) > 0:
         click.echo("Found Possibilities: "  + str(len(found_names)))
         click.echo()
@@ -66,7 +52,6 @@ def get_old_name(name):
         else:
             name = found_names[value -1]
             return name
-
 
 def rename(full_num, change_title, change_author):
     new_title = ""
@@ -103,12 +88,7 @@ def rename(full_num, change_title, change_author):
                     new_author = author
 
                 util.write_info(all_path + file, new_title, new_author)
-                old_author_path = author_path + author + "/"
-                new_author_path = author_path + new_author + "/"
-                if not os.path.exists(new_author_path):
-                    os.mkdir(new_author_path)
-                move(old_author_path + file, new_author_path + file)
-                if len(os.listdir(old_author_path)) == 0:
-                    os.rmdir(old_author_path)
+                database.rename_author(author, new_author)
+                
             else:
                 process.kill()
