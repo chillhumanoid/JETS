@@ -1,6 +1,6 @@
 #import statements
 
-import os, sys, click
+import os, sys, click, database
 from PyPDF2 import PdfFileReader, PdfFileWriter
 from display import display
 #global variables
@@ -11,13 +11,15 @@ path = path + "Articles/"
 all_path = path + "All/"
 author_path = path + "Authors/"
 #functions
+
 def auth_search(author):
     name = author.split(" ")
     x = 0
     found_names = []
     articles = []
+    all_authors = database.get_names()
     for x in name:
-        for author in os.listdir(author_path):
+        for author in all_authors:
             names = author.lower()
             if x.lower() in names:
                 if not author in found_names:
@@ -25,10 +27,13 @@ def auth_search(author):
                 else:
                     if author in found_names:
                         found_names.remove(author)
-        for author in os.listdir(author_path):
-            if author in found_names:
-                for article in os.listdir(author_path + author):
-                    articles.append(article)
+        for author in found_names:
+            author = "'" + author + "'"
+            author_article_numbers = database.get_full_numbers(author)
+            for number in author_article_numbers:
+                for article in os.listdir(all_path):
+                    if article.startswith(number):
+                        articles.append(article)
     display(articles)
 
 def article_search(term):    #for searching articles
