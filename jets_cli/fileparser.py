@@ -72,6 +72,13 @@ def get_authors(author):
         authors.append(author)
     return authors
 
+def fix_titled_authors(string):
+    string = string.replace("Iii", "III")
+    string = string.replace("Ii", "II")
+    string = string.replace("Iv", "IV")
+    string = string.replace("&Amp;", "And")
+    string = string.replace("  ", " ")
+    return string
 def fix_titled(string):
     string = string.replace("Iii", "III")
     string = string.replace("Iv", "IV")
