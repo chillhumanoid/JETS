@@ -134,6 +134,13 @@ def get_full_numbers(author_name):
     full_numbers = full_number.split(";")
     return full_numbers
 
+def remove_article_number(author_name, article_number):
+    full_numbers = get_full_numbers(author_name)
+    if article_number in full_numbers:
+        full_numbers.remove(article_number)
+    full_numbers = ";".join(full_numbers)
+    sql = "UPDATE authors SET articlenums = %s WHERE name = %s" %(quotify(full_numbers), quotify(author_name))
+    sql_executor(sql)
 def quotify(string):
     string = "'" + string + "'"
     return string
