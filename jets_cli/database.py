@@ -113,6 +113,9 @@ def print_table():
     conn.close()
 
 def remove_author(author_name):
+    if type(author_name) == int:
+        sql = "DELETE FROM authors WHERE id = %s" % author_name
+    else:
     sql = "DELETE FROM authors WHERE name = %s" % quotify(author_name)
     sql_executor(sql)
 
