@@ -1,4 +1,4 @@
-import requests, urllib.request, sqlite3, time, os, sys, click, util, rename as ren, fileparser as parsr, database
+import requests, urllib.request, sqlite3, known_authors, time, os, sys, click, util, rename as ren, fileparser as parsr, database
 from bs4 import BeautifulSoup
 from pathvalidate import ValidationError, validate_filename
 from PyPDF2 import PdfFileReader, PdfFileWriter; from shutil import copyfile, move
