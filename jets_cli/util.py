@@ -96,7 +96,6 @@ def get_possible_names(name):
     full_name_list = database.get_names()
     for x in name_split:
         for author in full_name_list:
-            print(author)
             names = author.lower()
             if name.lower() == names:
                 return None
