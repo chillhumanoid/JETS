@@ -126,9 +126,8 @@ def get_numbers(author_name):
 
 def get_full_numbers(author_name):
     sql = "SELECT articlenums FROM authors WHERE name = %s" % quotify(author_name)
-    c = sql_executor(sql)
-    data = c.fetchall()
-    full_number = data[0][0]
+    c = sql_executor(sql).fetchall()
+    full_number = c[0][0]
     full_numbers = full_number.split(";")
     return full_numbers
 
