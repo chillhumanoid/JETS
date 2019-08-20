@@ -54,6 +54,7 @@ def get_file_name(file_name):
 
 def get_authors(author):
     authors = []
+    author = author.replace(" And ", " and ")
     if " and " in author:
         auths = author.split(" and ")
         for a in auths:
