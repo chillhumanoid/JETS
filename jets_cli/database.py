@@ -72,8 +72,18 @@ def sort_articles(new_number, existing_numbers):
     return numbers
 
 def rename_author(id, new_author_name):
-    print(new_author_name)
-    print(id)
+    if search_table(new_author_name): #if the name already is in the table
+        sql = "SELECT articlenums FROM authors WHERE id=%s" % id
+        c = sql_executor(sql).fetchall()
+        article_number_old = c[0][0]
+        sql = "SELECT articlenums FROM authors WHERE name=%s" % quotify(new_author_name)
+        c = sql_executor(sql).fetchall()
+        article_numbers_new = c[0][0]
+        full_number = sort_articles(article_number_old, article_numbers_new)
+        full_number = ";".join(full_number)
+        sql = "UPDATE authors SET articlenums = %s WHERE name = %s" %(quotify(full_number),quotify(new_author_name))
+        remove_author(id)
+    else:
     sql = "UPDATE authors SET name = %s WHERE id = %s" %(quotify(new_author_name), id)
     sql_executor(sql)
 
