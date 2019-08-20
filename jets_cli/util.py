@@ -21,7 +21,7 @@ def start():
         os.mkdir(merge_path)
 
 def string_strip(string):
-    if string.endswith(" ") or string.endswith(".") or string.endswith("?"):
+    if string.endswith(" ") or string.endswith("."):
         string = string[:-1]
         return string_strip(string)
     else:
