@@ -44,14 +44,14 @@ def get_issue_url(data, volume_url):
     link_list = soup.findAll('a')
 
     i = 0
-    
     for link in link_list:
         link = str(link)
-        if " " + volume_number + "." in link and "Go to" not in link:
-            i = i + 1
+        if volume_number + "_" in link and "Go to" not in link:
             link_start = link.find('"') + 1
             link_end = link.find('"', link_start)
             url_append = link[link_start:link_end]
+            i_position = url_append.find("_") + 1
+            i = url_append[i_position:i_position+1]
             issue_url = base_url + url_append
             if issue_number == '0' or "." + issue_number in link:
                 data[1] = str(i)
