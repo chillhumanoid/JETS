@@ -156,4 +156,3 @@ def author_database_worker(full_name, full_num, author, force, title):
                 if author_name == None:
                     author_name = name
                 database.add_to_table(author_name, full_num)
-                database.print_table()
