@@ -36,30 +36,31 @@ def search_table(author_name):
     return value
 
 def sort_articles(new_number, existing_numbers):
-    new_vol = new_number.split(".")[0]
-    new_index = new_number.split(".")[1]
-    new_article = new_number.split(".")[2]
     numbers = existing_numbers.split(";")
+    new_numbers = new_number.split(";")
+    
     replace_position = -1
     
+    for new_number in new_numbers:
+        new_volume_number           =  new_number.split(".")[0]
+        new_index_number            =  new_number.split(".")[1]
+        new_article_number          =  new_number.split(".")[2]
+
     for index, number in enumerate(numbers):
-        existing_vol = number.split(".")[0]
-        existing_index = number.split(".")[1]
-        existing_article = number.split(".")[2]
-        if new_vol == existing_vol:
-            if new_index == existing_index:
-                if new_article == existing_article:
+            existing_volume_number  =  number.split(".")[0]
+            existing_index_number   =  number.split(".")[1]
+            existing_article_number =  number.split(".")[2]
+
+            if new_volume_number == existing_volume_number and new_index_number == existing_index_number and new_article_number == existing_article_number:
                     click.echo("Article Already Added")
                     replace_position = -2
-                    break
-                
-                elif new_article > existing_article:
+            elif new_volume_number == existing_volume_number and new_index_number == existing_index_number and new_article_number > existing_article_number:
                     replace_position = index
                     break
-            elif new_index > existing_index:
+            elif new_volume_number == existing_volume_number and new_index_number > existing_index_number:
                 replace_position = index
                 break
-        elif new_vol > existing_vol:
+            elif new_volume_number > existing_volume_number:
             replace_position = index
             break
     
