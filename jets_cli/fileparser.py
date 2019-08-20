@@ -79,15 +79,20 @@ def fix_titled_authors(string):
     string = string.replace("&Amp;", "And")
     string = string.replace("  ", " ")
     return string
+    
 def fix_titled(string):
     string = string.replace("Iii", "III")
+    string = string.replace("Ii", "II")
     string = string.replace("Iv", "IV")
     string = string.replace("Ot", "OT")
     string = string.replace("Nt", "NT")
     string = string.replace("'S", "'s")
     string = string.replace("’S", "’s")
     string = string.replace("Bc", "BC")
-    string = string.replace("Ad", "AD")
+    if string.endswith("Ad"):
+        string = string[:-2]
+        string = string + "AD"
+    string = string.replace("Ad ", "AD ")
     string = string.replace("&Amp;", "And")
     string = string.replace("Mattter", "Matter")
     string = string.replace("  ", " ")
