@@ -106,7 +106,7 @@ def get_title_and_author(data, title, article_url):
     full_name          =  full_number + " - " + file_name + ".pdf"
     
     author             = parsr.get_raw_author(full_name, count, original_file_name)
-    
+    author             = known_authors.change_known_authors(author)
     try:
         validate_filename(file_name)
     except ValidationError as e:
@@ -118,7 +118,6 @@ def get_title_and_author(data, title, article_url):
 
 def download(title, file_name, full_name, author, article_url, data, full_number):
     force              = data[3]
-    
     if os.path.exists(all_path + full_name) and force == False:
         util.p(full_name)
         click.echo("This File Already Exists")
