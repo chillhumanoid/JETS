@@ -16,6 +16,8 @@ def get_raw_author(raw_file_name, count, title):
             author = author.replace(", Jr", " Jr")
         author = util.string_strip(author) #this keeps stripping author until no whitespace on either end
         author = author.replace("  ", " ") #get rid of double spaces.
+        author = author.title()
+        author = fix_titled_authors(author)
     return author
 
 def get_raw_title(count, title):
