@@ -145,7 +145,7 @@ def merge(term):
     nums = util.get_numbers(term) #can be 0 appended
     vol_num = nums[0]
     issue_num = nums[1]
-    merge.start(vol_num, issue_num)
+    m.merge(vol_num, issue_num)
 
 #DOWNLOAD COMMAND
 @cli.command()
