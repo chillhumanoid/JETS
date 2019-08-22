@@ -18,6 +18,14 @@ merge_path = path + "Merged/"
 def cli(ctx):
     pass
 
+#LOGIN COMMAND
+
+@cli.command()
+@click.option('-u', 'user', required = True, nargs=1)
+@click.option('-p', 'pwd', required = True, nargs=1)
+def login(user, pwd):
+    log_in.set_login(user, pwd)
+
 #SEARCH COMMAND
 @cli.command()
 @click.option('-t','title', default=False, help="Search by title", count=True)
