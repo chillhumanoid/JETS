@@ -26,6 +26,7 @@ def cli(ctx):
 def login(user, pwd):
     log_in.set_login(user, pwd)
 
+
 #SEARCH COMMAND
 @cli.command()
 @click.option('-t','title', default=False, help="Search by title", count=True)
@@ -73,7 +74,6 @@ def rename(title, author, both, term):
     Usage: jets rename -t|-a|-b 1-62.1-4.articlenum"""
     nums = util.get_numbers(term)
     full_num = nums[0] + "." + nums[1] + "." + nums[2]
-    id = 0
     change_title = False
     change_author = False
     if title == 1:
@@ -164,7 +164,6 @@ def download(new, vol, issue, article, term, force):
        -a will download the given article in an issue (-v and -i required)
 
        Usage: jets -n|-v|-i|-a|1-62.1-4.articlenum"""
-    vol_num = article_num = issue_num = "0"
     if new >= 1:
         if force >= 1:
             util.p("-n can't be used with any other command")
