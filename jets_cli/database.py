@@ -286,6 +286,8 @@ def print_article_table(): #DEV USE
     conn.close()
 
 
+
+def get_full_number(article_id):
     """
     Gets the full number based on article id
 
@@ -297,6 +299,12 @@ def print_article_table(): #DEV USE
     Returns:
     full_number (string)
     """
+    sql = "SELECT full_number FROM titles WHERE article_id = %s" % article_id
+    c = sql_executor(sql).fetchall()
+    return c[0][0]
+
+
+
     """
     gets article_ids based on author name
 
