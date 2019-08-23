@@ -215,6 +215,16 @@ def add_to_articles_table(full_number, volume_number, issue_number, article_numb
             sql = "INSERT INTO linker (author_id, article_id) VALUES (%s, %s)" % (author_id, article_id)
             sql_executor(sql)
 
+
+
+def add_to_author_table(author_name):
+    author_exists = search_author_table(author_name)
+    print(author_name)
+    if not author_exists:
+        sql = "INSERT INTO authors (author_name) VALUES (%s)" % (quotate(author_name)) 
+        sql_executor(sql)
+
+
     """
     Get the title based on article id
     
