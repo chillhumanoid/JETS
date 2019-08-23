@@ -127,6 +127,8 @@ def search_articles_table(full_number):
         return True
 
 
+
+def search_author_table(author_name):
     """
     Search the author table for a specific author
 
@@ -137,6 +139,7 @@ def search_articles_table(full_number):
     True  : the author was found, item in table
     False : author was not found, item not in table
     """ 
+    sql = "SELECT * FROM authors WHERE author_name = %s" % quotate(author_name)
     c = sql_executor(sql)
     data = c.fetchall()
     if len(data) == 0:
