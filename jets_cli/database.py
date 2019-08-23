@@ -225,6 +225,7 @@ def add_to_author_table(author_name):
         sql_executor(sql)
 
 
+
 def get_title(article_id):
     """
     Get the title based on article id
@@ -241,18 +242,7 @@ def get_title(article_id):
     c = sql_executor(sql).fetchall()
     return c[0][0]
 
-def add_to_table(author_name, article_numbers):
-    if search_table(author_name):
-        full_number = sort_articles(article_numbers, get_numbers(author_name))
-        full_number = ";".join(full_number)
-        sql = "UPDATE authors SET articlenums = %s WHERE name = %s" % (quotify(full_number), quotify(author_name))
-    else:
-        sql = "INSERT INTO authors(name, articlenums) VALUES (%s, %s)" % (quotify(author_name), quotify(article_numbers))
-    conn = sqlite3.connect(path + "author.db")
-    c = conn.cursor()
-    c.execute(sql)
-    conn.commit()
-    conn.close()
+
 
     """
     Gets the author based on full number
