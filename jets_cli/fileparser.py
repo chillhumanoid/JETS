@@ -7,7 +7,7 @@ def get_full_number(file_name):
         full_num = file_name.split(" - ")[0] #get the file number
     return full_num
 
-def get_raw_author(raw_file_name, count, title):
+def get_raw_author(count, title):
     if count == 0:
         author = "JETS" #if no author given, author name is JETS always.
     else:
