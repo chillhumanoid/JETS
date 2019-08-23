@@ -28,7 +28,6 @@ def auth_search(author):
                     if author in found_names:
                         found_names.remove(author)
         for author in found_names:
-            author = "'" + author + "'"
             author_article_numbers = database.get_full_numbers(author)
             for number in author_article_numbers:
                 for article in os.listdir(all_path):
