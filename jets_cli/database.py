@@ -31,10 +31,9 @@ def search_author_table(author_name): #searches for a specific author
     c = sql_executor(sql)
     data = c.fetchall()
     if len(data) == 0:
-        value = False
+        return False
     else:
-        value = True
-    return value
+        return True
 
 def sort_articles(new_number, existing_numbers):
     numbers = existing_numbers.split(";")
