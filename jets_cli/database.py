@@ -4,13 +4,35 @@ path = path.replace("database.py","")
 path = path + "Articles/"
 all_path = path + "/All"
 def sql_executor(sql):
+    """
+    Executes SQL code
+
+    Instead of executing in each function, executes in this base function
+
+    Parameters:
+    sql (string): SQL query to be executed
+
+    Returns:
+    c (sql query) : whatever was in the query, gets returned to the function that called it
+    """
     conn = sqlite3.connect(path + "author.db")
     c = conn.cursor()
     c.execute(sql)
     conn.commit()
     return c
 
+
+
 def create_database():
+    """
+    Creates database on first run
+
+    If the database doesn't exist, or the tables don't exist, it creates the tables needed for authors and titles. 
+
+    Created tables: \n
+    authors : holds the author ids and the author names \n
+    titles : holds the article info and connects to the authors table
+    """
     sql = """CREATE TABLE IF NOT EXISTS authors (
         author_id integer PRIMARY KEY,
         name text NOT NULL
@@ -27,7 +49,21 @@ def create_database():
     );"""
     sql_executor(sql)
     
+    """
+    Get all the article IDs
+
+    Returns:
+    article_id_list (list): list of the article ids
+    """
 def get_all_names(): 
+    """
+    Get all the author names
+
+    Locations: rename.get_old_name()
+
+    Returns:
+    names (list): a list of all the author names
+    """ 
     names = []
     sql = "SELECT name FROM authors"
     c = sql_executor(sql)
@@ -35,16 +71,31 @@ def get_all_names():
         names.append(x[0])
     return names
 
-def search_articles_table(article_title):
-    sql = "SELECT * FROM titles WHERE title = %s"
+    """
+    Search the articles table for a specific article
+
+    Parameters:
+    full_number (string): if the full_number is in the table, gets information
+
+    Returns:
+    True  : the article number was found, item in table
+    False : article number was not found, item not in table
+    """
     c = sql_executor(sql)
     data = c.fetchall()
     if len(data) == 0:
         return = False
     else:
-        return = True
-def search_author_table(author_name): #searches for a specific author
-    sql = "SELECT * FROM authors WHERE name = %s" % quotify(author_name)
+    """
+    Search the author table for a specific author
+
+    Parameters:
+    author_name (string): the author name to search
+
+    Returns:
+    True  : the author was found, item in table
+    False : author was not found, item not in table
+    """ 
     c = sql_executor(sql)
     data = c.fetchall()
     if len(data) == 0:
@@ -58,54 +109,54 @@ def sort_articles(new_number, existing_numbers):
     
     replace_position = -1
 
-    for new_number in new_numbers:
-        new_volume_number           =  new_number.split(".")[0]
-        new_index_number            =  new_number.split(".")[1]
-        new_article_number          =  new_number.split(".")[2]
+    """
+    Rename the author in the author database
 
-        for index, number in enumerate(numbers):
-            existing_volume_number  =  number.split(".")[0]
-            existing_index_number   =  number.split(".")[1]
-            existing_article_number =  number.split(".")[2]
+    Locations: rename.change(), rename.rename()
 
-            if new_volume_number == existing_volume_number and new_index_number == existing_index_number and new_article_number == existing_article_number:
-                click.echo("Article Already Added")
-                replace_position = -2
-            elif new_volume_number == existing_volume_number and new_index_number == existing_index_number and new_article_number > existing_article_number:
-                replace_position = index
-                break
-            elif new_volume_number == existing_volume_number and new_index_number > existing_index_number:
-                replace_position = index
-                break
-            elif new_volume_number > existing_volume_number:
-                replace_position = index
-                break
+    If the new author name already exists(unlikely), remove the old author, get the new id, and set the author_id in the titles database on the correct id
             
-        if replace_position > -2:
-            if replace_position == -1:
-                numbers.append(new_number)
+    Parameters:
+    author_id (integer)
+    new_author_name(string)
+    """
             else:
-                numbers.insert(replace_position, new_number)
-    return numbers
+    """
+    Gets the author ID
 
-def rename_author(id, new_author_name):
-    if search_table(new_author_name): #if the name already is in the table
-        sql = "SELECT articlenums FROM authors WHERE id=%s" % id
+    Locations: rename.change()
+
+    Parameters:
+    author_name(string)
+
+    Returns:
+    c[0][0] (int): technically is the author_id
+    """
         c = sql_executor(sql).fetchall()
-        article_number_old = c[0][0]
-        sql = "SELECT articlenums FROM authors WHERE name=%s" % quotify(new_author_name)
-        c = sql_executor(sql).fetchall()
-        article_numbers_new = c[0][0]
-        full_number = sort_articles(article_number_old, article_numbers_new)
-        full_number = ";".join(full_number)
-        sql = "UPDATE authors SET articlenums = %s WHERE name = %s" %(quotify(full_number),quotify(new_author_name))
-        remove_author(id)
-    else:
-        sql = "UPDATE authors SET name = %s WHERE id = %s" %(quotify(new_author_name), id)
+    """
+    Adds new article to articles table
+
+    Parameters:\n
+    full_number    (string)  : Easy identifier, ##.##.## (vol.issue.article)\n
+    volume_number  (int)     : Lone identifier for volume\n
+    issue_number   (int)     : Lone identifier for issue\n
+    article_number (int)     : Lone identifier for article\n
+    article_title  (string)  : the title of the article\n
+    author_id      (str)     : the ID(s) of the author(s) \n
+    """
     sql_executor(sql)
 
-def get_id(author_name):
-    sql = "SELECT id FROM authors WHERE name = %s" % quotify(author_name)
+    """
+    Get the title based on article id
+    
+    Locations: display.display_articles(), rename.rename()
+    
+    Parameters:
+    article_id (int)
+
+    Returns:
+    title (string)
+    """
     c = sql_executor(sql).fetchall()
     return c[0][0]
 
@@ -122,9 +173,17 @@ def add_to_table(author_name, article_numbers):
     conn.commit()
     conn.close()
 
-def get_author(number):
-    number = "'%" + number + "%'"
-    sql = "SELECT name FROM authors WHERE articlenums LIKE %s" %number
+    """
+    Gets the author based on full number
+
+    Locations: util.get_info()
+
+    Parameters:
+    full_number (string)
+
+    Returns:
+    author_list (list)
+    """
     c = sql_executor(sql).fetchall()
     author_list = []
     for lis in c:
@@ -138,6 +197,26 @@ def print_table():
         click.echo(row)
     conn.close()
 
+    """
+    Gets the full number based on article id
+
+    Current locations: display.display_articles()
+
+    Parameters:
+    article_id (int)
+
+    Returns:
+    full_number (string)
+    """
+    """
+    gets article_ids based on author name
+
+    Parameters:
+    author_name (string)
+
+    Returns: 
+    article_id_list (list)
+    """
 def remove_article(full_number):
     article_id = get_article_id(full_number)
     sql = "DELETE FROM titles WHERE full_number = %s" %(quotate(full_number))
@@ -147,27 +226,15 @@ def remove_article(full_number):
     os.remove(all_path + str(article_id) + ".pdf")
 
 
-def get_numbers(author_name):
-    sql = "SELECT articlenums FROM authors WHERE name = %s" % quotify(author_name)
-    c = sql_executor(sql)
-    data = c.fetchall()
-    full_number = data[0][0]
-    full_number = full_number.split("'")[0]
-    return full_number
+    """
+    Updates title if changed
 
-def get_full_numbers(author_name):
-    sql = "SELECT articlenums FROM authors WHERE name = %s" % quotify(author_name)
-    c = sql_executor(sql).fetchall()
-    full_number = c[0][0]
-    full_numbers = full_number.split(";")
-    return full_numbers
+    Locations: rename.rename()
 
-def remove_article_number(author_name, article_number):
-    full_numbers = get_full_numbers(author_name)
-    if article_number in full_numbers:
-        full_numbers.remove(article_number)
-    full_numbers = ";".join(full_numbers)
-    sql = "UPDATE authors SET articlenums = %s WHERE name = %s" %(quotify(full_numbers), quotify(author_name))
+    Parameters:
+    article_id (int)   : identifier for article
+    new_title (string) : The new title to set
+    """
     sql_executor(sql)
     
 def quotify(string):
