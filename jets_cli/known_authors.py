@@ -1,6 +1,6 @@
 import os, sys
 
-known_authors = ["Jerome Ficek", "Ronald Youngblood", "Cleon Rogers", "Robert L Saucy", "Alan Johnson", "Lewis Foster", "Phillip H. Wiebe", "William Lane Craig" "Edwin Yamauchi","Paul Frederick Feiler", "Paul Feiler", "Martin H. Woudstra", "Philip Barton Payne", "George Allen Turner", "Vern Sheridan Poythress", "Gleason L. Archer", "Gordon Clark", "Wilbur B. Wallis", "Andrew Helmbold", "Vernon Grounds", "Robert Longenecker", "David Scaer", "John Warwick Montgomery", "George Eldon Ladd" "Craig Keener", "Samuel S. Schultz", "Charles Horne"]
+known_authors = ["Jerome Ficek", "Bruce Waltke", "James B. De Young", "Thomas Edward Mccomiskey", ". Robert L. Saucy", "Ronald Youngblood", "Cleon Rogers", "Robert L Saucy", "Alan Johnson", "Lewis Foster", "Phillip H. Wiebe", "William Lane Craig" "Edwin Yamauchi","Paul Frederick Feiler", "Paul Feiler", "Martin H. Woudstra", "Philip Barton Payne", "George Allen Turner", "Vern Sheridan Poythress", "Gleason L. Archer", "Gordon Clark", "Wilbur B. Wallis", "Andrew Helmbold", "Vernon Grounds", "Robert Longenecker", "David Scaer", "John Warwick Montgomery", "George Eldon Ladd" "Craig Keener", "Samuel S. Schultz", "Charles Horne"]
 
 def change_known_authors(name):
     if is_known_author(name):
@@ -32,6 +32,10 @@ def change_known_authors(name):
         name = name.replace("Robert L Saucy", "Robert L. Saucy")
         name = name.replace("Cleon Rogers", "Cleon L. Rogers, Jr")
         name = name.replace("Ronald Youngblood", "Ronald F. Youngblood")
+        name = name.replace("Bruce Waltke", "Bruce K. Waltke")
+        name = name.replace(". Robert L. Saucy", "Robert L. Saucy")
+        name = name.replace("Thomas Edward Mccomiskey", "Thomas E. Mccomiskey")
+        name = name.replace("James B. De Young", "James B. Deyoung")
     return name
 
 def is_known_author(name):
