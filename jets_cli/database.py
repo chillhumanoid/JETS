@@ -2,7 +2,7 @@ import sqlite3, os, click, util, sys, time
 path = os.path.realpath(__file__)
 path = path.replace("database.py","")
 path = path + "Articles/"
-
+all_path = path + "/All"
 def sql_executor(sql):
     conn = sqlite3.connect(path + "author.db")
     c = conn.cursor()
@@ -138,12 +138,14 @@ def print_table():
         click.echo(row)
     conn.close()
 
-def remove_author(author_name):
-    if type(author_name) == int:
-        sql = "DELETE FROM authors WHERE id = %s" % author_name
-    else:
-        sql = "DELETE FROM authors WHERE name = %s" % quotify(author_name)
+def remove_article(full_number):
+    article_id = get_article_id(full_number)
+    sql = "DELETE FROM titles WHERE full_number = %s" %(quotate(full_number))
     sql_executor(sql)
+    sql = "DELETE FROM linker WHERE article_id = %s" % article_id
+    sql_executor(sql)
+    os.remove(all_path + str(article_id) + ".pdf")
+
 
 def get_numbers(author_name):
     sql = "SELECT articlenums FROM authors WHERE name = %s" % quotify(author_name)
