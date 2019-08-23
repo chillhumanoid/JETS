@@ -16,9 +16,11 @@ def start(data):
     get_volume_url(data)
 
 def get_volume_url(data):
+    login_exists = util.is_login()
     with Session() as s:
-        login_data = {"name":log.get_username(), "pass":log.get_password(), "op":"Log in", "form_build_id":"form-a0ed7b5c7437ac9afeb21b126e24633b", "form_id":"user_login_block"}
-        s.post("https://www.etsjets.org/new_welcome?destination=node%2F1120", login_data)
+        if login_exists:
+            login_data = {"name":log.get_username(), "pass":log.get_password(), "op":"Log in", "form_build_id":"form-a0ed7b5c7437ac9afeb21b126e24633b", "form_id":"user_login_block"}
+            s.post("https://www.etsjets.org/new_welcome?destination=node%2F1120", login_data)
         volume_number = data[0]
         if volume_number == '0':
             file_start = "Vol "
@@ -36,12 +38,13 @@ def get_volume_url(data):
                 link_end = link.find('"', link_start)
                 urlAppend = link[link_start:link_end]
                 volume_url = base_url + urlAppend
-                get_issue_url(data, volume_url)
+                get_issue_url(data, volume_url, login_exists)
  
-def get_issue_url(data, volume_url):
+def get_issue_url(data, volume_url, login_exists):
     with Session() as s:
-        login_data = {"name":log.get_username(), "pass":log.get_password(), "op":"Log in", "form_build_id":"form-a0ed7b5c7437ac9afeb21b126e24633b", "form_id":"user_login_block"}
-        s.post("https://www.etsjets.org/new_welcome?destination=node%2F1120", login_data)
+        if login_exists:
+            login_data = {"name":log.get_username(), "pass":log.get_password(), "op":"Log in", "form_build_id":"form-a0ed7b5c7437ac9afeb21b126e24633b", "form_id":"user_login_block"}
+            s.post("https://www.etsjets.org/new_welcome?destination=node%2F1120", login_data)
         issue_number_original = data[1]
         issue_number = data[1]
         volume_number = data[0]
@@ -62,13 +65,14 @@ def get_issue_url(data, volume_url):
                 issue_url = base_url + url_append
                 if issue_number == '0' or "." + issue_number in link or "_" + issue_number in link:
                     data[1] = str(i)
-                    get_article_url(data, issue_url)
+                    get_article_url(data, issue_url, login_exists)
                     data[1] = issue_number_original
  
-def get_article_url(data, issue_url):
+def get_article_url(data, issue_url, login_exists):
     with Session() as s:
-        login_data = {"name":log.get_username(), "pass":log.get_password(), "op":"Log in", "form_build_id":"form-a0ed7b5c7437ac9afeb21b126e24633b", "form_id":"user_login_block"}
-        s.post("https://www.etsjets.org/new_welcome?destination=node%2F1120", login_data)
+        if login_exists:
+            login_data = {"name":log.get_username(), "pass":log.get_password(), "op":"Log in", "form_build_id":"form-a0ed7b5c7437ac9afeb21b126e24633b", "form_id":"user_login_block"}
+            s.post("https://www.etsjets.org/new_welcome?destination=node%2F1120", login_data)
         article_number_original = data[2]
         article_number = data[2]
  
