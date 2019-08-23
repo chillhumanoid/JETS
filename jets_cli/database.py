@@ -99,7 +99,7 @@ def get_all_names():
     names (list): a list of all the author names
     """ 
     names = []
-    sql = "SELECT name FROM authors"
+    sql = "SELECT author_name FROM authors"
     c = sql_executor(sql)
     for x in c:
         names.append(x[0])
