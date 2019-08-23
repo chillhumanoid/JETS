@@ -116,16 +116,7 @@ def get_title_and_author(data, title, article_url):
     full_number        = util.check_digit(data[0]) + "." + util.check_digit(data[1]) + "." + util.check_digit(data[2])
     full_name          =  full_number + " - " + file_name + ".pdf"
     
-    author             = parsr.get_raw_author(full_name, count, original_file_name)
-    author             = known_authors.change_known_authors(author)
-    try:
-        validate_filename(file_name)
-    except ValidationError as e:
-        click.echo()
-        click.echo("{}\n".format(e), file=sys.stderr)
-        sys.exit()
-    finally:
-        download(title, file_name, full_name, author, article_url, data, full_number)
+    article_exists = db.search_articles_table(full_number)
 
 def download(title, file_name, full_name, author, article_url, data, full_number):
     force              = data[3]

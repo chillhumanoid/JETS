@@ -105,6 +105,9 @@ def get_all_names():
         names.append(x[0])
     return names
 
+
+
+def search_articles_table(full_number):
     """
     Search the articles table for a specific article
 
@@ -115,11 +118,15 @@ def get_all_names():
     True  : the article number was found, item in table
     False : article number was not found, item not in table
     """
+    sql = "SELECT * FROM titles WHERE full_number = %s" %quotate(full_number)
     c = sql_executor(sql)
     data = c.fetchall()
     if len(data) == 0:
-        return = False
+        return False
     else:
+        return True
+
+
     """
     Search the author table for a specific author
 
@@ -178,6 +185,7 @@ def sort_articles(new_number, existing_numbers):
     article_title  (string)  : the title of the article\n
     author_id      (str)     : the ID(s) of the author(s) \n
     """
+    article_exists = search_articles_table(full_number)
     sql_executor(sql)
 
     """
