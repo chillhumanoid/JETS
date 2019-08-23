@@ -1,6 +1,6 @@
 ##imports
-import sys, os, re
-import search, util
+import sys, os, re, time
+import search, util, database as db
 from display import display
 from PyPDF2 import PdfFileReader, PdfFileWriter
 from shutil import copyfile
