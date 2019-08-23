@@ -26,7 +26,7 @@ def get_all_names():
         names.append(x[0])
     return names
 
-def search_table(author_name):
+def search_author_table(author_name): #searches for a specific author
     sql = "SELECT * FROM authors WHERE name = %s" % quotify(author_name)
     c = sql_executor(sql)
     data = c.fetchall()
