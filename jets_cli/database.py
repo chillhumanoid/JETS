@@ -70,6 +70,25 @@ def get_all_article_ids():
     for x in c:
         article_id_list.append(x[0])
     return article_id_list
+
+
+
+def get_all_titles():
+    """
+    Get all the titles
+
+    Returns:
+    titles (list): a list of all the titles in the table
+    """
+    titles = []
+    sql = "SELECT article_title FROM titles"
+    c = sql_executor(sql)
+    for x in c:
+        titles.append(x[0])
+    return titles
+
+
+
 def get_all_names(): 
     """
     Get all the author names

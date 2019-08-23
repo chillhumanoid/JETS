@@ -35,16 +35,7 @@ def auth_search(author):
                         articles.append(article)
     display(articles)
 
-def article_search(term):    #for searching articles
-    found = []
-    click.echo() #for formatting
-    x = 0   #used in loop iterations
-    term = term.lower()
-    if len(term) == 1:  #if the length is 4 exactly
-        for article in os.listdir(all_path):  #goes through all folders in base
-            f = article.lower()
-            if term in f:
-                found.append(article)
+    titles       = db.get_all_titles()
     elif len(term) > 1:
         for article in os.listdir(all_path):
             f = article.lower()
