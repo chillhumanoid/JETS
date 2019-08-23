@@ -244,6 +244,7 @@ def get_title(article_id):
 
 
 
+def get_author(full_number):
     """
     Gets the author based on full number
 
@@ -255,10 +256,15 @@ def get_title(article_id):
     Returns:
     author_list (list)
     """
+    article_id = get_article_id(full_number)
+    sql = "SELECT author_id FROM linker WHERE article_id = %s" % article_id
     c = sql_executor(sql).fetchall()
     author_list = []
     for lis in c:
-        author_list.append(lis[0])
+        sql = "SELECT author_name FROM authors WHERE author_id = %s" % lis[0]
+        d = sql_executor(sql).fetchall()
+        name = d[0][0]
+        author_list.append(name)
     return author_list
 
 def print_table():
