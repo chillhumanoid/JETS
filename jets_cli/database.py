@@ -190,6 +190,7 @@ def get_author_id(author_name):
 
 
 
+def add_to_articles_table(full_number, volume_number, issue_number, article_number, article_title, author_ids):
     """
     Adds new article to articles table
 
@@ -202,7 +203,17 @@ def get_author_id(author_name):
     author_id      (str)     : the ID(s) of the author(s) \n
     """
     article_exists = search_articles_table(full_number)
+    if not article_exists:
+        if "'" in article_title:
+            article_title = article_title.replace("'", "''")
+        article_title = "'" + article_title + "'"
+         
+        sql = "INSERT INTO titles (full_number, volume_number, issue_number, article_number, article_title) VALUES(%s, %s, %s, %s, %s)" % (quotate(full_number), volume_number, issue_number, article_number, article_title)
     sql_executor(sql)
+        article_id = get_article_id(full_number)
+        for author_id in author_ids:
+            sql = "INSERT INTO linker (author_id, article_id) VALUES (%s, %s)" % (author_id, article_id)
+            sql_executor(sql)
 
     """
     Get the title based on article id
