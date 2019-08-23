@@ -1,4 +1,4 @@
-import sys, os, time, subprocess, click, database
+import sys, os, time, subprocess, click, database as db
 from pathvalidate import ValidationError, validate_filename; from shutil import copyfile, move
 import util
 path = os.path.realpath(__file__)
@@ -7,28 +7,54 @@ path = path + "Articles/"
 all_path = path + "All/"
 author_path = path + "Authors/"
 
-def prompt(title, author, new_title, new_author):
+def display_title_author(title, author, new_title, new_author):
+    """
+    displays based on if title or author or both being changed
+    
+    Location: rename.change(), rename.rename()96
+
+    Parameters:
+    title      (string) : if "", title isn't changed
+    author     (string) : if "", author isn't changed
+    new_title  (string)
+    new_author (string)
+    """
     if not new_title == "":
-        util.p("Old Title - " + title) #display old title
+        util.p("Old Title - " + title)           #display old title
         click.echo("New Title - " + new_title)
     if not new_author == "":
-        util.p("Old Author - " + author) #display old author
+        util.p("Old Author - " + author)         #display old author
         click.echo("New Author - " + new_author) #display new author
 
-def change(name):
-    old_name = get_old_name(name)
-    util.p("Selected Author: " + old_name)
-    new_name = click.prompt("Enter New Author Name")
-    prompt("", old_name, "", new_name)
+def change(author_name):
+    """
+    Changes the author name
+
+    Parameters:
+    author_name (string)
+    """
+    old_name = get_old_name(author_name)              #just in case there is multiple options
+    util.p("Selected Author: " + old_name)            #print the selected author, for verifying purposes
+    new_name = click.prompt("Enter New Author Name") 
+    display_title_author("", old_name, "", new_name)  #display the old and new name, again for verification purposes
     if click.confirm("Confirm author change?"):
+        author_id = db.get_author_id(old_name)                #get the id of the old author name
         db.rename_author(author_id, new_name)
 
-
 def get_old_name(name):
+    """
+    Makes sure the old name exists, asks for user input if multiple potential options
+
+    Parameter:
+    name (string) : entered name
+
+    Returns:
+    name (string) : selected actual name
+    """
     found_names = []
     click.echo()
     name_split = name.split(" ")
-    full_authors = database.get_names()
+    full_authors = db.get_all_names()
     for x in name_split:
         for author in full_authors:
             names = author.lower()
@@ -52,27 +78,24 @@ def get_old_name(name):
             name = found_names[value -1]
             return name
 
-def rename(full_num, change_title, change_author):
+def rename(full_number, change_title, change_author):
     new_title = ""
     new_author = ""
-    for file in os.listdir(all_path):
-        if file.startswith(full_num):
-            file_path = all_path + file
-            acrobat_path = r'C:\Program Files (x86)\Adobe\Acrobat DC\Acrobat\Acrobat.exe'
-            process = subprocess.Popen("%s %s" % (acrobat_path, file_path))
-            info = util.get_info(file_path)
-            title = info[0]
-            author = info[1]
-            if not title == None: #if the file has a title
-               title = util.string_strip(title) #get rid of any whitespace
-            else:
-               title = "" #if it doesn't have a title set it to "" because otherwise error
-            if author == None: #if the article doesn't have an author, set it to "" because otehrwise error
-               author = ""
-            util.p("Current Title: " + title)
-            click.echo("Current Author: " + author)
-            if change_title:
-                new_title = click.prompt("Enter New Article Title") #gets new article title
-            if change_author:
-                new_author = click.prompt("Enter New Author Name")
+    article_id = db.get_article_id(full_number)
+    file_path = all_path + str(article_id) + ".pdf"
+    os.startfile(file_path)
+    old_title = db.get_title(article_id)
+    old_author = db.get_author(full_number)
+    util.p("Current Title: " + old_title)
+    util.p("Current Author: " + old_author)
+    if change_title:
+        new_title = click.prompt("Enter New Article Title")
+    if change_author:
+        new_author = click.prompt("Enter New Author Name")
+    display_title_author(old_title, old_author, new_title, new_author)
+    if click.confirm("Confirm title and/or author change?"):
+        if not new_title == "":
+            db.update_title(article_id, new_title)
+        if not new_author == "":
+            author_id = db.get_author_id(old_author)
             db.rename_author(author_id, new_author)

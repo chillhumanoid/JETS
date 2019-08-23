@@ -1,4 +1,4 @@
-import os, click, sys, database
+import os, click, sys, database as db
 from PyPDF2 import PdfFileReader, PdfFileWriter
 from shutil import copyfile
 import sqlite3
@@ -12,8 +12,9 @@ merge_path = path + "Merged/"
 author_path = path + "Authors/"
 
 def start():
+    print("TESTING")
     if not os.path.exists(path + "author.db"):
-        database.create_database()
+        db.create_database()
     if not os.path.exists(path):
         os.mkdir(path)
     if not os.path.exists(all_path):
@@ -42,22 +43,6 @@ def check_vol(vol):
         p("Please enter 1-62 for Volume")
         sys.exit()
 
-def is_login():
-    if os.path.exists(base_path + "login.txt"):
-        with open(base_path + "login.txt", "r") as f:
-            data = f.readlines()
-            if data[0] == "":
-                print("No Username")
-                return False
-            elif data[1] == "":
-                print("no pwd")
-                return False
-            else:
-                return True
-    else:
-        print("No file")
-        return False
-
 def check_issue(issue):
     if not issue.isdigit():
         p("Please eneter an integer for issue")
@@ -66,15 +51,6 @@ def check_issue(issue):
     if not issue >= 0 and issue <= 4:
         p("Please enter 1-4 for Issue")
         sys.exit()
-
-
-def get_info(pdf):
-    f = open(pdf, 'rb') #open the right article as "f"
-    pdf = PdfFileReader(f)
-    info = pdf.getDocumentInfo() #gets metadata
-    f.close()
-    info = [info.title, info.author]
-    return info
 
 def get_num(vNum, iNum, aNum):
     vNum = check_digit(vNum)
@@ -106,28 +82,38 @@ def check_digit(num):
     return num
 
 def get_possible_names(name):
-    found_names = []
-    click.echo()
-    name_split = name.split(" ")
-    full_name_list = database.get_names()
+    name_split         = name.split(" ")
+    x            = 0
+    found_names  = []
+    articles     = []
+    all_authors  = db.get_all_names()
+
     for x in name_split:
-        for author in full_name_list:
+        for author in all_authors:
             names = author.lower()
+
             if name.lower() == names:
                 return None
+            
             if x.lower() in names and len(x) > 2:
                 if not author in found_names:
                     found_names.append(author)
+    
     if len(found_names) > 0:
+        
         click.echo("Found Possibilities: "  + str(len(found_names)))
         click.echo()
+        
         for x, author in enumerate(found_names):
             click.echo(str(x + 1) + " - " + author)
         click.echo(str(x + 2) + " - New Author")
         click.echo()
+        
         value = click.prompt("Option", type = click.IntRange(1, len(found_names)+1))
+        
         if int(value) == x+2:
             return None
+        
         else:
             name = found_names[value -1]
             return name
@@ -152,12 +138,18 @@ def get_numbers(term, canAppend=True):
         article_num = check_digit(article_num)
     return (vol_num, issue_num, article_num)
 
-def get_nums(article):
-    number = article.split(" - ")[0]
-    numbers = number.split(".")
-    volume_number, issue_number, article_number = [numbers[0], numbers[1], numbers[2]] 
-    return [number, volume_number, issue_number, article_number]
-
-def get_title(article):
-    title = article.split(" - ", 1)[1]
-    title = title.split(".pdf")[0]
+def is_login():
+    if os.path.exists(base_path + "login.txt"):
+        with open(base_path + "login.txt", "r") as f:
+            data = f.readlines()
+            if data[0] == "":
+                print("No Username")
+                return False
+            elif data[1] == "":
+                print("no pwd")
+                return False
+            else:
+                return True
+    else:
+        print("No file")
+        return False
