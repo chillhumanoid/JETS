@@ -35,17 +35,23 @@ def create_database():
     """
     sql = """CREATE TABLE IF NOT EXISTS authors (
         author_id integer PRIMARY KEY,
-        name text NOT NULL
+        author_name text NOT NULL
     );"""
     sql_executor(sql)
     sql = """CREATE TABLE IF NOT EXISTS titles (
-        article_id int PRIMARY KEY,
+        article_id integer PRIMARY KEY,
+        full_number text NOT NULL,
         volume_number int,
         issue_number int,
         article_number int,
-        article_title text NOT NULL,
-        author_id int,
-        FOREIGN KEY (author_id) REFERENCES author(author_id)
+        article_title text NOT NULL
+    );"""
+    sql_executor(sql)
+    sql = """CREATE TABLE IF NOT EXISTS linker (
+        article_id integer NOT NULL, 
+        author_id integer NOT NULL,
+        FOREIGN KEY (article_id) REFERENCES titles(article_id),
+        FOREIGN KEY (author_id) REFERENCES authors(author_id)
     );"""
     sql_executor(sql)
     
