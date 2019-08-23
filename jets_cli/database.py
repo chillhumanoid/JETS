@@ -55,12 +55,21 @@ def create_database():
     );"""
     sql_executor(sql)
     
+
+
+def get_all_article_ids():
     """
     Get all the article IDs
 
     Returns:
     article_id_list (list): list of the article ids
     """
+    sql = "SELECT article_id FROM titles"
+    c = sql_executor(sql)
+    article_id_list = []
+    for x in c:
+        article_id_list.append(x[0])
+    return article_id_list
 def get_all_names(): 
     """
     Get all the author names

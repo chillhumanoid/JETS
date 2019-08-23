@@ -13,7 +13,8 @@ path = path + "Articles/All"
 ##function
 def start(volume_number, issue_number):
     if volume_number == "0" and issue_number == "0":
-        display(os.listdir(path))
+        article_ids = db.get_all_article_ids()
+        display(article_ids)
     if not volume_number == "0" and issue_number == "0":
         volume_number = util.check_digit(volume_number)
         display([article for article in os.listdir(path) if article.startswith(volume_number + ".")])
