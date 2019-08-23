@@ -149,6 +149,7 @@ def search_author_table(author_name):
 
     
 
+def rename_author(author_id, new_author_name):
     """
     Rename the author in the author database
 
@@ -160,7 +161,17 @@ def search_author_table(author_name):
     author_id (integer)
     new_author_name(string)
     """
+    if search_author_table(new_author_name):
+        new_author_id = get_author_id(new_author_name)
+        sql = "UPDATE linker SET (author_id) VALUES (%s) WHERE author_id = %s" % (new_author_id, author_id)
+        sql_executor(sql)
+        sql = "DELETE FROM authors WHERE author_id = %s" % author_id
             else:
+        sql = "UPDATE authors SET name = %s WHERE id = %s" %(quotate(new_author_name), author_id) 
+        sql_executor(sql)
+
+
+
     """
     Gets the author ID
 

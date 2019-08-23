@@ -21,8 +21,7 @@ def change(name):
     new_name = click.prompt("Enter New Author Name")
     prompt("", old_name, "", new_name)
     if click.confirm("Confirm author change?"):
-        id = database.get_id(old_name)
-        database.rename_author(id, new_name)
+        db.rename_author(author_id, new_name)
 
 
 def get_old_name(name):
@@ -76,19 +75,4 @@ def rename(full_num, change_title, change_author):
                 new_title = click.prompt("Enter New Article Title") #gets new article title
             if change_author:
                 new_author = click.prompt("Enter New Author Name")
-
-            prompt(title, author, new_title, new_author)
-
-            if click.confirm("Confirm title and/or author change?"): #confirm
-                process.terminate()
-                time.sleep(.5) #allow adobe to close
-                if new_title == "":
-                    new_title = title
-                if new_author == "":
-                    new_author = author
-
-                util.write_info(all_path + file, new_title, new_author)
-                database.rename_author(author, new_author)
-                
-            else:
-                process.kill()
+            db.rename_author(author_id, new_author)
