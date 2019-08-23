@@ -225,6 +225,7 @@ def add_to_author_table(author_name):
         sql_executor(sql)
 
 
+def get_title(article_id):
     """
     Get the title based on article id
     
@@ -236,6 +237,7 @@ def add_to_author_table(author_name):
     Returns:
     title (string)
     """
+    sql = "SELECT article_title FROM titles WHERE article_id = %s" % article_id
     c = sql_executor(sql).fetchall()
     return c[0][0]
 
