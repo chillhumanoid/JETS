@@ -1,4 +1,4 @@
-import sqlite3, os, click, util
+import sqlite3, os, click, util, sys
 path = os.path.realpath(__file__)
 path = path.replace("database.py","")
 path = path + "Articles/"
@@ -105,6 +105,15 @@ def add_to_table(author_name, article_numbers):
     c.execute(sql)
     conn.commit()
     conn.close()
+
+def get_author(number):
+    number = "'%" + number + "%'"
+    sql = "SELECT name FROM authors WHERE articlenums LIKE %s" %number
+    c = sql_executor(sql).fetchall()
+    author_list = []
+    for lis in c:
+        author_list.append(lis[0])
+    return author_list
 
 def print_table():
     conn = sqlite3.connect(path + "author.db")
