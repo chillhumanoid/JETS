@@ -325,6 +325,7 @@ def get_article_by_issue_number(volume_number, issue_number):
 
 
 
+def get_article_ids(author_name):
     """
     gets article_ids based on author name
 
@@ -334,6 +335,29 @@ def get_article_by_issue_number(volume_number, issue_number):
     Returns: 
     article_id_list (list)
     """
+    author_id = get_author_id(author_name)
+    sql = "SELECT article_id FROM linker WHERE author_id = %s" % author_id
+    c = sql_executor(sql).fetchall()
+    article_id_list = []
+    for lis in c:
+        article_id_list.append(lis[0])
+    return article_id_list
+
+
+
+def get_article_id(full_number):
+    """
+    Gets article_id based on full_number
+
+    Locations: rename.rename(), downloader.download()
+
+    Parameters:
+    full_number (string) : Vol.issue.article (##.##.##)
+    """
+    sql = "SELECT article_id FROM titles WHERE full_number = %s" % quotate(full_number)
+    c = sql_executor(sql).fetchall()
+    return c[0][0]
+
 def remove_article(full_number):
     article_id = get_article_id(full_number)
     sql = "DELETE FROM titles WHERE full_number = %s" %(quotate(full_number))
