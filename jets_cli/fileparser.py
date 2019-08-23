@@ -78,6 +78,8 @@ def fix_titled_authors(string):
     string = string.replace("Iv", "IV")
     string = string.replace("&Amp;", "And")
     string = string.replace("  ", " ")
+    if string.startswith(". "):
+        string = string.replace(". ", "",1)
     return string
     
 def fix_titled(string):
