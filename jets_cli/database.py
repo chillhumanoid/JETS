@@ -35,6 +35,14 @@ def get_all_names():
         names.append(x[0])
     return names
 
+def search_articles_table(article_title):
+    sql = "SELECT * FROM titles WHERE title = %s"
+    c = sql_executor(sql)
+    data = c.fetchall()
+    if len(data) == 0:
+        return = False
+    else:
+        return = True
 def search_author_table(author_name): #searches for a specific author
     sql = "SELECT * FROM authors WHERE name = %s" % quotify(author_name)
     c = sql_executor(sql)
