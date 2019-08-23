@@ -12,9 +12,18 @@ def sql_executor(sql):
 
 def create_database():
     sql = """CREATE TABLE IF NOT EXISTS authors (
-        id integer PRIMARY KEY,
-        name text NOT NULL,
-        articlenums text
+        author_id integer PRIMARY KEY,
+        name text NOT NULL
+    );"""
+    sql_executor(sql)
+    sql = """CREATE TABLE IF NOT EXISTS titles (
+        article_id int PRIMARY KEY,
+        volume_number int,
+        issue_number int,
+        article_number int,
+        article_title text NOT NULL,
+        author_id int,
+        FOREIGN KEY (author_id) REFERENCES author(author_id)
     );"""
     sql_executor(sql)
     
