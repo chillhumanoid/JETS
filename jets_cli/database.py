@@ -358,6 +358,8 @@ def get_article_id(full_number):
     c = sql_executor(sql).fetchall()
     return c[0][0]
 
+
+
 def remove_article(full_number):
     article_id = get_article_id(full_number)
     sql = "DELETE FROM titles WHERE full_number = %s" %(quotate(full_number))
@@ -367,6 +369,8 @@ def remove_article(full_number):
     os.remove(all_path + str(article_id) + ".pdf")
 
 
+
+def update_title(article_id, new_title):
     """
     Updates title if changed
 
@@ -376,9 +380,12 @@ def remove_article(full_number):
     article_id (int)   : identifier for article
     new_title (string) : The new title to set
     """
+    sql = "UPDATE titles SET title = %s WHERE article_id = %s" %(quotate(new_title), article_id)
     sql_executor(sql)
     
-def quotify(string):
+
+
+def quotate(string):
     if "'" in string:
         string = '"' + string + '"'
     else:
