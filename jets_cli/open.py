@@ -1,4 +1,4 @@
-import os, sys, subprocess, click, database
+import os, sys, subprocess, click, database as db, util
 from display import display
 
 path = os.path.realpath(__file__)
