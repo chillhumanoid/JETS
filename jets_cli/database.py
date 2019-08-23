@@ -147,11 +147,7 @@ def search_author_table(author_name):
     else:
         return True
 
-def sort_articles(new_number, existing_numbers):
-    numbers = existing_numbers.split(";")
-    new_numbers = new_number.split(";")
     
-    replace_position = -1
 
     """
     Rename the author in the author database
