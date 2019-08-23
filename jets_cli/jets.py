@@ -16,6 +16,7 @@ merge_path = path + "Merged/"
 @click.group(context_settings=CONTEXT_SETTINGS)
 @click.pass_context
 def cli(ctx):
+    util.start()
     pass
 
 #LOGIN COMMAND
