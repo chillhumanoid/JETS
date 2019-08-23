@@ -18,7 +18,7 @@ def create_database():
     );"""
     sql_executor(sql)
     
-def get_names():
+def get_all_names(): 
     names = []
     sql = "SELECT name FROM authors"
     c = sql_executor(sql)
