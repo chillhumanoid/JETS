@@ -54,7 +54,7 @@ def create_database():
         FOREIGN KEY (author_id) REFERENCES authors(author_id)
     );"""
     sql_executor(sql)
-    
+
 
 
 def get_all_article_ids():
@@ -89,7 +89,7 @@ def get_all_titles():
 
 
 
-def get_all_names(): 
+def get_all_names():
     """
     Get all the author names
 
@@ -147,7 +147,7 @@ def search_author_table(author_name):
     else:
         return True
 
-    
+
 
 def rename_author(author_id, new_author_name):
     """
@@ -156,7 +156,7 @@ def rename_author(author_id, new_author_name):
     Locations: rename.change(), rename.rename()
 
     If the new author name already exists(unlikely), remove the old author, get the new id, and set the author_id in the titles database on the correct id
-            
+
     Parameters:
     author_id (integer)
     new_author_name(string)
@@ -166,7 +166,7 @@ def rename_author(author_id, new_author_name):
         sql = "UPDATE linker SET (author_id) VALUES (%s) WHERE author_id = %s" % (new_author_id, author_id)
         sql_executor(sql)
         sql = "DELETE FROM authors WHERE author_id = %s" % author_id
-            else:
+    else:
         sql = "UPDATE authors SET name = %s WHERE id = %s" %(quotate(new_author_name), author_id) 
         sql_executor(sql)
 
@@ -185,7 +185,7 @@ def get_author_id(author_name):
     c[0][0] (int): technically is the author_id
     """
     sql = "SELECT author_id FROM authors WHERE author_name = %s" % quotate(author_name)
-        c = sql_executor(sql).fetchall()
+    c = sql_executor(sql).fetchall()
     return c[0][0]
 
 
@@ -209,12 +209,12 @@ def add_to_articles_table(full_number, volume_number, issue_number, article_numb
         article_title = "'" + article_title + "'"
          
         sql = "INSERT INTO titles (full_number, volume_number, issue_number, article_number, article_title) VALUES(%s, %s, %s, %s, %s)" % (quotate(full_number), volume_number, issue_number, article_number, article_title)
-    sql_executor(sql)
+        sql_executor(sql)
         article_id = get_article_id(full_number)
         for author_id in author_ids:
             sql = "INSERT INTO linker (author_id, article_id) VALUES (%s, %s)" % (author_id, article_id)
             sql_executor(sql)
-
+     
 
 
 def add_to_author_table(author_name):
@@ -382,7 +382,7 @@ def update_title(article_id, new_title):
     """
     sql = "UPDATE titles SET title = %s WHERE article_id = %s" %(quotate(new_title), article_id)
     sql_executor(sql)
-    
+
 
 
 def quotate(string):
