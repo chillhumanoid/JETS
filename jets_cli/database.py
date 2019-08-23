@@ -172,6 +172,7 @@ def rename_author(author_id, new_author_name):
 
 
 
+def get_author_id(author_name):
     """
     Gets the author ID
 
@@ -183,7 +184,12 @@ def rename_author(author_id, new_author_name):
     Returns:
     c[0][0] (int): technically is the author_id
     """
+    sql = "SELECT author_id FROM authors WHERE author_name = %s" % quotate(author_name)
         c = sql_executor(sql).fetchall()
+    return c[0][0]
+
+
+
     """
     Adds new article to articles table
 
