@@ -5,6 +5,7 @@ import sqlite3
 
 path = os.path.realpath(__file__)
 path = path.replace("util.py","")
+base_path = path
 path = path + "Articles/"
 all_path = path + "All/"
 merge_path = path + "Merged/"
@@ -41,6 +42,21 @@ def check_vol(vol):
         p("Please enter 1-62 for Volume")
         sys.exit()
 
+def is_login():
+    if os.path.exists(base_path + "login.txt"):
+        with open(base_path + "login.txt", "r") as f:
+            data = f.readlines()
+            if data[0] == "":
+                print("No Username")
+                return False
+            elif data[1] == "":
+                print("no pwd")
+                return False
+            else:
+                return True
+    else:
+        print("No file")
+        return False
 
 def check_issue(issue):
     if not issue.isdigit():
