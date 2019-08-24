@@ -1,6 +1,6 @@
 #import statements
 
-import os, sys, click, database as db
+import os, sys, click, database as db, time
 from PyPDF2 import PdfFileReader, PdfFileWriter
 from display import display
 #global variables
@@ -16,7 +16,6 @@ def auth_search(author):
     name         = author.split(" ")
     x            = 0
     found_names  = []
-    articles     = []
     all_authors  = db.get_all_names()
 
     for x in name:
@@ -40,26 +39,26 @@ def auth_search(author):
     display(article_id_list)
 
 def article_search(term):
-    found        = []
-    click.echo()                                        #for formatting
-    x            = 0                                    #used in loop iterations
-    term         = term.lower()
-    titles       = db.get_all_titles()
+    found            = []
+    article_id_list  = []
+    click.echo()                                                                           
+    term             = term.lower()
+    full_list        = db.get_all_titles()
+
     if len(term) == 1:
-        
-        for title in titles:   
-            if term in title.lower():
-                found.append(title)
+        for item in full_list:
+            if term in item[0].lower():
+                found.append(item[1])
     
     elif len(term) > 1:
-        for title in titles:
-            if term in title.lower():
-                found.append(title)
+        for item in full_list:
+            if term in item[0].lower():
+                found.append(item[1])
         if len(found) == 0:
-            for title in titles:
+            for item in full_list:
                 
                 terms         = term.split(" ")
-                title_lower   = title.lower()
+                title_lower   = item[0].lower()
                 run           = 1
                 
                 for term in terms:
@@ -70,12 +69,14 @@ def article_search(term):
                         temporary = 0
             
                     elif term in title_lower and run == 1:
-                        found.append(title)
+                        found.append(item[1])
                         run = run + 1
                     
                     if term not in title_lower:
                         run = run + 1
                         
-                        if title in found:
-                            found.remove(title)
-    display(found)
+                        if item[0] in found:
+                            found.remove(item[1])
+    for full_number in found:
+        article_id_list.append(db.get_article_id(full_number))
+    display(article_id_list)
