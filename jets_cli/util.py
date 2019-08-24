@@ -12,7 +12,6 @@ merge_path = path + "Merged/"
 author_path = path + "Authors/"
 
 def start():
-    print("TESTING")
     if not os.path.exists(path + "author.db"):
         db.create_database()
     if not os.path.exists(path):
@@ -151,5 +150,4 @@ def is_login():
             else:
                 return True
     else:
-        print("No file")
         return False
