@@ -84,7 +84,6 @@ def get_possible_names(name):
     name_split         = name.split(" ")
     x            = 0
     found_names  = []
-    articles     = []
     all_authors  = db.get_all_names()
 
     for x in name_split:
