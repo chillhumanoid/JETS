@@ -132,9 +132,12 @@ def get_numbers(term, canAppend=True):
         p("Please enter an integer for article")
         sys.exit()
     if canAppend == 1:
-        vol_num = check_digit(vol_num)
-        issue_num = check_digit(issue_num)
-        article_num = check_digit(article_num)
+        if not vol_num == "0":
+            vol_num = check_digit(vol_num)
+        if not issue_num == "0":
+            issue_num = check_digit(issue_num)
+        if not article_num == "0":
+            article_num = check_digit(article_num)
     return (vol_num, issue_num, article_num)
 
 def is_login():
