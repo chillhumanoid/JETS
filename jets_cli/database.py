@@ -82,10 +82,10 @@ def get_all_titles():
     titles (list): a list of all the titles in the table
     """
     titles = []
-    sql = "SELECT article_title FROM titles"
+    sql = "SELECT article_title, full_number FROM titles"
     c = sql_executor(sql)
     for x in c:
-        titles.append(x[0])
+        titles.append((x[0], x[1]))
     return titles
 
 
