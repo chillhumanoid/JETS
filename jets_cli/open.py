@@ -33,7 +33,7 @@ def open_file(full_number):
     x = 0
     article_id = db.get_article_id(full_number)
     for article in os.listdir(all_path):
-        if article_id + ".pdf" == article:
+        if str(article_id) + ".pdf" == article:
             os.startfile(all_path + article)
             x = x + 1
     if x == 0:
