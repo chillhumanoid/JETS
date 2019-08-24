@@ -35,17 +35,9 @@ def auth_search(author):
                     found_names.remove(author)
 
         for author in found_names:
+            article_id_list  = db.get_article_ids(author)
 
-            author_id        = db.get_author_id(author)
-            article_id_list  = db.get_article_ids(author_id)
-
-            for article_id in article_id_list:
-                for article in os.listdir(all_path):
-
-                    if article == str(article_id) + ".pdf":
-                        articles.append(article)
-
-    display(articles)
+    display(article_id_list)
 
 def article_search(term):
     found        = []
