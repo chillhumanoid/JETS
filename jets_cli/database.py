@@ -168,7 +168,7 @@ def rename_author(author_id, new_author_name):
         sql_executor(sql)
         sql = "DELETE FROM authors WHERE author_id = %s" % author_id
     else:
-        sql = "UPDATE authors SET name = %s WHERE id = %s" %(quotate(new_author_name), author_id) 
+        sql = "UPDATE authors SET author_name = %s WHERE author_id = %s" %(quotate(new_author_name), author_id) 
         sql_executor(sql)
 
 
