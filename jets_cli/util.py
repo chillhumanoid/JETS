@@ -85,7 +85,6 @@ def get_possible_names(name):
     x            = 0
     found_names  = []
     all_authors  = db.get_all_names()
-
     for x in name_split:
         for author in all_authors:
             names = author.lower()
