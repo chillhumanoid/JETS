@@ -65,7 +65,7 @@ def get_all_article_ids():
     Returns:
     article_id_list (list): list of the article ids
     """
-    sql = "SELECT article_id FROM titles"
+    sql = "SELECT article_id FROM titles ORDER BY full_number ASC"
     c = sql_executor(sql)
     article_id_list = []
     for x in c:
