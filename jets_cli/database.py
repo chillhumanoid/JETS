@@ -2,7 +2,7 @@ import sqlite3, os, click, util, sys, time
 path = os.path.realpath(__file__)
 path = path.replace("database.py","")
 path = path + "Articles/"
-all_path = path + "/All"
+all_path = path + "All/"
 
 def sql_executor(sql):
     """
