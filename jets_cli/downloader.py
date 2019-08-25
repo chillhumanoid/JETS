@@ -76,7 +76,7 @@ def get_issue_url(data, volume_url):
         for link in link_list:
 
             link = str(link)
-            
+
             if (" " + volume_number + "." in link or volume_number + "." in link or volume_number + "_" in link) and not "Go to " in link:
                 
                 i          = i + 1
@@ -230,8 +230,6 @@ def download(article_title, author_name, article_url, data, full_number, volume_
 
             with open(all_path + str(article_id) + ".pdf", 'wb') as file:
                 file.write(r.content)
-            
-            time.sleep(1)
         else:
             value = click.prompt("Change (A)uthor or (T)itle or (N)either?", default="n")
             value = value.lower()
