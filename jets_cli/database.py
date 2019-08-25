@@ -392,12 +392,20 @@ def remove_article_by_volume(volume_number):
                 sql_executor(sql)
         os.remove(all_path + str(article_id) + ".pdf")
 
+
 def remove_article(full_number):
     article_id = get_article_id(full_number)
+    author_name = get_author(full_number)[0]
+    author_id = get_author_id(author_name)
     sql = "DELETE FROM titles WHERE full_number = %s" %(quotate(full_number))
     sql_executor(sql)
     sql = "DELETE FROM linker WHERE article_id = %s" % article_id
     sql_executor(sql)
+    sql = "SELECT * FROM linker WHERE author_id = %s" % author_id
+    c = sql_executor(sql).fetchall()
+    if len(c) == 0:
+        sql = "DELETE FROM authors WHERE author_id = %s" % author_id
+        sql_executor(sql)
     os.remove(all_path + str(article_id) + ".pdf")
 
 
