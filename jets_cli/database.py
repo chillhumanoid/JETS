@@ -393,7 +393,7 @@ def remove_article_by_volume(volume_number):
         os.remove(all_path + str(article_id) + ".pdf")
 
 
-def remove_article(full_number):
+def remove_article(full_number): 
     article_id = get_article_id(full_number)
     author_name = get_author(full_number)[0]
     author_id = get_author_id(author_name)
