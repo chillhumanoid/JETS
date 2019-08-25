@@ -360,6 +360,37 @@ def get_article_id(full_number):
     return c[0][0]
 
 
+def remove_article_by_volume(volume_number):
+    """
+    Allows for removal of articles by volume
+
+    Location: dev use only? 
+
+    Parameters:
+    volume_number (int)
+    """
+    sql = "SELECT article_id FROM titles WHERE volume_number = %s" % volume_number
+    c = sql_executor(sql).fetchall()
+    article_id_list = []
+    for lis in c:
+        article_id_list.append(lis[0])
+    for article_id in article_id_list:
+        sql = "SELECT author_id FROM linker WHERE article_id = %s" % article_id
+        c = sql_executor(sql).fetchall()
+        author_id_list = []
+        for lis in c:
+            author_id_list.append(lis[0])
+        sql = "DELETE FROM titles WHERE article_id = %s" % article_id
+        sql_executor(sql)
+        sql = "DELETE FROM linker WHERE article_id = %s" % article_id
+        sql_executor(sql)
+        for author_id in author_id_list:
+            sql = "SELECT * FROM linker WHERE author_id = %s" % author_id
+            c = sql_executor(sql).fetchall()
+            if len(c) == 0:
+                sql = "DELETE FROM authors WHERE author_id = %s" % author_id
+                sql_executor(sql)
+        os.remove(all_path + str(article_id) + ".pdf")
 
 def remove_article(full_number):
     article_id = get_article_id(full_number)
