@@ -142,7 +142,8 @@ def get_article_url(data, issue_url):
                         link = link.replace("</em>", "")
                     if "<br/>" in link:
                         link = link.replace("<br/>", "")
-                    
+                    if "\n" in link:
+                        link = link.replace("\n", "")
                     title_start = link.find('>') + 1
                     title_end   = link.find('<', title_start)
                     link_start  = link.find('"') + 1
