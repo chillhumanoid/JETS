@@ -1,4 +1,4 @@
-import search as s, lister as l, open as o, merge as m, util, downloader as dl, rename as ren, login as log_in
+import search as s, lister as l, open as o, merge as m, util, downloader as dl, rename as ren, login as log_in, database as db
 import time #DEV IMPORTS
 from rename import rename as r; from display import display
 import click, configparser, os, sys
