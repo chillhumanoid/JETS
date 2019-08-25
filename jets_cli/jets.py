@@ -1,4 +1,5 @@
-import search as s, lister as l, open as o, merge, util, downloader as dl
+import search as s, lister as l, open as o, merge as m, util, downloader as dl, rename as ren, login as log_in, database as db
+import time #DEV IMPORTS
 from rename import rename as r; from display import display
 import click, configparser, os, sys
 
@@ -12,10 +13,21 @@ all_path = path + "All/"
 author_path = path + "Author/"
 merge_path = path + "Merged/"
 
+
 @click.group(context_settings=CONTEXT_SETTINGS)
 @click.pass_context
 def cli(ctx):
+    util.start()
     pass
+
+#LOGIN COMMAND
+
+@cli.command()
+@click.option('-u', 'user', required = True, nargs=1)
+@click.option('-p', 'pwd', required = True, nargs=1)
+def login(user, pwd):
+    log_in.set_login(user, pwd)
+
 
 #SEARCH COMMAND
 @cli.command()
@@ -34,27 +46,45 @@ def search(title, author, term):
     elif author == 1:
         s.auth_search(term)
 
+#CHANGE COMMAND
+@cli.command()
+@click.option('-a', 'article', default=False, help="Change for specific article", count=True)
+@click.option('-n', 'name', default=False, help="Change all articles with a given name", count=True)
+@click.argument("term", nargs=-1, required=True)
+def change(article, name, term):
+    if article == 1 and name == False:
+        if len(term) == 1:
+            term = term[0]
+            numbers = util.get_numbers(term)
+            full_number = numbers[0] + "." + numbers[1] + "." + numbers[2]
+            r(full_number, False, True)
+        else:
+            util.p("Only one argument for article")
+            sys.exit()
+    if name == 1 and article == False:
+        term = ' '.join(term)
+        ren.change(term)
 
 #RENAME COMMAND
 @cli.command()
 @click.option('-t', 'title',default=False, help="Rename title", count=True)
-@click.option('-a', 'author',default=False, help="Rename author", count=True)
 @click.option('-b', 'both',default=False, help="Rename both title and author", count=True)
 @click.argument("term", nargs=1, required=True)
 def rename(title, author, both, term):
     """Rename title/author/both of article
 
     Usage: jets rename -t|-a|-b 1-62.1-4.articlenum"""
-    nums = util.get_numbers(term)
-    full_num = nums[0] + "." + nums[1] + "." + nums[2]
-    id = 0
+    numbers = util.get_numbers(term)
+    full_number = numbers[0] + "." + numbers[1] + "." + numbers[2]
     change_title = False
     change_author = False
     if title == 1:
         change_title = True
-    if author == 1:
+    if both == 1:
+        change_title = True
         change_author = True
-    r(full_num, change_title, change_author)
+    r(full_number, change_title, change_author)
+
 
 #LIST COMMAND
 @cli.command()
@@ -66,9 +96,9 @@ def list(term):
     if term == None:
         l.start("0","0")
     else:
-        num = util.get_numbers(term) #CAN BE 0 APPENDED
-        vNum,iNum=[num[0], num[1]]
-        l.start(vNum, iNum)
+        numbers = util.get_numbers(term) #CAN BE 0 APPENDED
+        volume_number,issue_number=[numbers[0], numbers[1]]
+        l.start(volume_number, issue_number)
 
 #INFO COMMAND
 @cli.command()
@@ -77,13 +107,20 @@ def info(term):
     """Show title and author for a given article
 
     Usage: jets info 1-62.1-4.articlenum"""
-    num = util.get_numbers(term) #CAN BE 0 APPENDED
-    full_num=num[0] + "." + num[1] + "." + num[2]
+    numbers = util.get_numbers(term) #CAN BE 0 APPENDED
+    full_number=numbers[0] + "." + numbers[1] + "." + numbers[2]
     articles = []
     for article in os.listdir(all_path):
-        if article.startswith(full_num):
+        if article.startswith(full_number):
             articles.append(article)
     display(articles)
+
+#REMOVE COMMAND
+@cli.command("remove")
+@click.argument("volume", nargs=1, required = True)
+def remove(volume):
+    util.check_vol(volume)
+    db.remove_article_by_volume(volume)
 
 #OPEN COMMAND
 @cli.command("open")
@@ -97,9 +134,9 @@ def opener(term, author):
     if author == 1:
         o.open_author(term)
     elif author == False:
-        num = util.get_numbers(term) #can be 0 appended
-        full_num = num[0] + "." + num[1] + "." + num[2]
-        o.open_file(full_num)
+        numbers = util.get_numbers(term) #can be 0 appended
+        full_number = numbers[0] + "." + numbers[1] + "." + numbers[2]
+        o.open_file(full_number)
     else:
         util.p("Please enter an article number or author name")
 
@@ -114,10 +151,10 @@ def merge(term):
 
     Usage: jets merge 1-62.1-4"""
 
-    nums = util.get_numbers(term) #can be 0 appended
-    vol_num = nums[0]
-    issue_num = nums[1]
-    merge.start(vol_num, issue_num)
+    numbers = util.get_numbers(term) #can be 0 appended
+    volume_number = numbers[0]
+    issue_number = numbers[1]
+    m.merge(volume_number, issue_number)
 
 #DOWNLOAD COMMAND
 @cli.command()
@@ -136,7 +173,6 @@ def download(new, vol, issue, article, term, force):
        -a will download the given article in an issue (-v and -i required)
 
        Usage: jets -n|-v|-i|-a|1-62.1-4.articlenum"""
-    vol_num = article_num = issue_num = "0"
     if new >= 1:
         if force >= 1:
             util.p("-n can't be used with any other command")
@@ -144,8 +180,8 @@ def download(new, vol, issue, article, term, force):
     else:
         if vol == 0 and issue == 0 and article == 0:
             if not term == None:
-                num = util.get_numbers(term, False) #CANT be 0 appended
-                vNum,iNum,aNum=[num[0], num[1], num[2]]
+                numbers = util.get_numbers(term, False) #CANT be 0 appended
+                volume_number,issue_number,article_number=[numbers[0], numbers[1], numbers[2]]
         else:
             if not vol == 0 and issue == 0 and article == 0:
                 util.check_vol(vol)
@@ -158,7 +194,10 @@ def download(new, vol, issue, article, term, force):
             else:
                 util.check_vol(vol)
                 util.check_issue(issue)
-            vNum = str(vol)
-            iNum = str(issue)
-            aNum = str(article)
-    dl.start([vNum, iNum, aNum, force])
+            volume_number = str(vol)
+            issue_number = str(issue)
+            article_number = str(article)
+    dl.get_volume_url([volume_number, issue_number, article_number, force])
+if __name__ == '__main__':
+    util.start()
+    cli()

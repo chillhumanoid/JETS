@@ -1,26 +1,28 @@
-import os, click, sys
+import os, click, sys, database as db
 from PyPDF2 import PdfFileReader, PdfFileWriter
 from shutil import copyfile
+import sqlite3
 
 path = os.path.realpath(__file__)
 path = path.replace("util.py","")
+base_path = path
 path = path + "Articles/"
 all_path = path + "All/"
 merge_path = path + "Merged/"
 author_path = path + "Authors/"
 
 def start():
+    if not os.path.exists(path + "author.db"):
+        db.create_database()
     if not os.path.exists(path):
         os.mkdir(path)
     if not os.path.exists(all_path):
         os.mkdir(all_path)
-    if not os.path.exists(author_path):
-        os.mkdir(author_path)
     if not os.path.exists(merge_path):
         os.mkdir(merge_path)
 
 def string_strip(string):
-    if string.endswith(" ") or string.endswith(".") or string.endswith("?"):
+    if string.endswith(" ") or string.endswith("."):
         string = string[:-1]
         return string_strip(string)
     else:
@@ -40,7 +42,6 @@ def check_vol(vol):
         p("Please enter 1-62 for Volume")
         sys.exit()
 
-
 def check_issue(issue):
     if not issue.isdigit():
         p("Please eneter an integer for issue")
@@ -49,15 +50,6 @@ def check_issue(issue):
     if not issue >= 0 and issue <= 4:
         p("Please enter 1-4 for Issue")
         sys.exit()
-
-
-def get_info(pdf):
-    f = open(pdf, 'rb') #open the right article as "f"
-    pdf = PdfFileReader(f)
-    info = pdf.getDocumentInfo() #gets metadata
-    f.close()
-    info = [info.title, info.author]
-    return info
 
 def get_num(vNum, iNum, aNum):
     vNum = check_digit(vNum)
@@ -88,6 +80,41 @@ def check_digit(num):
         num = "0" + str(num)
     return num
 
+def get_possible_names(name):
+    name_split         = name.split(" ")
+    x            = 0
+    found_names  = []
+    all_authors  = db.get_all_names()
+    for x in name_split:
+        for author in all_authors:
+            names = author.lower()
+
+            if name.lower() == names:
+                return None
+            
+            if x.lower() in names and len(x) > 2:
+                if not author in found_names:
+                    found_names.append(author)
+    
+    if len(found_names) > 0:
+        
+        click.echo("Found Possibilities: "  + str(len(found_names)))
+        click.echo()
+        
+        for x, author in enumerate(found_names):
+            click.echo(str(x + 1) + " - " + author)
+        click.echo(str(x + 2) + " - New Author")
+        click.echo()
+        
+        value = click.prompt("Option", type = click.IntRange(1, len(found_names)+1))
+        
+        if int(value) == x+2:
+            return None
+        
+        else:
+            name = found_names[value -1]
+            return name
+
 def get_numbers(term, canAppend=True):
     cDot = term.count(".")
     vol_num = issue_num = article_num = "0"
@@ -103,18 +130,25 @@ def get_numbers(term, canAppend=True):
         p("Please enter an integer for article")
         sys.exit()
     if canAppend == 1:
-        vol_num = check_digit(vol_num)
-        issue_num = check_digit(issue_num)
-        article_num = check_digit(article_num)
+        if not vol_num == "0":
+            vol_num = check_digit(vol_num)
+        if not issue_num == "0":
+            issue_num = check_digit(issue_num)
+        if not article_num == "0":
+            article_num = check_digit(article_num)
     return (vol_num, issue_num, article_num)
 
-def get_nums(article):
-    num = article.split(" - ")[0]
-    a = num.split(".")
-    vNum,iNum, aNum = [a[0], a[1], a[2]]
-    payload = [num, vNum, iNum, aNum]
-    return payload
-
-def get_title(article):
-    title = article.split(" - ", 1)[1]
-    title = title.split(".pdf")[0]
+def is_login():
+    if os.path.exists(base_path + "login.txt"):
+        with open(base_path + "login.txt", "r") as f:
+            data = f.readlines()
+            if data[0] == "":
+                print("No Username")
+                return False
+            elif data[1] == "":
+                print("no pwd")
+                return False
+            else:
+                return True
+    else:
+        return False

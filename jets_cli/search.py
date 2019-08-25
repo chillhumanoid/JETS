@@ -1,64 +1,83 @@
 #import statements
 
-import os, sys, click
+import os, sys, click, database as db, time
 from PyPDF2 import PdfFileReader, PdfFileWriter
 from display import display
 #global variables
 
-rPath = os.path.realpath(__file__)
-rPath = rPath.replace("search.py","")
-
+path = os.path.realpath(__file__)
+path = path.replace("search.py","")
+path = path + "Articles/"
+all_path = path + "All/"
+author_path = path + "Authors/"
 #functions
-def auth_search(author):
-    name = author.split(" ")
-    x = 0
-    listoNames = []
-    articles = []
-    for x in name:
-        for author in os.listdir(rPath + "Articles/Authors/"):
-            names = author.lower().split(" ")
-            if x.lower() in names:
-                if not author in listoNames:
-                    listoNames.append(author)
-                else:
-                    if author in listoNames:
-                        listoNames.remove(author)
-        for author in os.listdir(rPath + "Articles/Authors/"):
-            if author in listoNames:
-                for article in os.listdir(rPath + "Articles/Authors/" + author):
-                    articles.append(article)
-    display(articles)
 
-def article_search(term):    #for searching articles
-    path = rPath + "Articles/All/"
-    found = []
-    click.echo() #for formatting
-    x = 0   #used in loop iterations
-    term = term.lower()
-    if len(term) == 1:  #if the length is 4 exactly
-        for article in os.listdir(path):  #goes through all folders in base
-            f = article.lower()
-            if term in f:
-                found.append(article)
+def auth_search(author):
+    name             = author.split(" ")
+    x                = 0
+    found_names      = []
+    all_authors      = db.get_all_names()
+    article_id_list  = []
+    for x in name:
+        for author in all_authors:
+
+            names      = author.lower()
+
+            if x.lower() in names:
+                if not author in found_names:
+
+                    found_names.append(author)
+                
+            else:
+                if author in found_names:
+
+                    found_names.remove(author)
+
+        for author in found_names:
+            for article_id in db.get_article_ids(author):
+                article_id_list.append(article_id)
+
+    display(article_id_list)
+
+def article_search(term):
+    found            = []
+    article_id_list  = []
+    click.echo()                                                                           
+    term             = term.lower()
+    full_list        = db.get_all_titles()
+
+    if len(term) == 1:
+        for item in full_list:
+            if term in item[0].lower():
+                found.append(item[1])
+    
     elif len(term) > 1:
-        for article in os.listdir(path):
-            f = article.lower()
-            if term in f:    #if term is found
-                found.append(article)
+        for item in full_list:
+            if term in item[0].lower():
+                found.append(item[1])
         if len(found) == 0:
-            for article in os.listdir(path):
-                terms = term.split(" ")
-                f = article.lower()
-                run = 1
-                for y in terms:
-                    y = y.lower()
-                    if y == "the" or y == "of" or y == "a" or y == "and" or y == "or" or y == "if" or y == "&" or y == "is" or y == "on": #ignores major key words, otherwise everything would be displayed
+            for item in full_list:
+                
+                terms         = term.split(" ")
+                title_lower   = item[0].lower()
+                run           = 1
+                
+                for term in terms:
+
+                    term = term.lower()
+                    
+                    if term == "the" or term == "of" or term == "a" or term == "and" or term == "or" or term == "if" or term == "&" or term == "is" or term == "on":
                         temporary = 0
-                    elif y in f and run == 1:
-                        found.append(article)
+            
+                    elif term in title_lower and run == 1:
+                        found.append(item[1])
                         run = run + 1
-                    if y not in f:
+                    
+                    if term not in title_lower:
                         run = run + 1
-                        if article in found:
-                            found.remove(article)
-    display(found)
+                        
+                        if item[0] in found:
+                            found.remove(item[1])
+    for full_number in found:
+        article_id_list.append(db.get_article_id(full_number))
+    display(article_id_list)
