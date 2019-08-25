@@ -408,7 +408,16 @@ def remove_article(full_number):
         sql_executor(sql)
     os.remove(all_path + str(article_id) + ".pdf")
 
-
+def remove_author(author_name):
+    name = util.get_possible_names(author_name)
+    time.sleep(2)
+    sql = "SELECT author_id FROM authors WHERE author_name = %s" % quotate(name)
+    c = sql_executor(sql).fetchall()
+    author_id = c[0][0]
+    sql = "DELETE FROM authors WHERE author_id = %s" % author_id
+    sql_executor(sql)
+    sql = "DELETE FROM linker WHERE author_id = %s" % author_id
+    sql_executor(sql)
 
 def update_title(article_id, new_title):
     """
