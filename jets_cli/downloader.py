@@ -1,4 +1,4 @@
-import requests, urllib.request, sqlite3, known_authors, time, os, sys, click, util, search
+import requests, urllib.request, sqlite3, known_authors, os, sys, click, util, search
 import rename as ren, fileparser as parsr, database as db, login as log
 from bs4 import BeautifulSoup;
 from requests import Session
