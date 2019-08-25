@@ -77,18 +77,31 @@ def get_issue_url(data, volume_url):
 
             link = str(link)
             
-            if (" " + volume_number + "." in link or volume_number + "." in link) and not "Go to " in link:
+            if (" " + volume_number + "." in link or volume_number + "." in link or volume_number + "_" in link) and not "Go to " in link:
                 
                 i          = i + 1
                 link_start = link.find('"') + 1
                 link_end   = link.find('"', link_start)
                 url_append = link[link_start:link_end]
                 issue_url  = base_url + url_append
+                y = 0
+                if (issue_number == '0') or ("." + issue_number in link) or (volume_number + "_" + issue_number in link):
 
-                if issue_number == '0' or "." + issue_number in link or "_" + issue_number in link:
+                    if issue_number == '0':
+                        y = i
+                        if volume_number + "_" in link:
+                            location_one = link.find("_")+1
+                            location_two = link.find('"', location_one)
+                        elif volume_number + "-" in link:
+                            location_one = link.find("-") + 1
+                            location_two = link.find('"', location_one)
+                        elif volume_number + "." in link:
+                            location_one = link.find(".") + 1
+                            location_two = link.find("<", location_one)
+                        i = link[location_one:location_two]
 
                     data[1]    = str(i)
-
+                    i = y
                     get_article_url(data, issue_url)
 
                     data[1]    = issue_number_original
