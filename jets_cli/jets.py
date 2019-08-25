@@ -115,6 +115,13 @@ def info(term):
             articles.append(article)
     display(articles)
 
+#REMOVE COMMAND
+@cli.command("remove")
+@click.argument("volume", nargs=1, required = True)
+def remove(volume):
+    util.check_vol(volume)
+    db.remove_article_by_volume(volume)
+
 #OPEN COMMAND
 @cli.command("open")
 @click.option("-a", 'author', default=False, help="Specify Author to Open", count=True)
