@@ -13,11 +13,11 @@ author_path = path + "Authors/"
 #functions
 
 def auth_search(author):
-    name         = author.split(" ")
-    x            = 0
-    found_names  = []
-    all_authors  = db.get_all_names()
-
+    name             = author.split(" ")
+    x                = 0
+    found_names      = []
+    all_authors      = db.get_all_names()
+    article_id_list  = []
     for x in name:
         for author in all_authors:
 
@@ -34,7 +34,8 @@ def auth_search(author):
                     found_names.remove(author)
 
         for author in found_names:
-            article_id_list  = db.get_article_ids(author)
+            for article_id in db.get_article_ids(author):
+                article_id_list.append(article_id)
 
     display(article_id_list)
 
