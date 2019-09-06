@@ -5,4 +5,5 @@ jets_cli/JETS.egg-info/
 /env
 /.vs
 jets_cli/tester.py
+.vscode/
 jets_cli/login.txt
