@@ -57,11 +57,16 @@ def menu(stdscr, vol_number):
                     cursor_y = rows
             elif k == curses.KEY_DOWN:
                 cursor_y += 1
-                if cursor_y == rows + 1:
+                if cursor_y == rows + 2:
                     cursor_y = 1
-
+            string = "All"
+            if cursor_y == 1:
+                stdscr.attron(curses.color_pair(3))
+            stdscr.addstr(1, x_start_pos, string)
+            if cursor_y == 1:
+                stdscr.attroff(curses.color_pair(3))
             for i in range(0, rows):
-                y_position = i + 1
+                y_position = i + 2
                 number = str(issue_number[i])
                 string = "Vol {} ({}) - Issue {}".format(vol_number, year, number)
                 if cursor_y == y_position:
