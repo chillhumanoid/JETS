@@ -2,7 +2,6 @@
 
 import os, sys, click, database as db, time
 from PyPDF2 import PdfFileReader, PdfFileWriter
-from display import display
 from database import get_title
 from database import get_article_id
 from database import search as s

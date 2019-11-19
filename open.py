@@ -1,5 +1,4 @@
 import os, sys, subprocess, click, database as db, util
-from display import display
 
 path = os.path.realpath(__file__)
 path = path.replace("open.py","")

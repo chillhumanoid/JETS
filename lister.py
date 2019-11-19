@@ -3,7 +3,6 @@ import sys, os, re, time
 import search, util
 from database import get_article_id
 from database import get_article
-from display import display
 from PyPDF2 import PdfFileReader, PdfFileWriter
 from shutil import copyfile
 

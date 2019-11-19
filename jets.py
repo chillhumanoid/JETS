@@ -1,6 +1,6 @@
 import search as s, lister as l, open as o, merge as m    #inside imports
 import rename as ren, login as log_in, database as db, util
-from rename import rename as r; from display import display; from download import download as dl
+from rename import rename as r; from download import download as dl
 import click, configparser, os, sys
 from menus import main as main_menu
 from download import get_url                                            #outside imports
