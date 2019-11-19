@@ -77,30 +77,3 @@ def display_articles(article_ids, title_len):
                 title = title[:max_length] + "..."
             display = "{0:^11}|  {1:<{3}} | {2:<26}".format(full_number, title, author, title_len)
             click.echo(display)
-
-def get_authors(author_list):
-    fullName = []
-    for name in author_list:
-        first_name = name[0:1] + "."
-        full_name = name.split(" ")
-        full_name[0] = first_name
-        if "Jr" in full_name or "III" in full_name:
-            last_location = len(full_name) - 2
-        else:
-            last_location = len(full_name) - 1
-            if not last_location == 1:
-                full_name = get_middle(last_location, full_name)
-            name = ' '.join(full_name)
-            fullName.append(name)
-    author = ', '.join(fullName)
-    return author
-
-def get_middle(location, full_name):
-    middle_location = location - 1
-    middle = full_name[middle_location]
-    if not len(middle) == 2:
-        middle = middle[0:1] + "."
-        full_name[middle_location] = middle
-        if not middle_location <= 1:
-            return get_middle(middle_location, full_name)
-    return full_name
