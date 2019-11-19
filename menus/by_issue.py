@@ -22,8 +22,8 @@ def menu(stdscr, vol_number, year):
     max_pages = 1
 
     while(True):
-        if k == 27 or k == ord('b'):
-            break
+        if k == 27 or k == curses.KEY_LEFT:
+            by_volume_year.start()
         else:
             stdscr.clear()
 
@@ -84,7 +84,5 @@ def menu(stdscr, vol_number, year):
 
         k = stdscr.getch()
 
-    if k == 27:
-        by_volume_year.start()
 def start(volume_number, year):
     curses.wrapper(menu, volume_number, year)
