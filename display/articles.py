@@ -119,6 +119,24 @@ def menu(stdscr, volume_number, year, issue_number):
                             article = article[:40]
                         display_string = "{} | "
                         stdscr.addstr(y_position, x_start_pos, display_string)
+            else:
+                l_row = "Page 1 of 1"
+                for i in range(0, rows - 1):
+                    y_position = i + 1
+                    article_id = article_ids[i]
+                    number = get_numbers.full(article_id)
+                    number = number.split(".")[1] + "." + number.split(".")[2]
+                    title = get_title.by_article_id(article_id)
+                    author = get_author.by_article_id(article_id)
+                    display_author = names.get_authors(author)
+                    if len(title) > 75:
+                        title = title[:72] + " . . ."
+                    else:
+                        magic_number = 78 - len(title)
+                        magic_string = " " * magic_number
+                        title = title + magic_string
+                    display_string = "{}| {} | {}".format(number, title, display_author)
+                    stdscr.addstr(y_position, x_start_pos, display_string)
 
         stdscr.attron(curses.color_pair(3))
         stdscr.addstr(height-1, 0, status_bar)
