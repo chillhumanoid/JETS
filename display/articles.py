@@ -46,6 +46,15 @@ def menu(stdscr, volume_number, year, issue_number):
             stdscr.addstr(0, start_x_title, title)
             stdscr.attroff(curses.A_BOLD)
             stdscr.attroff(curses.color_pair(1))
+            if issue_number != "All":
+                article_ids = get_article.by_issue(volume_number, issue_number)
+            else:
+                article_ids = get_article.by_volume(volume_number)
+
+            rows = len(article_ids)
+            max_rows = height - 4
+            last_row = rows - (max_rows * (max_pages - 1)) + 2
+
 
             if k == curses.KEY_UP:
                 cursor_y -= 1
@@ -63,13 +72,8 @@ def menu(stdscr, volume_number, year, issue_number):
                     if cursor_y == max_rows:
                         cursor_y = 1
             articles = []
-            if issue_number != "All":
-                article_ids = get_article.by_issue(volume_number, issue_number)
-            else:
-                article_ids = get_article.by_volume(volume_number)
 
-            rows = len(article_ids)
-            max_rows = height - 4
+
             if rows > max_rows:
                 num_pages = ceil(rows/max_rows)
                 max_pages = num_pages
@@ -147,6 +151,8 @@ def menu(stdscr, volume_number, year, issue_number):
                             stdscr.attroff(curses.color_pair(3))
             else:
                 l_row = "Page 1 of 1"
+                if k == curses.KEY_LEFT:
+                    by_issue.start(volume_number, year)
                 for i in range(0, rows - 1):
                     y_position = i + 1
                     article_id = article_ids[i]
@@ -162,7 +168,11 @@ def menu(stdscr, volume_number, year, issue_number):
                         magic_string = " " * magic_number
                         title = title + magic_string
                     display_string = "{}| {} | {}".format(number, title, display_author)
+                    if cursor_y == y_position:
+                        stdscr.attron(curses.color_pair(3))
                     stdscr.addstr(y_position, x_start_pos, display_string)
+                    if cursor_y == y_position:
+                        stdscr.attroff(curses.color_pair(3))
 
         stdscr.attron(curses.color_pair(3))
         stdscr.addstr(height-1, 0, status_bar)
