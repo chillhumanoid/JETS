@@ -27,7 +27,9 @@ def cli(ctx):
     """
     pass
 
-
+@cli.command()
+def curses():
+    main_menu.start()
 #LOGIN COMMAND
 @cli.command()
 @click.option('-u', 'user', required = True, metavar='<user>', nargs=1, help="Username for etsjets.org")
@@ -224,6 +226,6 @@ def download(new, vol, issue, article, term, force):
             issue_number = str(issue)
             article_number = str(article)
     get_url.volume([volume_number, issue_number, article_number, force])
-    
+
 if __name__ == '__main__':
     cli()
