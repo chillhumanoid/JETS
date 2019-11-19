@@ -32,7 +32,7 @@ def menu(stdscr, vol_number, year):
             height, width = stdscr.getmaxyx()
 
             start_x_title = int((width // 2) - (len(title) // 2) - len(title) % 2)
-            status_bar = "  Press 'b' to go to Volume selection menu"
+            status_bar = "  Press 'esc' to go to Volume selection menu"
 
             stdscr.attron(curses.color_pair(1))
             stdscr.attron(curses.A_BOLD)
@@ -85,8 +85,6 @@ def menu(stdscr, vol_number, year):
         k = stdscr.getch()
 
     if k == 27:
-        sys.exit()
-    if k == ord('b'):
         by_volume_year.start()
 def start(volume_number, year):
     curses.wrapper(menu, volume_number, year)

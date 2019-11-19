@@ -39,7 +39,7 @@ def menu(stdscr, volume_number, year, issue_number):
 
             start_x_title = int((width // 2) - (len(title) //2) - len(title) % 2)
 
-            status_bar = "Press 'b' to go issue selection"
+            status_bar = "Press 'esc' to go issue selection"
 
             stdscr.attron(curses.color_pair(1))
             stdscr.attron(curses.A_BOLD)
@@ -70,7 +70,7 @@ def menu(stdscr, volume_number, year, issue_number):
                 l_row = "Page {} of {}".format(current_page, num_pages)
 
                 if current_page == 1:
-                    status_bar = " Press 'n' to go to the next page | Press 'b' to go to issue_selection"
+                    status_bar = " Press 'n' to go to the next page | Press 'esc' to go to issue_selection"
                     for i in range(0, max_rows - 1):
                         y_position = i + 1
                         article_id = article_ids[i]
@@ -88,7 +88,7 @@ def menu(stdscr, volume_number, year, issue_number):
                         display_string = "{}| {} | {}".format(number, title, display_author)
                         stdscr.addstr(y_position, x_start_pos, display_string)
                 elif current_page == max_pages:
-                    status_bar = " Press 'p' to go to the previous page | Press 'b' to go to issue selection"
+                    status_bar = " Press 'p' to go to the previous page | Press 'esc' to go to issue selection"
                     for i in range(0, max_rows + 1):
                         y_position = i + 1
                         check = i + (max_rows * (current_page-1)) - 1
@@ -110,7 +110,7 @@ def menu(stdscr, volume_number, year, issue_number):
                             display_string = "{}| {} | {}".format(number, title, display_author)
                             stdscr.addstr(y_position, x_start_pos, display_string)
                 else:
-                    status_bar = " Press 'n' to go to the next page | Press 'p' to go to the previous page | Press 'b' to go to issue_selection"
+                    status_bar = " Press 'n' to go to the next page | Press 'p' to go to the previous page | Press 'esc' to go to issue_selection"
                     for i in range(0, max_rows -1):
                         y_position = i + 1
                         article = articles[i + (max_rows * (current_page - 1)) - 1]

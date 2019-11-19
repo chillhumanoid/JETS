@@ -70,15 +70,13 @@ def menu(stdscr):
                 if k == ord('n') and not current_page == max_pages:
                     cursor_y = 1
                     current_page += 1
-
                 elif k == ord('p') and not current_page == 1:
                     cursor_y = 1
                     current_page -= 1
-
                 l_row = "Page {} of {}".format(current_page, num_pages)
 
                 if(current_page == 1):
-                    status_bar = " Press 'n' to go to the next page | Press 'b' to go to the main menu"
+                    status_bar = " Press 'n' to go to the next page | Press 'esc' to go to the main menu"
                     for i in range(0, max_rows - 1):
                         y_position = i + 1
                         number = str(volume_numbers[i])
@@ -93,7 +91,7 @@ def menu(stdscr):
                             stdscr.attroff(curses.color_pair(3))
 
                 elif(current_page == max_pages):
-                    status_bar = " Press 'p' to go to the previous page | Press 'b' to go to the main menu"
+                    status_bar = " Press 'p' to go to the previous page | Press 'esc' to go to the main menu"
                     for i in range(0, max_rows + 1):
                         y_position = i + 1
                         if not (i + (max_rows * (current_page - 1)) - 1) > rows:
@@ -106,7 +104,7 @@ def menu(stdscr):
 
 
                 else:
-                    status_bar = " Press 'n' to go to the next page | Press 'p' to go the previous page | Press 'b' to go to the main menu"
+                    status_bar = " Press 'n' to go to the next page | Press 'p' to go the previous page | Press 'esc' to go to the main menu"
                     for i in range(0, max_rows - 1):
                         y_position = i + 1
                         number = str(volume_numbers[i + (max_rows * (current_page - 1)) - 1])
@@ -151,8 +149,6 @@ def menu(stdscr):
 
             k = stdscr.getch()
     if k == 27:
-        sys.exit()
-    elif k == ord('b') or k == 10:
         main.start()
 
 def start():
