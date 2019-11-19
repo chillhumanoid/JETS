@@ -1,8 +1,9 @@
 from menus import by_issue
 import sys, curses, os
-from utilities import get_year as get
-from database import get_numbers, get_article, get_title
+from utilities import get_year as get, names
+from database import get_numbers, get_article, get_title, get_author
 from math import *
+
 
 def menu(stdscr, volume_number, year, issue_number):
     x_start_pos = 2
@@ -46,20 +47,14 @@ def menu(stdscr, volume_number, year, issue_number):
             stdscr.attroff(curses.A_BOLD)
             stdscr.attroff(curses.color_pair(1))
 
-            stdscr.attron(curses.color_pair(3))
-            stdscr.addstr(height-1, 0, status_bar)
-            stdscr.addstr(height-1, len(status_bar), " " * (width - len(status_bar) - 1))
-            stdscr.attroff(curses.color_pair(3))
 
             articles = []
             if issue_number != "All":
                 article_ids = get_article.by_issue(volume_number, issue_number)
             else:
                 article_ids = get_article.by_volume(volume_number)
-            for id in article_ids:
-                title = get_title.by_article_id(id)
-                articles.append(title)
-            rows = len(articles)
+
+            rows = len(article_ids)
             max_rows = height - 4
             if rows > max_rows:
                 num_pages = ceil(rows/max_rows)
@@ -78,33 +73,65 @@ def menu(stdscr, volume_number, year, issue_number):
                     status_bar = " Press 'n' to go to the next page | Press 'b' to go to issue_selection"
                     for i in range(0, max_rows - 1):
                         y_position = i + 1
-                        article = str(articles[i])
-                        display_string = "{}) {}".format(y_position, article)
+                        article_id = article_ids[i]
+                        number = get_numbers.full(article_id)
+                        number = number.split(".")[1] + "." + number.split(".")[2]
+                        title = get_title.by_article_id(article_id)
+                        author = get_author.by_article_id(article_id)
+                        display_author = names.get_authors(author)
+                        if len(title) > 75:
+                            title = title[:72] + " . . ."
+                        else:
+                            magic_number = 78 - len(title)
+                            magic_string = " " * magic_number
+                            title = title + magic_string
+                        display_string = "{}| {} | {}".format(number, title, display_author)
                         stdscr.addstr(y_position, x_start_pos, display_string)
                 elif current_page == max_pages:
                     status_bar = " Press 'p' to go to the previous page | Press 'b' to go to issue selection"
                     for i in range(0, max_rows + 1):
                         y_position = i + 1
-                        if not(i + (max_rows * (current_page - 1)) - 1) > rows:
-                            article = articles[i + (max_rows * (current_page - 1)) - 2]
-                            display_string = "{}) {}".format(y_position, article)
+                        check = i + (max_rows * (current_page-1)) - 1
+                        print(check)
+                        print(rows)
+                        if not check > rows:
+                            article_id = article_ids[i + (max_rows * (current_page-1)) - 2]
+                            number = get_numbers.full(article_id)
+                            number = number.split(".")[1] + "." + number.split(".")[2]
+                            title = get_title.by_article_id(article_id)
+                            author = get_author.by_article_id(article_id)
+                            display_author = names.get_authors(author)
+                            if len(title) > 75:
+                                title = title[:72] + " . . ."
+                            else:
+                                magic_number = 78 - len(title)
+                                magic_string = " " * magic_number
+                                title = title + magic_string
+                            display_string = "{}| {} | {}".format(number, title, display_author)
                             stdscr.addstr(y_position, x_start_pos, display_string)
                 else:
                     status_bar = " Press 'n' to go to the next page | Press 'p' to go to the previous page | Press 'b' to go to issue_selection"
                     for i in range(0, max_rows -1):
                         y_position = i + 1
                         article = articles[i + (max_rows * (current_page - 1)) - 1]
-                        display_string = "{}) {}".format(y_position, article)
+                        article = "{}) {}".format(y_position, article)
+                        if len(article) > 40:
+                            article = article[:40]
+                        display_string = "{} | "
                         stdscr.addstr(y_position, x_start_pos, display_string)
 
+        stdscr.attron(curses.color_pair(3))
+        stdscr.addstr(height-1, 0, status_bar)
+        stdscr.addstr(height-1, len(status_bar), " " * (width - len(status_bar) - 1))
+        stdscr.attroff(curses.color_pair(3))
+        stdscr.addstr(height - 3, x_start_pos, l_row)
 
         stdscr.move(cursor_y, cursor_x)
         stdscr.refresh()
         k = stdscr.getch()
     if k == 27:
-        sys.exit()
-    if k == ord('b'):
         by_issue.start(volume_number, year)
+
 
 
 def start(volume_number, year, issue_number):
