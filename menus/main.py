@@ -16,16 +16,18 @@ def main_menu(stdscr):
     curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)
     curses.init_pair(3, curses.COLOR_BLACK, curses.COLOR_WHITE)
 
-    while(k != 27): #27 is the esc key
-        if k == curses.KEY_UP:
+    while(True):
+        if k == 27 or k == curses.KEY_LEFT:
+            break #27 is the esc key
+        elif k == curses.KEY_UP:
             cursor_y -= 1
             if cursor_y == 0:
                 cursor_y = 5 #hardcoded because i know how many menu items (+1)
-        if k == curses.KEY_DOWN:
+        elif k == curses.KEY_DOWN:
             cursor_y += 1
             if cursor_y == 6: #above value + 1
                 cursor_y = 1
-        if k == 10:
+        elif k == 10 or curses.KEY_RIGHT:
             char = int.from_bytes(stdscr.instr(cursor_y, 1, 1),  byteorder='little')
             if char == ord('1'):
                 by_volume_year.start()

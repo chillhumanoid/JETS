@@ -67,12 +67,14 @@ def menu(stdscr):
                 num_pages = ceil(rows / max_rows)
                 max_pages = num_pages
 
-                if k == ord('n') and not current_page == max_pages:
+                if (k == ord('n') or k == curses.KEY_RIGHT) and not current_page == max_pages:
                     cursor_y = 1
                     current_page += 1
-                elif k == ord('p') and not current_page == 1:
+                elif (k == ord('p') or k == curses.KEY_LEFT) and not current_page == 1:
                     cursor_y = 1
                     current_page -= 1
+                elif k == curses.KEY_LEFT and current_page == 1:
+                    main.start()
                 l_row = "Page {} of {}".format(current_page, num_pages)
 
                 if(current_page == 1):
