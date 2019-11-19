@@ -1,6 +1,6 @@
 import curses, sys, os
 from database import get_numbers
-from menus import main, by_index
+from menus import main, by_issue
 from math import *
 from utilities import get_year as get
 
@@ -82,9 +82,13 @@ def menu(stdscr):
                     for i in range(0, max_rows - 1):
                         y_position = i + 1
                         number = str(volume_numbers[i])
+                        if len(number) == 1:
+                            display_number = "0" + number
+                        else:
+                            display_number = number
                         if cursor_y == y_position:
                             stdscr.attron(curses.color_pair(3))
-                        stdscr.addstr(y_position, x_start_pos, "Vol " + number + " (" + get.year(number) + ")")
+                        stdscr.addstr(y_position, x_start_pos, "Vol " + display_number + " (" + get.year(number) + ")")
                         if cursor_y == y_position:
                             stdscr.attroff(curses.color_pair(3))
 
@@ -114,14 +118,23 @@ def menu(stdscr):
                 if k == 10:
                     i = cursor_y - 1
                     if(current_page == max_pages):
-                        number = volume_numbers[i + (max_rows * (current_page -1)) -2]
-                        by_index.start(number)
+                        number = str(volume_numbers[i + (max_rows * (current_page -1)) -2])
+                        year = get.year(number)
+                        if len(number) == 1:
+                            number = "0" + number
+                        by_issue.start(number, year)
                     elif(current_page == 1):
-                        number = volume_numbers[i]
-                        by_index.start(number)
+                        number = str(volume_numbers[i])
+                        year = get.year(number)
+                        if len(number) == 1:
+                            number = "0" + number
+                        by_issue.start(number, year)
                     else:
-                        number = volume_numbers[i + (max_rows * (current_page - 1)) -1]
-                        by_index.start(number)
+                        number = str(volume_numbers[i + (max_rows * (current_page - 1)) -1])
+                        year = get.year(number)
+                        if len(str(number)) == 1:
+                            number = "0" + str(number)
+                        by_issue.start(number, year)
 
 
 

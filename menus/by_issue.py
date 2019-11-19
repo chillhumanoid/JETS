@@ -2,8 +2,9 @@ import sys, curses, os
 from menus import by_volume_year
 from utilities import get_year as get
 from database import get_numbers
-vol_number = 0
-def menu(stdscr, vol_number):
+from display import articles
+
+def menu(stdscr, vol_number, year):
     cursor_y = 1
     cursor_x = 2
     k = 0
@@ -25,8 +26,6 @@ def menu(stdscr, vol_number):
             break
         else:
             stdscr.clear()
-
-            year = get.year(str(vol_number))
 
             title = "Volume {} ({})".format(vol_number, year)
 
@@ -74,6 +73,12 @@ def menu(stdscr, vol_number):
                 stdscr.addstr(y_position, x_start_pos, string)
                 if cursor_y == y_position:
                     stdscr.attroff(curses.color_pair(3))
+            if k == 10:
+                if cursor_y == 1:
+                    articles.start(vol_number, year, "All")
+                else:
+                    selected_issue = cursor_y - 1
+                    articles.start(vol_number, year, selected_issue)
         stdscr.move(cursor_y, cursor_x)
         stdscr.refresh()
 
@@ -83,5 +88,5 @@ def menu(stdscr, vol_number):
         sys.exit()
     if k == ord('b'):
         by_volume_year.start()
-def start(volume_number):
-    curses.wrapper(menu, volume_number)
+def start(volume_number, year):
+    curses.wrapper(menu, volume_number, year)
