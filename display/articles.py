@@ -25,7 +25,7 @@ def menu(stdscr, volume_number, year, issue_number):
     max_pages = 1
 
     while(True):
-        if k == 27 or k == ord('b'):
+        if k == 27 or k == curses.KEY_LEFT:
             break
         else:
             stdscr.clear()
@@ -47,7 +47,21 @@ def menu(stdscr, volume_number, year, issue_number):
             stdscr.attroff(curses.A_BOLD)
             stdscr.attroff(curses.color_pair(1))
 
-
+            if k == curses.KEY_UP:
+                cursor_y -= 1
+                if cursor_y == 0:
+                    if current_page == max_pages:
+                        cursor_y = last_row
+                    else:
+                        cursor_y = max_rows - 1
+            elif k == curses.KEY_DOWN:
+                cursor_y += 1
+                if current_page == max_pages:
+                    if cursor_y == last_row + 1:
+                        cursor_y = 1
+                else:
+                    if cursor_y == max_rows:
+                        cursor_y = 1
             articles = []
             if issue_number != "All":
                 article_ids = get_article.by_issue(volume_number, issue_number)
@@ -86,14 +100,16 @@ def menu(stdscr, volume_number, year, issue_number):
                             magic_string = " " * magic_number
                             title = title + magic_string
                         display_string = "{}| {} | {}".format(number, title, display_author)
+                        if cursor_y == y_position:
+                            stdscr.attron(curses.color_pair(3))
                         stdscr.addstr(y_position, x_start_pos, display_string)
+                        if cursor_y == y_position:
+                            stdscr.attroff(curses.color_pair(3))
                 elif current_page == max_pages:
                     status_bar = " Press 'p' to go to the previous page | Press 'esc' to go to issue selection"
                     for i in range(0, max_rows + 1):
                         y_position = i + 1
                         check = i + (max_rows * (current_page-1)) - 1
-                        print(check)
-                        print(rows)
                         if not check > rows:
                             article_id = article_ids[i + (max_rows * (current_page-1)) - 2]
                             number = get_numbers.full(article_id)
@@ -108,7 +124,11 @@ def menu(stdscr, volume_number, year, issue_number):
                                 magic_string = " " * magic_number
                                 title = title + magic_string
                             display_string = "{}| {} | {}".format(number, title, display_author)
+                            if cursor_y == y_position:
+                                stdscr.attron(curses.color_pair(3))
                             stdscr.addstr(y_position, x_start_pos, display_string)
+                            if cursor_y == y_position:
+                                stdscr.attroff(curses.color_pair(3))
                 else:
                     status_bar = " Press 'n' to go to the next page | Press 'p' to go to the previous page | Press 'esc' to go to issue_selection"
                     for i in range(0, max_rows -1):
@@ -118,7 +138,11 @@ def menu(stdscr, volume_number, year, issue_number):
                         if len(article) > 40:
                             article = article[:40]
                         display_string = "{} | "
+                        if cursor_y == y_position:
+                            stdscr.attron(curses.color_pair(3))
                         stdscr.addstr(y_position, x_start_pos, display_string)
+                        if cursor_y == y_position:
+                            stdscr.attroff(curses.color_pair(3))
             else:
                 l_row = "Page 1 of 1"
                 for i in range(0, rows - 1):
@@ -147,7 +171,7 @@ def menu(stdscr, volume_number, year, issue_number):
         stdscr.move(cursor_y, cursor_x)
         stdscr.refresh()
         k = stdscr.getch()
-    if k == 27:
+    if k == 27 or curses.KEY_LEFT:
         by_issue.start(volume_number, year)
 
 
