@@ -7,3 +7,4 @@ jets_cli/JETS.egg-info/
 jets_cli/tester.py
 .vscode/
 jets_cli/login.txt
+JETS.egg-info
