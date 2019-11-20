@@ -1,43 +1,57 @@
-import search as s, lister as l, open as o, merge as m, util, downloader as dl, rename as ren, login as log_in, database as db
-import time #DEV IMPORTS
-from rename import rename as r; from display import display
+import search as s, lister as l, merge as m    #inside imports
+import rename as ren, login as log_in, database as db, util
+from rename import rename as r; from download import download as dl
 import click, configparser, os, sys
+from menus import main as main_menu
+from download import get_url                                            #outside imports
+import time
 
-#import search as searcher
-CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
+CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])                      #sets help to -h or --help
 
-path = os.path.realpath(__file__)
-path = path.replace("jets.py","")
-path = path + "Articles/"
+path = os.path.realpath(__file__)                                                #get current path
+path = path.replace("jets.py","")                                                #replace script name with nothing
+path = path + "Articles/"                                                        #get the article path
 all_path = path + "All/"
 author_path = path + "Author/"
 merge_path = path + "Merged/"
 
 
-@click.group(context_settings=CONTEXT_SETTINGS)
+@click.group(context_settings=CONTEXT_SETTINGS)                                  #officialy sets help to use -h or --help
 @click.pass_context
 def cli(ctx):
-    util.start()
+    """
+    Start of CLI command handler, also runs the startup script
+
+    Parameters:
+    ctx (click ctx) : The ctx of the command
+    """
     pass
 
-#LOGIN COMMAND
-
 @cli.command()
-@click.option('-u', 'user', required = True, nargs=1)
-@click.option('-p', 'pwd', required = True, nargs=1)
+def curses():
+    main_menu.start(1)
+#LOGIN COMMAND
+@cli.command()
+@click.option('-u', 'user', required = True, metavar='<user>', nargs=1, help="Username for etsjets.org")
+@click.option('-p', 'pwd', required = True, metavar='<pwd>', nargs=1, help="Password for etsjets.org")
 def login(user, pwd):
+    """
+    Usage: jets login -u username -p password
+    """
     log_in.set_login(user, pwd)
 
 
 #SEARCH COMMAND
 @cli.command()
-@click.option('-t','title', default=False, help="Search by title", count=True)
-@click.option('-a','author', default=False, help="Search by author", count=True)
-@click.argument('term', nargs=-1)
+@click.option('-t','title', default=False, metavar="<title>", help="Search by title", count=True)
+@click.option('-a','author', default=False, metavar="<author>", help="Search by author", count=True)
+@click.argument('term',metavar="<search_term>", nargs=-1)
 def search(title, author, term):
-    """Search by title or author
+    """
+    Search by <author> or by <title>
 
-    Usage: jets search -t|-a TERM"""
+    Usage: jets search (-t|-a) <search_term>
+    """
     term = ' '.join(term)
     if author == 1 and title == 1 or author > 1 or title > 1:
         util.p("Only One Option Allowed")
@@ -46,24 +60,28 @@ def search(title, author, term):
     elif author == 1:
         s.auth_search(term)
 
+
 #CHANGE COMMAND
 @cli.command()
 @click.option('-a', 'article', default=False, help="Change for specific article", count=True)
 @click.option('-n', 'name', default=False, help="Change all articles with a given name", count=True)
-@click.argument("term", nargs=-1, required=True)
+@click.argument("term", metavar="<article_number>", nargs=-1, required=True)
 def change(article, name, term):
-    if article == 1 and name == False:
-        if len(term) == 1:
+    """
+    Changes the name of a given article or the name of the author overall, when in doubt, go overall
+    """
+    if article == 1 and name == False:                                           #selected if -a was used, and not -n
+        if len(term) == 1:                                                       #makes sure that article only has one argument
             term = term[0]
-            numbers = util.get_numbers(term)
-            full_number = numbers[0] + "." + numbers[1] + "." + numbers[2]
-            r(full_number, False, True)
+            numbers = util.get_numbers(term)                                     #gets a list in return
+            full_number = numbers[0] + "." + numbers[1] + "." + numbers[2]       #sets full_number to that list. this may be counter intuitive, but
+            r(full_number, False, True)                                          #r(ename) with full number, and that we're not changing title, but article
         else:
             util.p("Only one argument for article")
             sys.exit()
     if name == 1 and article == False:
-        term = ' '.join(term)
-        ren.change(term)
+        term = ' '.join(term)                                                     #join the full name
+        ren.change(term)                                                          #change the name
 
 #RENAME COMMAND
 @cli.command()
@@ -71,9 +89,8 @@ def change(article, name, term):
 @click.option('-b', 'both',default=False, help="Rename both title and author", count=True)
 @click.argument("term", nargs=1, required=True)
 def rename(title, author, both, term):
-    """Rename title/author/both of article
+    """Rename title of article"""
 
-    Usage: jets rename -t|-a|-b 1-62.1-4.articlenum"""
     numbers = util.get_numbers(term)
     full_number = numbers[0] + "." + numbers[1] + "." + numbers[2]
     change_title = False
@@ -135,8 +152,17 @@ def opener(term, author):
         o.open_author(term)
     elif author == False:
         numbers = util.get_numbers(term) #can be 0 appended
-        full_number = numbers[0] + "." + numbers[1] + "." + numbers[2]
-        o.open_file(full_number)
+        volume_number = numbers[0]
+        issue_number = numbers[1]
+        article_number = numbers[2]
+        if not volume_number == "0" and (issue_number == "0" and article_number == "0"):
+            o.open_merged_file(volume_number, 0)
+        if (not volume_number == "0" and not issue_number == "0") and article_number == "0":
+            o.open_merged_file(volume_number, issue_number)
+        if (not volume_number == "0" and not issue_number == "0" and not article_number == "0"):
+            full_number = volume_number + "." + issue_number + "." + article_number
+
+            o.open_file(full_number)
     else:
         util.p("Please enter an article number or author name")
 
@@ -150,11 +176,13 @@ def merge(term):
     Merging volumes does also merge issues.
 
     Usage: jets merge 1-62.1-4"""
-
-    numbers = util.get_numbers(term) #can be 0 appended
-    volume_number = numbers[0]
-    issue_number = numbers[1]
-    m.merge(volume_number, issue_number)
+    if term.lower() == "all":
+            m.merge_all()
+    else:
+        numbers = util.get_numbers(term) #can be 0 appended
+        volume_number = numbers[0]
+        issue_number = numbers[1]
+        m.merge(volume_number, issue_number)
 
 #DOWNLOAD COMMAND
 @cli.command()
@@ -197,7 +225,7 @@ def download(new, vol, issue, article, term, force):
             volume_number = str(vol)
             issue_number = str(issue)
             article_number = str(article)
-    dl.get_volume_url([volume_number, issue_number, article_number, force])
+    get_url.volume([volume_number, issue_number, article_number, force])
+
 if __name__ == '__main__':
-    util.start()
     cli()

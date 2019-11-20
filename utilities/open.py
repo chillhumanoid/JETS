@@ -1,10 +1,21 @@
 import os, sys, subprocess, click, database as db, util
-from display import display
 
-path = os.path.realpath(__file__)
-path = path.replace("open.py","")
+path = os.getcwd() + "/"
+path = path.replace("utilities/open.py","")
 all_path = path + "Articles/All/"
+merged_path = path + "Articles/Merged/"
 
+def open_merged_file(volume_number, issue_number):
+    if issue_number == 0:
+        check_statement = "Vol " + str(volume_number) + ".pdf"
+    else:
+        check_statement = "Issue " + str(issue_number) + ".pdf"
+    for directory in os.listdir(merged_path):
+        if directory == "Vol " + volume_number:
+            merge_path = merged_path + directory + "/"
+            for merged_file in os.listdir(merge_path):
+                if merged_file == check_statement:
+                    os.startfile(merge_path + merged_file)
 
 def open_author(author_name):
     """
@@ -31,7 +42,7 @@ def open_file(full_number):
     full_number (string)
     """
     x = 0
-    article_id = db.get_article_id(full_number)
+    article_id = db.get_article_id.by_full_number(full_number)
     for article in os.listdir(all_path):
         if str(article_id) + ".pdf" == article:
             os.startfile(all_path + article)

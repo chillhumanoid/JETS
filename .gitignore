@@ -1,8 +1,9 @@
 __pycache__/
 Articles/
 venv/
-jets_cli/JETS.egg-info/
 /env
 /.vs
 jets_cli/tester.py
-jets_cli/login.txt
+.vscode/
+JETS.egg-info
+login.txt
