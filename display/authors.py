@@ -4,7 +4,8 @@ from database import get_author
 from utilities import arith, sort_dict
 
 
-def menu(stdscr):
+def menu(stdscr, current_page, sort_int):
+    #SORT INT: 1 - by last a-z 2 - by last z-a 3 - by first a-z 4 - by first z-a
     x_start_pos = 1
     cursor_y = 1
     cursor_x = 2
@@ -20,9 +21,6 @@ def menu(stdscr):
     curses.init_pair(3, curses.COLOR_BLACK, curses.COLOR_WHITE)
 
     paged = False
-    current_page = 1
-    max_pages = 1
-    sort_int = 1 # 1 = by last a-z, 2 = by last z-a, 3 = by first a-z, 4= by first z-a"
     while (True):
         if k == 27:
             main.start()
@@ -157,5 +155,5 @@ def menu(stdscr):
 
 
 
-def start():
-    curses.wrapper(menu)
+def start(current_page, sort_int):
+    curses.wrapper(menu, current_page, sort_int)
