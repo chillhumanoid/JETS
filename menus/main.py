@@ -6,7 +6,7 @@ from utilities import arith, sort_dict, string_handler
 
 
 def main_menu(stdscr, cursor_y):
-    cursor_x = 2
+    cursor_x = 1
     k = 0
 
     curses.curs_set(0)
@@ -95,5 +95,5 @@ def main_menu(stdscr, cursor_y):
 
 
 
-def start(main_pos):            
+def start(main_pos):
     curses.wrapper(main_menu, main_pos)

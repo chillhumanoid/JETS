@@ -8,7 +8,7 @@ def menu(stdscr, current_page, sort_int, main_pos):
     #SORT INT: 1 - by last a-z 2 - by last z-a 3 - by first a-z 4 - by first z-a
     x_start_pos = 1
     cursor_y = 1
-    cursor_x = 2
+    cursor_x = 1
     k = 0
 
     alpha = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
@@ -56,7 +56,7 @@ def menu(stdscr, current_page, sort_int, main_pos):
 
             rows = len(author_names)
 
-            max_rows = height - 4
+            max_rows = height - 5
             num_pages = ceil(rows/max_rows)
             last_row = arith.get_last_row(rows, max_rows, num_pages)
 
@@ -72,11 +72,11 @@ def menu(stdscr, current_page, sort_int, main_pos):
             stdscr.attroff(curses.color_pair(3))
 
 
-            for i in range(0, max_rows - 1):
+            for i in range(0, max_rows):
                 y_position = i + 1
-                if not (current_page == num_pages and y_position >= last_row):
+                if not (current_page == num_pages and y_position >= last_row - 1):
                     if not (i + (max_rows * (current_page - 1)) - 1) > rows:
-                        index = arith.get_author_index(max_rows, num_pages, current_page, y_position)
+                        index = arith.get_index(max_rows, num_pages, current_page, y_position, last_row)
                         dict = author_list[index]
                         author = sort_dict.get_name(dict)
                         if cursor_y == y_position:
@@ -85,7 +85,7 @@ def menu(stdscr, current_page, sort_int, main_pos):
                         if cursor_y == y_position:
                             stdscr.attroff(curses.color_pair(3))
             if k == 10:
-                i = arith.get_index(max_rows, num_pages, current_page, cursor_y, False)
+                i = arith.get_index(max_rows, num_pages, current_page, cursor_y, last_row)
                 dict = author_list[i]
                 author = sort_dict.get_name(dict)
                 sys.exit()
@@ -142,8 +142,8 @@ def menu(stdscr, current_page, sort_int, main_pos):
             else:
                 letter = str(chr(k))
                 if letter in alpha:
-                    index = string_handler.get_index_of_letter(letter, author_list, sort_int) + 1
-                    if not index == 0:
+                    index = string_handler.get_index_of_letter(letter, author_list, sort_int)
+                    if not index == -1:
                         page_cursor = arith.get_page_and_cursor(index, max_rows, num_pages)
                         current_page = page_cursor[0]
                         cursor_y = page_cursor[1]
