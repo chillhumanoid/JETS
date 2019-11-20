@@ -10,7 +10,7 @@ def create(list):
         first = full_name[0]
         middle = " "
         postfix = ""
-        if "Jr" in full_name or "III" in full_name:
+        if "Jr" in full_name or "III" in full_name or "II" in full_name or "IV" in full_name or "Jr." in full_name:
             last_location = len(full_name) - 2
             postfix = full_name[len(full_name) - 1]
             postfix = " " + postfix
@@ -47,3 +47,17 @@ def get_middle(location, full_name, middle_full):
     else:
         middle_full.append(middle)
     return middle_full
+
+def get_name(dict):
+    first = dict["first"]
+    middle = dict["middle"]
+    post = dict["post"]
+    last = dict["last"]
+    author = first + middle + last + post
+    return author
+
+def get_all_names(list):
+    names = []
+    for dict in list:
+        names.append(get_name(dict))
+    return names
