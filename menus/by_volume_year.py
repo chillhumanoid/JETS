@@ -5,7 +5,7 @@ from math import *
 from utilities import get_year as get, arith, string_handler
 
 
-def menu(stdscr, current_page):
+def menu(stdscr, current_page, main_cursor_y):
     cursor_y = 1
     cursor_x = 2
     k = 0
@@ -72,7 +72,7 @@ def menu(stdscr, current_page):
                     cursor_y = 1
                     current_page -= 1
                 elif (k == curses.KEY_LEFT or k == ord('p')) and current_page == 1:
-                    main.start()
+                    main.start(main_cursor_y)
                 l_row = "Page {} of {}".format(current_page, num_pages)
 
                 if(current_page == 1):
@@ -123,7 +123,7 @@ def menu(stdscr, current_page):
                     year = get.year(number)
                     if(len(number) == 1):
                         number = "0" + number
-                    by_issue.start(number, year, current_page)
+                    by_issue.start(number, year, current_page, main_cursor_y)
 
 
 
@@ -140,7 +140,7 @@ def menu(stdscr, current_page):
 
             k = stdscr.getch()
     if k == 27:
-        main.start()
+        main.start(main_cursor_y)
 
-def start(current_page):
-    curses.wrapper(menu, current_page)
+def start(current_page, main_cursor_y):
+    curses.wrapper(menu, current_page, main_cursor_y)

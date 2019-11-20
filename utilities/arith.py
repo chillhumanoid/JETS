@@ -24,7 +24,7 @@ def get_max_title_len(width, a_len):
     return length
 
 def get_index(max_rows, num_pages, current_page, cursor_y, for_volume):
-    i = cursor_y - 1
+    i = cursor_y
     if current_page == 1:
         if for_volume:
             return i + 1
@@ -32,10 +32,34 @@ def get_index(max_rows, num_pages, current_page, cursor_y, for_volume):
             return i
     elif current_page == num_pages:
         if for_volume:
-            return (i + (max_rows * (current_page - 1)) - 1)
+            return (i + (max_rows * (current_page - 1)) - 3)
         else:
-            return (i + (max_rows * (current_page - 1)) - 2)
+            return (i + (max_rows * (current_page - 1)) - 3)
     else:
         if for_volume:
-            return i + (max_rows * (current_page - 1))
-        return (i + (max_rows * (current_page - 1)) - 1)
+            return i + (max_rows * (current_page - 1) - 2)
+        else:
+            return i + (max_rows * (current_page - 1) - 2)
+def get_author_index(max_rows, num_pages, current_page, cursor_y):
+    i = cursor_y
+    if current_page == 1:
+        return  i
+    elif current_page == num_pages:
+        return (i + (max_rows * (current_page - 1)) - 2)
+    else:
+        return (i + (max_rows * (current_page - 1)))
+
+def get_page_and_cursor(index_number, max_rows, num_pages):
+    page = ceil(index_number / max_rows)
+    if page == num_pages:
+        cursor_pos = index_number % max_rows + 2
+    elif page != 1:
+        cursor_pos = index_number % max_rows + 1
+    elif page == 1:
+        cursor_pos = index_number % max_rows
+    print(cursor_pos)
+    if cursor_pos == 26:
+        page += 1
+        cursor_pos = 1
+    data = [page, cursor_pos]
+    return data

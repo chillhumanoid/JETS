@@ -29,7 +29,7 @@ def cli(ctx):
 
 @cli.command()
 def curses():
-    main_menu.start()
+    main_menu.start(1)
 #LOGIN COMMAND
 @cli.command()
 @click.option('-u', 'user', required = True, metavar='<user>', nargs=1, help="Username for etsjets.org")

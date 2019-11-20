@@ -1,12 +1,12 @@
 import curses, sys
 from menus import by_volume_year
 from display import authors
+from database import get_author
+from utilities import arith, sort_dict, string_handler
 
 
-
-def main_menu(stdscr):
+def main_menu(stdscr, cursor_y):
     cursor_x = 2
-    cursor_y = 1
     k = 0
 
     curses.curs_set(0)
@@ -20,7 +20,7 @@ def main_menu(stdscr):
     curses.init_pair(3, curses.COLOR_BLACK, curses.COLOR_WHITE)
 
     while(True):
-        if k == 27 or k == curses.KEY_LEFT:
+        if k == 27:
             break #27 is the esc key
         elif k == curses.KEY_UP:
             cursor_y -= 1
@@ -33,12 +33,11 @@ def main_menu(stdscr):
         elif k == 10 or curses.KEY_RIGHT:
             char = int.from_bytes(stdscr.instr(cursor_y, 1, 1),  byteorder='little')
             if char == ord('1'):
-                by_volume_year.start(1)
+                by_volume_year.start(1, cursor_y)
             elif char == ord('2'):
-                authors.start()
+                authors.start(1, 1, cursor_y)
         stdscr.clear()
         height, width = stdscr.getmaxyx()
-        print(width)
 
         title = "Journal of the Evangelical Theological Society Application"
         status_bar = "Written by Jonathan Thorne | © 2019 | Press 'esc' to quit"
@@ -96,5 +95,5 @@ def main_menu(stdscr):
 
 
 
-def start():
-    curses.wrapper(main_menu)
+def start(main_pos):            
+    curses.wrapper(main_menu, main_pos)
