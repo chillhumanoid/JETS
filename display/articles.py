@@ -33,8 +33,10 @@ def menu(stdscr, volume_number, year, issue_number, volume_current_page):
 
             if issue_number != "All":
                 title = "Volume {} ({}) - Issue {}".format(volume_number, year, issue_number)
+                article_ids = get_article.by_issue(volume_number, issue_number)
             else:
                 title = "Volume {} ({}) - All Issues".format(volume_number, year)
+                article_ids = get_article.by_volume(volume_number)
 
             height, width = stdscr.getmaxyx()
 
@@ -47,10 +49,6 @@ def menu(stdscr, volume_number, year, issue_number, volume_current_page):
             stdscr.addstr(0, start_x_title, title)
             stdscr.attroff(curses.A_BOLD)
             stdscr.attroff(curses.color_pair(1))
-            if issue_number != "All":
-                article_ids = get_article.by_issue(volume_number, issue_number)
-            else:
-                article_ids = get_article.by_volume(volume_number)
 
             rows = len(article_ids)
             max_rows = height - 4
