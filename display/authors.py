@@ -30,18 +30,19 @@ def menu(stdscr):
             stdscr.clear()
             height, width = stdscr.getmaxyx()
 
-            title = "JETS Author Listing"
-            start_x_title = arith.title_start(title, width)
-
             if sort_int == 1:
+                title = "JETS Author Listing - Sorted by Last  (A-Z)"
                 status_bar = " esc : Main Menu | arrow keys : Navigation | '(a-z) : go to that alpha | 1: Sort by First | 2: Sort (Z-A) '"
             elif sort_int == 2:
+                title = "JETS Author Listing - Sorted by Last  (Z-A)"
                 status_bar = " esc : Main Menu | arrow keys : Navigation | '(a-z) : go to that alpha | 1: Sort by First | 2: Sort (A-Z) '"
             elif sort_int == 3:
+                title = "JETS Author Listing - Sorted by First (A-Z)"
                 status_bar = " esc : Main Menu | arrow keys : Navigation | '(a-z) : go to that alpha | 1: Sort by Last  | 2: Sort (Z-A) '"
             elif sort_int == 4:
+                title = "JETS Author Listing - Sorted by First (Z-A)"
                 status_bar = " esc : Main Menu | arrow keys : Navigation | '(a-z) : go to that alpha | 1: Sort by Last | 2: Sort (A-Z) '"
-
+            start_x_title = arith.title_start(title, width)
             stdscr.attron(curses.color_pair(1))
             stdscr.attron(curses.A_BOLD)
             stdscr.addstr(0, start_x_title, title)
@@ -58,36 +59,9 @@ def menu(stdscr):
             max_rows = height - 4
             num_pages = arith.get_page_num(rows, max_rows)
             last_row = arith.get_last_row(rows, max_rows, num_pages)
-            if k == ord('d'):
-                if current_page == 1:
-                    current_page = 35
-                elif current_page == 35:
-                    current_page = 1
-            elif k == ord('r'):
-                current_page = 1
-            if k == curses.KEY_UP:
-                cursor_y -= 1
-                if cursor_y == 0:
-                    if current_page == num_pages:
-                        cursor_y = last_row - 1
-                    else:
-                        cursor_y = max_rows - 1
-            elif k == curses.KEY_DOWN:
-                cursor_y += 1
-                if current_page == num_pages:
-                    if cursor_y == last_row:
-                        cursor_y = 1
-                else:
-                    if cursor_y == max_rows:
-                        cursor_y = 1
-            elif k == curses.KEY_LEFT and not current_page == 1:
-                cursor_y = 1
-                current_page -= 1
-            elif k == curses.KEY_LEFT and current_page == 1:
-                main.start()
-            elif (k == curses.KEY_RIGHT) and not current_page == num_pages:
-                cursor_y = 1
-                current_page += 1
+
+
+
 
             l_row = "Page {} of {}".format(current_page, num_pages)
 
@@ -123,7 +97,13 @@ def menu(stdscr):
                 author = first + middle + last + post
                 print(author)
                 sys.exit()
-            elif k == ord('1'):
+
+
+            stdscr.move(cursor_y, cursor_x)
+            stdscr.refresh()
+
+            k = stdscr.getch()
+            if k == ord('1'):
                 current_page = 1
                 if sort_int == 1:
                     sort_int = 3
@@ -131,8 +111,9 @@ def menu(stdscr):
                     sort_int = 4
                 elif sort_int == 3:
                     sort_int = 1
-                elif sort_it == 4:
+                elif sort_int == 4:
                     sort_int = 2
+
             elif k == ord('2'):
                 current_page = 1
                 if sort_int == 1:
@@ -140,14 +121,39 @@ def menu(stdscr):
                 elif sort_int == 2:
                     sort_int = 1
                 elif sort_int == 3:
-                    sort_int == 4
+                    sort_int = 4
                 elif sort_int == 4:
                     sort_int = 3
-
-            stdscr.move(cursor_y, cursor_x)
-            stdscr.refresh()
-
-            k = stdscr.getch()
+            if k == ord('d'):
+                if current_page == 1:
+                    current_page = 35
+                elif current_page == 35:
+                    current_page = 1
+            elif k == ord('r'):
+                current_page = 1
+            if k == curses.KEY_UP:
+                cursor_y -= 1
+                if cursor_y == 0:
+                    if current_page == num_pages:
+                        cursor_y = last_row - 1
+                    else:
+                        cursor_y = max_rows - 1
+            elif k == curses.KEY_DOWN:
+                cursor_y += 1
+                if current_page == num_pages:
+                    if cursor_y == last_row:
+                        cursor_y = 1
+                else:
+                    if cursor_y == max_rows:
+                        cursor_y = 1
+            elif k == curses.KEY_LEFT and not current_page == 1:
+                cursor_y = 1
+                current_page -= 1
+            elif k == curses.KEY_LEFT and current_page == 1:
+                main.start()
+            elif (k == curses.KEY_RIGHT) and not current_page == num_pages:
+                cursor_y = 1
+                current_page += 1
 
 
 
