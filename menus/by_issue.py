@@ -1,5 +1,5 @@
 import sys, curses, os
-from menus import by_volume_year
+from menus import by_volume_year, main
 from utilities import get_year as get
 from database import get_numbers
 from display import articles
@@ -24,6 +24,8 @@ def menu(stdscr, vol_number, year):
     while(True):
         if k == 27 or k == curses.KEY_LEFT:
             by_volume_year.start()
+        elif k == ord('m'):
+            main.start()
         else:
             stdscr.clear()
 
@@ -32,7 +34,7 @@ def menu(stdscr, vol_number, year):
             height, width = stdscr.getmaxyx()
 
             start_x_title = int((width // 2) - (len(title) // 2) - len(title) % 2)
-            status_bar = "  Press 'esc' to go to Volume selection menu"
+            status_bar = " 'esc' : Volume Selection | 'm' : Main Menu "
 
             stdscr.attron(curses.color_pair(1))
             stdscr.attron(curses.A_BOLD)
