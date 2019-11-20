@@ -6,7 +6,7 @@ from math import *
 from display import article
 
 
-def menu(stdscr, volume_number, year, issue_number):
+def menu(stdscr, volume_number, year, issue_number, volume_current_page):
     x_start_pos = 2
     cursor_y = 1
     cursor_x = 2
@@ -93,7 +93,7 @@ def menu(stdscr, volume_number, year, issue_number):
                     cursor_y = 1
                     current_page -= 1
                 elif k == curses.KEY_LEFT and current_page == 1:
-                    by_issue.start(volume_number, year)
+                    by_issue.start(volume_number, year, volume_current_page)
 
                 l_row = "Page {} of {}".format(current_page, num_pages)
 
@@ -184,7 +184,7 @@ def menu(stdscr, volume_number, year, issue_number):
                     full_number = get_numbers.full(article_id)
                     open.open_file(full_number)
                 elif k == ord('i'):
-                    article.start(article_id, volume_number, year, issue_number)
+                    article.start(article_id, volume_number, year, issue_number, volume_current_page)
                 elif k == ord('m'):
                     main.start()
             else:
@@ -212,8 +212,6 @@ def menu(stdscr, volume_number, year, issue_number):
                     if cursor_y == y_position:
                         stdscr.attroff(curses.color_pair(3))
                 i = cursor_y - 1
-                print(cursor_y)
-                print(i)
                 article_id = article_ids[i]
                 if k == ord('o') or k == 10:
                     full_number = get_numbers.full(article_id)
@@ -221,7 +219,7 @@ def menu(stdscr, volume_number, year, issue_number):
                 elif k == ord('m'):
                     main.start()
                 elif k == ord('i'):
-                    article.start(article_id, volume_number, year, issue_number)
+                    article.start(article_id, volume_number, year, issue_number, volume_current_page)
 
         stdscr.attron(curses.color_pair(3))
         stdscr.addstr(height-1, 0, status_bar)
@@ -233,9 +231,9 @@ def menu(stdscr, volume_number, year, issue_number):
         stdscr.refresh()
         k = stdscr.getch()
     if k == 27:
-        by_issue.start(volume_number, year)
+        by_issue.start(volume_number, year, volume_current_page)
 
 
 
-def start(volume_number, year, issue_number):
-    curses.wrapper(menu, volume_number, year, issue_number)
+def start(volume_number, year, issue_number, volume_current_page):
+    curses.wrapper(menu, volume_number, year, issue_number, volume_current_page)

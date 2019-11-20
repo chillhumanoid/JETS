@@ -2,7 +2,8 @@ import curses, sys, os
 from database import get_title, get_author, get_numbers
 from display import articles
 from utilities import open
-def menu(stdscr, article_id, volume_number, year, issue_number):
+from menus import main
+def menu(stdscr, article_id, volume_number, year, issue_number, volume_current_page):
     curses.curs_set(0)
 
     k = 0
@@ -18,12 +19,13 @@ def menu(stdscr, article_id, volume_number, year, issue_number):
     curses.init_pair(3, curses.COLOR_BLACK, curses.COLOR_WHITE)
 
     while True:
-        if k == 27:
-            articles.start(volume_number, year, issue_number)
+        if k == 27 or k == curses.KEY_LEFT or k == ord('b'):
+            articles.start(volume_number, year, issue_number, volume_current_page)
+        elif k == ord('m'):
+            main.start()
         else:
-
-
             stdscr.clear()
+            status_bar = "'o' : Open | 'b'/esc : Article Selection | 'i' : Issue Selection | 'v' | Volume Selection | 'm' : Main Menu"
             title = get_title.by_article_id(article_id)
             authors = get_author.by_article_id(article_id)
             full_number = get_numbers.full(article_id)
@@ -57,5 +59,5 @@ def menu(stdscr, article_id, volume_number, year, issue_number):
             stdscr.refresh()
             k = stdscr.getch()
 
-def start(article_id, volume_number, year, issue_number):
-    curses.wrapper(menu, article_id, volume_number, year, issue_number)
+def start(article_id, volume_number, year, issue_number, volume_current_page):
+    curses.wrapper(menu, article_id, volume_number, year, issue_number, volume_current_page)

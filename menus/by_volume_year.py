@@ -5,7 +5,7 @@ from math import *
 from utilities import get_year as get
 
 
-def menu(stdscr):
+def menu(stdscr, current_page):
     cursor_y = 1
     cursor_x = 2
     k = 0
@@ -20,10 +20,9 @@ def menu(stdscr):
     curses.init_pair(3, curses.COLOR_BLACK, curses.COLOR_WHITE)
 
     paged = False
-    current_page = 1
     max_pages = 1
     while(True):
-        if k == 27 or k == ord('b'):
+        if k == 27 or k == ord('m'):
             break
         else:
             stdscr.clear()
@@ -78,7 +77,7 @@ def menu(stdscr):
                 l_row = "Page {} of {}".format(current_page, num_pages)
 
                 if(current_page == 1):
-                    status_bar = " Press 'n' to go to the next page | Press 'esc' to go to the main menu"
+                    status_bar = " 'n' : Next Page | 'm'/esc : Main Menu "
                     for i in range(0, max_rows - 1):
                         y_position = i + 1
                         number = str(volume_numbers[i])
@@ -93,7 +92,7 @@ def menu(stdscr):
                             stdscr.attroff(curses.color_pair(3))
 
                 elif(current_page == max_pages):
-                    status_bar = " Press 'p' to go to the previous page | Press 'esc' to go to the main menu"
+                    status_bar = " 'p' : Previous Page | 'm'/esc : Main Menu "
                     for i in range(0, max_rows + 1):
                         y_position = i + 1
                         if not (i + (max_rows * (current_page - 1)) - 1) > rows:
@@ -106,7 +105,7 @@ def menu(stdscr):
 
 
                 else:
-                    status_bar = " Press 'n' to go to the next page | Press 'p' to go the previous page | Press 'esc' to go to the main menu"
+                    status_bar = " 'n' : Next Page | 'p' : Previous Page | 'm'/esc : Main Menu "
                     for i in range(0, max_rows - 1):
                         y_position = i + 1
                         number = str(volume_numbers[i + (max_rows * (current_page - 1)) - 1])
@@ -122,19 +121,19 @@ def menu(stdscr):
                         year = get.year(number)
                         if len(number) == 1:
                             number = "0" + number
-                        by_issue.start(number, year)
+                        by_issue.start(number, year, current_page)
                     elif(current_page == 1):
                         number = str(volume_numbers[i])
                         year = get.year(number)
                         if len(number) == 1:
                             number = "0" + number
-                        by_issue.start(number, year)
+                        by_issue.start(number, year, current_page)
                     else:
                         number = str(volume_numbers[i + (max_rows * (current_page - 1)) -1])
                         year = get.year(number)
                         if len(str(number)) == 1:
                             number = "0" + str(number)
-                        by_issue.start(number, year)
+                        by_issue.start(number, year, current_page)
 
 
 
@@ -153,5 +152,5 @@ def menu(stdscr):
     if k == 27:
         main.start()
 
-def start():
-    curses.wrapper(menu)
+def start(current_page):
+    curses.wrapper(menu, current_page)

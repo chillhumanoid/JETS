@@ -30,7 +30,7 @@ def main_menu(stdscr):
         elif k == 10 or curses.KEY_RIGHT:
             char = int.from_bytes(stdscr.instr(cursor_y, 1, 1),  byteorder='little')
             if char == ord('1'):
-                by_volume_year.start()
+                by_volume_year.start(1)
         stdscr.clear()
         height, width = stdscr.getmaxyx()
 

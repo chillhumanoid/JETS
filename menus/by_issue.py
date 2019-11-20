@@ -4,7 +4,7 @@ from utilities import get_year as get
 from database import get_numbers
 from display import articles
 
-def menu(stdscr, vol_number, year):
+def menu(stdscr, vol_number, year, volume_current_page):
     cursor_y = 1
     cursor_x = 2
     k = 0
@@ -23,7 +23,7 @@ def menu(stdscr, vol_number, year):
 
     while(True):
         if k == 27 or k == curses.KEY_LEFT:
-            by_volume_year.start()
+            by_volume_year.start(volume_current_page)
         elif k == ord('m'):
             main.start()
         else:
@@ -77,14 +77,14 @@ def menu(stdscr, vol_number, year):
                     stdscr.attroff(curses.color_pair(3))
             if k == 10:
                 if cursor_y == 1:
-                    articles.start(vol_number, year, "All")
+                    articles.start(vol_number, year, "All", volume_current_page)
                 else:
                     selected_issue = cursor_y - 1
-                    articles.start(vol_number, year, selected_issue)
+                    articles.start(vol_number, year, selected_issue, volume_current_page)
         stdscr.move(cursor_y, cursor_x)
         stdscr.refresh()
 
         k = stdscr.getch()
 
-def start(volume_number, year):
-    curses.wrapper(menu, volume_number, year)
+def start(volume_number, year, volume_current_page):
+    curses.wrapper(menu, volume_number, year, volume_current_page)
