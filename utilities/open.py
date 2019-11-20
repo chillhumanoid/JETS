@@ -1,7 +1,7 @@
 import os, sys, subprocess, click, database as db, util
 
-path = os.path.realpath(__file__)
-path = path.replace("open.py","")
+path = os.getcwd() + "/"
+path = path.replace("utilities/open.py","")
 all_path = path + "Articles/All/"
 merged_path = path + "Articles/Merged/"
 

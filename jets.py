@@ -1,4 +1,4 @@
-import search as s, lister as l, open as o, merge as m    #inside imports
+import search as s, lister as l, merge as m    #inside imports
 import rename as ren, login as log_in, database as db, util
 from rename import rename as r; from download import download as dl
 import click, configparser, os, sys
