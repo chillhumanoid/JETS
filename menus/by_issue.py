@@ -1,6 +1,6 @@
 import sys, curses, os
 from menus import by_volume_year, main
-from utilities import get_year as get
+from utilities import get_year as get, arith
 from database import get_numbers
 from display import articles
 
@@ -22,8 +22,10 @@ def menu(stdscr, vol_number, year, volume_current_page):
     max_pages = 1
 
     while(True):
-        if k == 27 or k == curses.KEY_LEFT:
+        if k == 27 or k == curses.KEY_LEFT or k == ord('p') or k == ord('v'):
             by_volume_year.start(volume_current_page)
+        elif k == ord('q'):
+            sys.exit()
         elif k == ord('m'):
             main.start()
         else:
@@ -33,8 +35,8 @@ def menu(stdscr, vol_number, year, volume_current_page):
 
             height, width = stdscr.getmaxyx()
 
-            start_x_title = int((width // 2) - (len(title) // 2) - len(title) % 2)
-            status_bar = " 'esc' : Volume Selection | 'm' : Main Menu "
+            start_x_title = arith.title_start(title, width)
+            status_bar = " p'/'v'/esc : Volume Selection | 'm' : Main Menu "
 
             stdscr.attron(curses.color_pair(1))
             stdscr.attron(curses.A_BOLD)
