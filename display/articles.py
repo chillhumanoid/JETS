@@ -1,9 +1,10 @@
-from menus import by_issue
+from menus import by_issue, main
 import sys, curses, os
 from utilities import get_year as get, names, open
 from database import get_numbers, get_article, get_title, get_author
 from math import *
 from display import article
+
 
 def menu(stdscr, volume_number, year, issue_number):
     x_start_pos = 2
@@ -39,7 +40,7 @@ def menu(stdscr, volume_number, year, issue_number):
 
             start_x_title = int((width // 2) - (len(title) //2) - len(title) % 2)
 
-            status_bar = "Press 'esc' to go issue selection"
+            status_bar = " 'o'/enter : Open | 'i' : Information | esc : Issue Selection | 'm' : Main Menu "
 
             stdscr.attron(curses.color_pair(1))
             stdscr.attron(curses.A_BOLD)
@@ -59,7 +60,7 @@ def menu(stdscr, volume_number, year, issue_number):
             else:
                 num_pages = 1
                 last_row = rows - 1
-            
+
 
 
             if k == curses.KEY_UP:
@@ -97,7 +98,7 @@ def menu(stdscr, volume_number, year, issue_number):
                 l_row = "Page {} of {}".format(current_page, num_pages)
 
                 if current_page == 1:
-                    status_bar = " Press 'n' to go to the next page | Press 'esc' to go to issue_selection"
+                    status_bar = " 'n' : Next Page | 'o'/Enter : Open | 'i' : Information | esc : Issue Selection | 'm' : Main Menu "
                     for i in range(0, max_rows - 1):
                         y_position = i + 1
                         article_id = article_ids[i]
@@ -121,7 +122,7 @@ def menu(stdscr, volume_number, year, issue_number):
                         if cursor_y == y_position:
                             stdscr.attroff(curses.color_pair(3))
                 elif current_page == max_pages:
-                    status_bar = " Press 'p' to go to the previous page | Press 'esc' to go to issue selection"
+                    status_bar = " 'p' : Previous Page | 'o''/Enter : Open | 'i' : Information | esc : Issue Selection | 'm' : Main Menu "
                     for i in range(0, max_rows + 1):
                         y_position = i + 1
                         check = i + (max_rows * (current_page-1)) - 1
@@ -147,7 +148,7 @@ def menu(stdscr, volume_number, year, issue_number):
                             if cursor_y == y_position:
                                 stdscr.attroff(curses.color_pair(3))
                 else:
-                    status_bar = " Press 'n' to go to the next page | Press 'p' to go to the previous page | Press 'esc' to go to issue_selection"
+                    status_bar = " 'n' : Next Page | 'p' : Previous Page | 'o'/Enter Open | 'i' : Information | esc : Issue Selection | 'm' : Main Menu "
                     for i in range(0, max_rows -1):
                         y_position = i + 1
                         check = i + (max_rows * (current_page-1)) - 1
@@ -184,6 +185,8 @@ def menu(stdscr, volume_number, year, issue_number):
                     open.open_file(full_number)
                 elif k == ord('i'):
                     article.start(article_id, volume_number, year, issue_number)
+                elif k == ord('m'):
+                    main.start()
             else:
                 l_row = "Page {} of {}".format(current_page, num_pages)
                 if k == curses.KEY_LEFT:
@@ -212,11 +215,13 @@ def menu(stdscr, volume_number, year, issue_number):
                 print(cursor_y)
                 print(i)
                 article_id = article_ids[i]
-                if k == 10:
-                    article.start(article_id, volume_number, year, issue_number)
-                elif k == ord('o'):
+                if k == ord('o') or k == 10:
                     full_number = get_numbers.full(article_id)
                     open.open_file(full_number)
+                elif k == ord('m'):
+                    main.start()
+                elif k == ord('i'):
+                    article.start(article_id, volume_number, year, issue_number)
 
         stdscr.attron(curses.color_pair(3))
         stdscr.addstr(height-1, 0, status_bar)
