@@ -1,5 +1,8 @@
 import curses, sys
 from menus import by_volume_year
+from display import authors
+
+
 
 def main_menu(stdscr):
     cursor_x = 2
@@ -31,8 +34,11 @@ def main_menu(stdscr):
             char = int.from_bytes(stdscr.instr(cursor_y, 1, 1),  byteorder='little')
             if char == ord('1'):
                 by_volume_year.start(1)
+            elif char == ord('2'):
+                authors.start()
         stdscr.clear()
         height, width = stdscr.getmaxyx()
+        print(width)
 
         title = "Journal of the Evangelical Theological Society Application"
         status_bar = "Written by Jonathan Thorne | © 2019 | Press 'esc' to quit"
