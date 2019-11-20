@@ -2,7 +2,7 @@ import curses, sys, os
 from database import get_title, get_author, get_numbers
 from display import articles
 from utilities import open
-from menus import main
+from menus import main, by_issue, by_volume_year
 def menu(stdscr, article_id, volume_number, year, issue_number, volume_current_page):
     curses.curs_set(0)
 
@@ -23,9 +23,15 @@ def menu(stdscr, article_id, volume_number, year, issue_number, volume_current_p
             articles.start(volume_number, year, issue_number, volume_current_page)
         elif k == ord('m'):
             main.start()
+        elif k == ord('i'):
+            by_issue.start(volume_number, year, issue_number, volume_current_page)
+        elif k == ord('v'):
+            by_volume_year.start(volume_current_page)
         else:
             stdscr.clear()
-            status_bar = "'o' : Open | 'b'/esc : Article Selection | 'i' : Issue Selection | 'v' | Volume Selection | 'm' : Main Menu"
+            height, width = stdscr.getmaxyx()
+
+            status_bar = "'o' : Open | 'b'/esc : Article Selection | 'i' : Issue Selection | 'v' : Volume Selection | 'm' : Main Menu"
             title = get_title.by_article_id(article_id)
             authors = get_author.by_article_id(article_id)
             full_number = get_numbers.full(article_id)
@@ -50,6 +56,11 @@ def menu(stdscr, article_id, volume_number, year, issue_number, volume_current_p
             stdscr.attron(curses.color_pair(1))
             stdscr.addstr(5, x_start_pos, third_line)
             stdscr.attroff(curses.color_pair(1))
+
+            stdscr.attron(curses.color_pair(3))
+            stdscr.addstr(height-1, 0, status_bar)
+            stdscr.addstr(height-1, len(status_bar), " " * (width - len(status_bar) - 1))
+            stdscr.attroff(curses.color_pair(3))
 
             y_start = 6
             for name in authors:

@@ -1,4 +1,4 @@
-from menus import by_issue, main
+from menus import by_issue, main, by_volume_year
 import sys, curses, os
 from utilities import get_year as get, names, open
 from database import get_numbers, get_article, get_title, get_author
@@ -40,7 +40,7 @@ def menu(stdscr, volume_number, year, issue_number, volume_current_page):
 
             start_x_title = int((width // 2) - (len(title) //2) - len(title) % 2)
 
-            status_bar = " 'o'/enter : Open | 'i' : Information | esc : Issue Selection | 'm' : Main Menu "
+            status_bar = " 'o' : Open | 'i' : Info | esc : Issue Selection | 'v' : Volume Selection | 'm' : Main Menu "
 
             stdscr.attron(curses.color_pair(1))
             stdscr.attron(curses.A_BOLD)
@@ -98,7 +98,7 @@ def menu(stdscr, volume_number, year, issue_number, volume_current_page):
                 l_row = "Page {} of {}".format(current_page, num_pages)
 
                 if current_page == 1:
-                    status_bar = " 'n' : Next Page | 'o'/Enter : Open | 'i' : Information | esc : Issue Selection | 'm' : Main Menu "
+                    status_bar = " 'n' : Next Page | 'o' : Open | 'i' : Info | esc : Issue Selection | 'v' : Volume Selection | 'm' : Main Menu "
                     for i in range(0, max_rows - 1):
                         y_position = i + 1
                         article_id = article_ids[i]
@@ -122,7 +122,7 @@ def menu(stdscr, volume_number, year, issue_number, volume_current_page):
                         if cursor_y == y_position:
                             stdscr.attroff(curses.color_pair(3))
                 elif current_page == max_pages:
-                    status_bar = " 'p' : Previous Page | 'o''/Enter : Open | 'i' : Information | esc : Issue Selection | 'm' : Main Menu "
+                    status_bar = " 'p' : Previous Page | 'o' : Open | 'i' : Info | esc : Issue Selection | 'v': Volume Selection | 'm' : Main Menu "
                     for i in range(0, max_rows + 1):
                         y_position = i + 1
                         check = i + (max_rows * (current_page-1)) - 1
@@ -148,7 +148,7 @@ def menu(stdscr, volume_number, year, issue_number, volume_current_page):
                             if cursor_y == y_position:
                                 stdscr.attroff(curses.color_pair(3))
                 else:
-                    status_bar = " 'n' : Next Page | 'p' : Previous Page | 'o'/Enter Open | 'i' : Information | esc : Issue Selection | 'm' : Main Menu "
+                    status_bar = " 'n' : Next Page | 'p' : Previous Page | 'o' :  Open | 'i' : Info | esc : Issue Selection | 'v' : Volume Selection | 'm' : Main Menu "
                     for i in range(0, max_rows -1):
                         y_position = i + 1
                         check = i + (max_rows * (current_page-1)) - 1
@@ -187,6 +187,8 @@ def menu(stdscr, volume_number, year, issue_number, volume_current_page):
                     article.start(article_id, volume_number, year, issue_number, volume_current_page)
                 elif k == ord('m'):
                     main.start()
+                elif k == ord('v'):
+                    by_volume_year.start(volume_current_page)
             else:
                 l_row = "Page {} of {}".format(current_page, num_pages)
                 if k == curses.KEY_LEFT:
@@ -218,6 +220,8 @@ def menu(stdscr, volume_number, year, issue_number, volume_current_page):
                     open.open_file(full_number)
                 elif k == ord('m'):
                     main.start()
+                elif k == ord('v'):
+                    by_volume_year.start(current_page)
                 elif k == ord('i'):
                     article.start(article_id, volume_number, year, issue_number, volume_current_page)
 
