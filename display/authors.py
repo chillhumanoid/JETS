@@ -1,15 +1,17 @@
 from menus import main
 import sys, curses, os
 from database import get_author
-from utilities import arith, sort_dict
+from utilities import arith, sort_dict, string_handler
+from math import *
 
-
-def menu(stdscr, current_page, sort_int):
+def menu(stdscr, current_page, sort_int, main_pos):
     #SORT INT: 1 - by last a-z 2 - by last z-a 3 - by first a-z 4 - by first z-a
     x_start_pos = 1
     cursor_y = 1
     cursor_x = 2
     k = 0
+
+    alpha = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
 
     curses.curs_set(0)
     stdscr.clear()
@@ -23,7 +25,7 @@ def menu(stdscr, current_page, sort_int):
     paged = False
     while (True):
         if k == 27:
-            main.start()
+            main.start(main_pos)
         else:
             stdscr.clear()
             height, width = stdscr.getmaxyx()
@@ -55,7 +57,7 @@ def menu(stdscr, current_page, sort_int):
             rows = len(author_names)
 
             max_rows = height - 4
-            num_pages = arith.get_page_num(rows, max_rows)
+            num_pages = ceil(rows/max_rows)
             last_row = arith.get_last_row(rows, max_rows, num_pages)
 
 
@@ -72,28 +74,20 @@ def menu(stdscr, current_page, sort_int):
 
             for i in range(0, max_rows - 1):
                 y_position = i + 1
-                index = arith.get_index(max_rows, num_pages, current_page, y_position, False)
                 if not (current_page == num_pages and y_position >= last_row):
-                    dict = author_list[index]
-                    first = dict["first"]
-                    middle = dict["middle"]
-                    post = dict["post"]
-                    last = dict["last"]
-                    author = first + middle + last + post
-                    if cursor_y == y_position:
-                        stdscr.attron(curses.color_pair(3))
-                    stdscr.addstr(y_position, x_start_pos, author)
-                    if cursor_y == y_position:
-                        stdscr.attroff(curses.color_pair(3))
+                    if not (i + (max_rows * (current_page - 1)) - 1) > rows:
+                        index = arith.get_author_index(max_rows, num_pages, current_page, y_position)
+                        dict = author_list[index]
+                        author = sort_dict.get_name(dict)
+                        if cursor_y == y_position:
+                            stdscr.attron(curses.color_pair(3))
+                        stdscr.addstr(y_position, x_start_pos, author)
+                        if cursor_y == y_position:
+                            stdscr.attroff(curses.color_pair(3))
             if k == 10:
                 i = arith.get_index(max_rows, num_pages, current_page, cursor_y, False)
                 dict = author_list[i]
-                first = dict["first"]
-                middle = dict["middle"]
-                post = dict["post"]
-                last = dict["last"]
-                author = first + middle + last + post
-                print(author)
+                author = sort_dict.get_name(dict)
                 sys.exit()
 
 
@@ -122,13 +116,6 @@ def menu(stdscr, current_page, sort_int):
                     sort_int = 4
                 elif sort_int == 4:
                     sort_int = 3
-            if k == ord('d'):
-                if current_page == 1:
-                    current_page = 35
-                elif current_page == 35:
-                    current_page = 1
-            elif k == ord('r'):
-                current_page = 1
             if k == curses.KEY_UP:
                 cursor_y -= 1
                 if cursor_y == 0:
@@ -148,12 +135,24 @@ def menu(stdscr, current_page, sort_int):
                 cursor_y = 1
                 current_page -= 1
             elif k == curses.KEY_LEFT and current_page == 1:
-                main.start()
+                main.start(main_pos)
             elif (k == curses.KEY_RIGHT) and not current_page == num_pages:
                 cursor_y = 1
                 current_page += 1
+            else:
+                letter = str(chr(k))
+                if letter in alpha:
+                    index = string_handler.get_index_of_letter(letter, author_list, sort_int) + 1
+                    if not index == 0:
+                        page_cursor = arith.get_page_and_cursor(index, max_rows, num_pages)
+                        current_page = page_cursor[0]
+                        cursor_y = page_cursor[1]
 
 
 
-def start(current_page, sort_int):
-    curses.wrapper(menu, current_page, sort_int)
+
+
+
+
+def start(current_page, sort_int, main_pos):
+    curses.wrapper(menu, current_page, sort_int, main_pos)
