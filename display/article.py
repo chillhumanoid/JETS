@@ -3,7 +3,7 @@ from database import get_title, get_author, get_numbers
 from display import articles
 from utilities import open
 from menus import main, by_issue, by_volume_year
-def menu(stdscr, article_id, volume_number, year, issue_number, volume_current_page):
+def menu(stdscr, article_id, volume_number, year, issue_number, volume_current_page, main_cursor_y):
     curses.curs_set(0)
 
     k = 0
@@ -20,13 +20,13 @@ def menu(stdscr, article_id, volume_number, year, issue_number, volume_current_p
 
     while True:
         if k == 27 or k == curses.KEY_LEFT or k == ord('b'):
-            articles.start(volume_number, year, issue_number, volume_current_page)
+            articles.start(volume_number, year, issue_number, volume_current_page, main_cursor_y)
         elif k == ord('m'):
-            main.start()
+            main.start(main_cursor_y)
         elif k == ord('i'):
-            by_issue.start(volume_number, year, issue_number, volume_current_page)
+            by_issue.start(volume_number, year, issue_number, volume_current_page, main_cursor_y)
         elif k == ord('v'):
-            by_volume_year.start(volume_current_page)
+            by_volume_year.start(volume_current_page, main_cursor_y)
         else:
             stdscr.clear()
             height, width = stdscr.getmaxyx()
@@ -70,5 +70,5 @@ def menu(stdscr, article_id, volume_number, year, issue_number, volume_current_p
             stdscr.refresh()
             k = stdscr.getch()
 
-def start(article_id, volume_number, year, issue_number, volume_current_page):
-    curses.wrapper(menu, article_id, volume_number, year, issue_number, volume_current_page)
+def start(article_id, volume_number, year, issue_number, volume_current_page, main_cursor_y):
+    curses.wrapper(menu, article_id, volume_number, year, issue_number, volume_current_page, main_cursor_y)

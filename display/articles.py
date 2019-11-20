@@ -6,7 +6,7 @@ from math import *
 from display import article
 
 
-def menu(stdscr, volume_number, year, issue_number, volume_current_page):
+def menu(stdscr, volume_number, year, issue_number, volume_current_page, main_cursor_y):
     x_start_pos = 1
     cursor_y = 1
     cursor_x = 2
@@ -87,7 +87,7 @@ def menu(stdscr, volume_number, year, issue_number, volume_current_page):
                     cursor_y = 1
                     current_page -= 1
                 elif k == curses.KEY_LEFT and current_page == 1:
-                    by_issue.start(volume_number, year, volume_current_page)
+                    by_issue.start(volume_number, year, volume_current_page, main_cursor_y)
 
                 l_row = "Page {} of {}".format(current_page, num_pages)
 
@@ -149,11 +149,11 @@ def menu(stdscr, volume_number, year, issue_number, volume_current_page):
                 full_number = get_numbers.full(article_id)
                 open.open_file(full_number)
             elif k == ord('i'):
-                article.start(article_id, volume_number, year, issue_number, volume_current_page)
+                article.start(article_id, volume_number, year, issue_number, volume_current_page, main_cursor_y)
             elif k == ord('m'):
-                main.start()
+                main.start(main_cursor_y)
             elif k == ord('v'):
-                by_volume_year.start(current_page)
+                by_volume_year.start(volume_current_page, main_cursor_y)
         stdscr.attron(curses.color_pair(3))
         stdscr.addstr(height-1, 0, status_bar)
         stdscr.addstr(height-1, len(status_bar), " " * (width - len(status_bar) - 1))
@@ -164,9 +164,9 @@ def menu(stdscr, volume_number, year, issue_number, volume_current_page):
         stdscr.refresh()
         k = stdscr.getch()
     if k == 27:
-        by_issue.start(volume_number, year, volume_current_page)
+        by_issue.start(volume_number, year, volume_current_page, main_cursor_y)
 
 
 
-def start(volume_number, year, issue_number, volume_current_page):
-    curses.wrapper(menu, volume_number, year, issue_number, volume_current_page)
+def start(volume_number, year, issue_number, volume_current_page, main_cursor_y):
+    curses.wrapper(menu, volume_number, year, issue_number, volume_current_page, main_cursor_y)
