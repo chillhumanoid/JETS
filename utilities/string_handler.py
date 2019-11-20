@@ -36,3 +36,21 @@ def display_number(number):
     else:
         display_number = number
     return display_number
+
+def get_index_of_letter(letter, list, sort):
+    letter = letter.upper()
+    check = 0
+    if sort == 1 or sort == 3:
+        for (item, d) in enumerate(list):
+            if d["last"][0] == letter:
+                return item
+            else:
+                check = 1
+    elif sort == 2 or sort == 4:
+        for (item, d) in enumerate(list):
+            if d["first"][0] == letter:
+                return item
+            else:
+                check = 1
+    if check == 1:
+        return -1
