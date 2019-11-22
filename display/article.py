@@ -1,9 +1,9 @@
-import curses, sys, os
+import curses
 from database import get_title, get_author, get_numbers
-from display import articles
+from display import displays
 from utilities import open
-from menus import main, by_issue, by_volume_year
-def menu(stdscr, article_id, volume_number, year, issue_number, volume_current_page, main_cursor_y):
+from menus import main
+def menu(stdscr, article_id, volume_number, volume_year, issue_number, volume_current_page, main_pos):
     curses.curs_set(0)
 
     k = 0
@@ -20,13 +20,13 @@ def menu(stdscr, article_id, volume_number, year, issue_number, volume_current_p
 
     while True:
         if k == 27 or k == curses.KEY_LEFT or k == ord('b'):
-            articles.start(volume_number, year, issue_number, volume_current_page, main_cursor_y)
+            displays.start("articles", main_pos, 0, volume_number, volume_year, volume_current_page, issue_number)
         elif k == ord('m'):
-            main.start(main_cursor_y)
+            main.start(main_pos)
         elif k == ord('i'):
-            by_issue.start(volume_number, year, issue_number, volume_current_page, main_cursor_y)
+            displays.start("issue", main_pos, 0, volume_number, volume_year, volume_current_page, issue_number)
         elif k == ord('v'):
-            by_volume_year.start(volume_current_page, main_cursor_y)
+            displays.start("volume", main_pos, 0, 0, 0, volume_current_page, 0)
         else:
             stdscr.clear()
             height, width = stdscr.getmaxyx()
