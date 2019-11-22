@@ -1,13 +1,14 @@
-from database import get_numbers, get_article, get_title, get_author
+from database import get_numbers, get_title, get_author
 from utilities import arith, names, get_year as get
 def display_string(article_id, width):
-    a_len = 32
+    a_len = 26
     number = get_numbers.full(article_id)
     number = number.split(".")[1] + "." + number.split(".")[2]
     title = get_title.by_article_id(article_id)
     author = get_author.by_article_id(article_id)
     author_ = names.get_authors(author)
     display_author = get_display_author(author_, a_len)
+    print(len(display_author))
     display_title = get_display_title(title, width, a_len)
     finString = "{} | {} | {}".format(number, display_title, display_author)
     return finString
@@ -16,7 +17,7 @@ def display_volume(display_number, number):
 
 def get_display_author(author, a_len):
     if(len(author) > a_len):
-        display_author = display_author[:a_len - 6]
+        display_author = author[:a_len - 6]
         display_author = display_author + " . . ."
         return display_author
     else:
@@ -26,7 +27,7 @@ def get_display_title(title, width, a_len):
     if len(title) > title_len:
         title = title[:title_len-3] + " . . ."
     else:
-        magic_number = title_len + 3 - len(title)
+        magic_number = title_len + (3 - len(title))
         magic_string = " " * magic_number
         title = title + magic_string
     return title
