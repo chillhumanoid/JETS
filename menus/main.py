@@ -1,8 +1,5 @@
 import curses, sys
-from menus import by_volume_year
-from display import authors
-from database import get_author
-from utilities import arith, sort_dict, string_handler
+from display import displays
 
 
 def main_menu(stdscr, cursor_y):
@@ -33,9 +30,9 @@ def main_menu(stdscr, cursor_y):
         elif k == 10 or curses.KEY_RIGHT:
             char = int.from_bytes(stdscr.instr(cursor_y, 1, 1),  byteorder='little')
             if char == ord('1'):
-                by_volume_year.start(1, cursor_y)
+                displays.start("volume", cursor_y, 0, 0, 0, 1, 0, "")
             elif char == ord('2'):
-                authors.start(1, 1, cursor_y)
+                displays.start("authors", cursor_y, 1, 0, 0, 0, 0, "")
         stdscr.clear()
         height, width = stdscr.getmaxyx()
 
