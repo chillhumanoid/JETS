@@ -7,3 +7,5 @@ jets_cli/tester.py
 .vscode/
 JETS.egg-info
 login.txt
+
+.spyproject/
