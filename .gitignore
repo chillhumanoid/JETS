@@ -9,3 +9,9 @@ JETS.egg-info
 login.txt
 
 .spyproject/
+
+names.txt
+
+display/author.py
+
+display/authors.py
