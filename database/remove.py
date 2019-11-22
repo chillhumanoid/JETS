@@ -25,7 +25,7 @@ def article_by_volume(volume_number):
 def remove_article(full_number):
     article_id = get_article_id.by_full_number(full_number)
     author_name = get_author.by_full_number(full_number)[0]
-    author_id = get_author_id(author_name)
+    author_id = get_author_id.by_name(author_name)
     sql = "DELETE FROM titles WHERE full_number = %s" % quotate(full_number)
     executor.execute(sql)
     delete_linker_article_id(article_id)
