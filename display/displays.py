@@ -105,17 +105,27 @@ def menu(stdscr, menu_type, main_pos, authors_current_page, volume_number, volum
             cursor_y -= 1
             if cursor_y == 0:
                 if current_page == num_pages:
-                    cursor_y = last_row - 2
+                    if not last_row == 0:
+                        if not last_row == max_rows - 1:
+                            cursor_y = last_row - 2
+                        else:
+                            cursor_y = max_rows
+                    else:
+                        cursor_y = 1
                 else:
                     cursor_y = max_rows
         
         elif k == curses.KEY_DOWN:
             cursor_y += 1
             if current_page == num_pages:
-                if cursor_y == last_row - 1:
-                    cursor_y = 1
+                if num_pages == 1:
+                    if cursor_y == rows + 1:
+                        cursor_y = 1
+                else:
+                    if cursor_y >= last_row - 1:
+                        cursor_y = 1
             else:
-                if cursor_y == max_rows + 1:
+                if cursor_y >= max_rows + 1:
                     cursor_y = 1
         
         elif k == curses.KEY_LEFT and not current_page == 1:
