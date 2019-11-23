@@ -6,7 +6,6 @@ path = path.replace("download\\util.py","")
 article_path = path + "Articles/"
 
 def is_login():
-    click.echo(article_path + "login.txt")
     if os.path.exists(article_path + "login.txt"):
         with open(article_path + "login.txt", "r") as f:
             data = f.readlines()
@@ -17,7 +16,6 @@ def is_login():
                 click.echo("no pwd")
                 return False
             else:
-                click.echo("login found")
                 return True
     else:
         click.echo("login not found")
