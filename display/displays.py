@@ -132,13 +132,20 @@ def menu(stdscr, menu_type, main_pos, authors_current_page, volume_number, volum
             cursor_y = 1
             current_page -= 1
         elif k == curses.KEY_LEFT and current_page == 1:
-            main.start(main_pos)
+            if menu_type == "authors" or menu_type == "volume":
+                main.start(main_pos)
+            elif menu_type == "issue":
+                menu(stdscr, "volume", main_pos, 0, 0, 0, volume_current_page, issue_number, "")
+            elif menu_type == "articles":
+                menu(stdscr, "issue", main_pos, 0, volume_number, volume_year, volume_current_page, issue_number, "")
+            elif menu_type == "author_articles":
+                menu(stdscr, "authors", main_pos, authors_current_page, 0, 0, 0, 0, author_name)
         elif k == curses.KEY_RIGHT and not current_page == num_pages:
             cursor_y = 1
             current_page += 1
 
 
-        if menu_type == "authors":
+        elif menu_type == "authors":
             if k == 27:
                 main.start(main_pos)
 
