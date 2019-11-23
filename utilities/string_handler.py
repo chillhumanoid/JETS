@@ -8,7 +8,6 @@ def display_string(article_id, width):
     author = get_author.by_article_id(article_id)
     author_ = names.get_authors(author)
     display_author = get_display_author(author_, a_len)
-    print(len(display_author))
     display_title = get_display_title(title, width, a_len)
     finString = "{} | {} | {}".format(number, display_title, display_author)
     return finString
