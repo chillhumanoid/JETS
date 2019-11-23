@@ -21,7 +21,7 @@ def create(list):
             middle_full = get_middle(last_location, full_name, [], first)
             middle = ' '.join(middle_full)
             middle = " " + middle + " "
-        name_dict = {"first":first, "middle":middle, "last":last, "post":postfix}
+        name_dict = {"first":first, "middle":middle, "last":last, "post":postfix, "original":name}
         dict_list.append(name_dict)
     return dict_list
 
