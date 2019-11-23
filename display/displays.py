@@ -66,7 +66,12 @@ def menu(stdscr, menu_type, main_pos, authors_current_page, volume_number, volum
         else:
             max_rows = height - 5
         num_pages = ceil(rows / max_rows)
-        last_row = arith.get_last_row(rows, max_rows, num_pages)
+        if num_pages == 1:
+            max_rows = rows
+        if not num_pages == 1:
+            last_row = arith.get_last_row(rows, max_rows, num_pages)
+        else:
+            last_row = rows + 3
         status_bar = menu_helpers.get_status_bar(menu_type, current_page, num_pages, sort_int)
 
         l_row = "Page {} of {}".format(current_page, num_pages)
@@ -106,10 +111,7 @@ def menu(stdscr, menu_type, main_pos, authors_current_page, volume_number, volum
             if cursor_y == 0:
                 if current_page == num_pages:
                     if not last_row == 0:
-                        if not last_row == max_rows - 1:
-                            cursor_y = last_row - 2
-                        else:
-                            cursor_y = max_rows
+                        cursor_y = last_row - 3
                     else:
                         cursor_y = 1
                 else:
