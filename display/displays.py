@@ -7,15 +7,35 @@ from display import article
 """
 testing capability to reuse menu logic
 """
-def menu(stdscr, menu_type, main_pos, authors_current_page, volume_number, volume_year, volume_current_page, issue_number, author_name):
+def menu(stdscr, menu_type, main_pos, volume_y_pos, issue_y_pos, articles_y_pos, authors_y_pos, author_articles_y_pos, authors_current_page, volume_number, volume_year, volume_current_page, issue_number, author_name):
     x_start_pos = 1
     cursor_y = 1
     cursor_x = 1
     k = 0
     if menu_type == "authors":
+        if not authors_y_pos == 0:
+            cursor_y = authors_y_pos
         current_page = authors_current_page
     elif menu_type == "volume":
+        if not volume_y_pos == 0:
+            cursor_y = volume_y_pos
         current_page = volume_current_page
+    elif menu_type == "issue":
+        if not issue_y_pos == 0:
+            cursor_y = issue_y_pos
+        current_page = 1
+    elif menu_type == "articles":
+        if not articles_y_pos == 0:
+            cursor_y = articles_y_pos
+        current_page = 1
+    elif menu_type == "authors":
+        if not authors_y_pos == 0:
+            cursor_y = authors_y_pos
+        current_page = 1
+    elif menu_type == "author_articles":
+        if not author_articles_y_pos == 0:
+            cursor_y = author_articles_y_pos
+        current_page = 1
     else:
         current_page = 1
     alpha = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
@@ -33,7 +53,6 @@ def menu(stdscr, menu_type, main_pos, authors_current_page, volume_number, volum
     while(True):
         stdscr.clear()
         height, width = stdscr.getmaxyx()
-
         title = menu_helpers.get_title(menu_type, sort_int, volume_number, volume_year, issue_number, author_name)
 
 
@@ -119,7 +138,6 @@ def menu(stdscr, menu_type, main_pos, authors_current_page, volume_number, volum
 
         elif k == curses.KEY_DOWN:
             cursor_y += 1
-            print("LAST ROW {}".format(last_row))
             if current_page == num_pages:
                 if num_pages == 1:
                     if cursor_y == rows + 1:
@@ -138,17 +156,18 @@ def menu(stdscr, menu_type, main_pos, authors_current_page, volume_number, volum
             if menu_type == "authors" or menu_type == "volume":
                 main.start(main_pos)
             elif menu_type == "issue":
-                menu(stdscr, "volume", main_pos, 0, 0, 0, volume_current_page, issue_number, "")
+                menu(stdscr, "volume", main_pos, volume_y_pos, issue_y_pos, articles_y_pos, authors_y_pos, author_articles_y_pos, authors_current_page, 0, 0, volume_current_page, issue_number, "")
             elif menu_type == "articles":
-                menu(stdscr, "issue", main_pos, 0, volume_number, volume_year, volume_current_page, issue_number, "")
+                menu(stdscr, "issue", main_pos, volume_y_pos, issue_y_pos, 0, 0, 0, 0, volume_number, volume_year, volume_current_page, issue_number, "")
             elif menu_type == "author_articles":
-                menu(stdscr, "authors", main_pos, authors_current_page, 0, 0, 0, 0, author_name)
+                menu(stdscr, "authors", main_pos, 0, 0, 0, authors_y_pos, 0, authors_current_page, 0, 0, 0, 0, author_name)
         elif k == curses.KEY_RIGHT and not current_page == num_pages:
             cursor_y = 1
             current_page += 1
 
 
         elif menu_type == "authors":
+            authors_y_pos = cursor_y
             if k == 27:
                 main.start(main_pos)
 
@@ -177,8 +196,8 @@ def menu(stdscr, menu_type, main_pos, authors_current_page, volume_number, volum
             elif k == 10:
                 i = arith.get_index(max_rows, num_pages, current_page, cursor_y, last_row)
                 pre_display = display_list[i]
-                author = pre_display["original"]
-                menu(stdscr, "author_articles", main_pos, current_page, 0, 0, 0, 0, author)
+                author_name = pre_display["original"]
+                menu(stdscr, "author_articles", main_pos, 0, 0, 0, authors_y_pos, 0, current_page, 0, 0, 0, 0, author_name)
 
             else:
                 letter = str(chr(k))
@@ -191,6 +210,7 @@ def menu(stdscr, menu_type, main_pos, authors_current_page, volume_number, volum
 
 
         elif menu_type == "volume":
+            volume_y_pos = cursor_y
             if k == 27:
                 main.start(main_pos)
 
@@ -207,46 +227,46 @@ def menu(stdscr, menu_type, main_pos, authors_current_page, volume_number, volum
 
             elif k == 10:
                 i = arith.get_index(max_rows, num_pages, current_page, cursor_y, last_row)
-                pre_display = str(display_list[i])
-                year = get.year(pre_display)
-                if(len(pre_display) == 1):
-                    pre_display = "0" + pre_display
-                menu(stdscr, "issue", main_pos, 0, pre_display, year, current_page, issue_number, "")
+                volume_num = str(display_list[i])
+                vol_year = get.year(volume_num)
+                if(len(volume_num) == 1):
+                    volume_num = "0" + volume_num
+                menu(stdscr, "issue", main_pos, volume_y_pos, 0, 0, 0, 0, 0, volume_num, vol_year, current_page, 0, "")
 
         elif menu_type == "issue":
+            issue_y_pos = cursor_y
             if k == 10:
                 selected_issue = cursor_y - 1
                 if selected_issue == 0:
                     selected_issue = "All"
-                menu(stdscr, "articles", main_pos, 0, volume_number, volume_year, volume_current_page, selected_issue, "")
-
+                menu(stdscr, "articles", main_pos, volume_y_pos, issue_y_pos, 0, 0, 0, 0, volume_number, volume_year, volume_current_page, selected_issue, "")
             elif k == 27:
-                menu(stdscr, "volume", main_pos, 0, 0, 0, volume_current_page, issue_number, "")
+                menu(stdscr, "volume", main_pos, volume_y_pos, 0, 0, 0, 0, 0, 0, 0, volume_current_page, issue_number, "")
 
         elif menu_type == "articles":
+            articles_y_pos = cursor_y
             i = arith.get_index(max_rows, num_pages, current_page, cursor_y, last_row)
             article_id = display_list[i]
             if k == 27:
-                menu(stdscr, "issue", main_pos, 0, volume_number, volume_year, volume_current_page, issue_number, "")
+                menu(stdscr, "issue", main_pos, volume_y_pos, issue_y_pos, 0, 0, 0, 0, volume_number, volume_year, volume_current_page, issue_number, "")
             elif k == 10 or k == ord('o'):
                 full_number = get_numbers.full(article_id)
                 open.open_file(full_number)
             elif k == ord('i'):
-                article.start(article_id, volume_number, volume_year, issue_number, volume_current_page, main_pos)
+                article.start(menu_type, main_pos, volume_y_pos, issues_y_pos, articles_y_pos, 0, 0, volume_number, volume_year, volume_current_page, issue_number, "", 0, article_id)
             elif k == ord('v'):
-                menu(stdscr, "volume", main_pos, 0, 0, 0, volume_current_page, issue_number, "")
+                menu(stdscr, "volume", main_pos, volume_y_pos, 0, 0, 0, 0, 0, 0, 0, volume_current_page, issue_number, "")
         elif menu_type == "author_articles":
+            author_articles_y_pos = cursor_y
             i = arith.get_index(max_rows, num_pages, current_page, cursor_y, last_row)
             article_id = display_list[i]
-            if k==27:
-                menu(stdscr, "authors", main_pos, authors_current_page, 0, 0, 0, 0, author_name)
+            if k==27 or k == ord('a'):
+                menu(stdscr, "authors", main_pos, 0, 0, 0, authors_y_pos, 0, authors_current_page, 0, 0, 0, 0, author_name)
             elif k == 10 or k == ord('o'):
                 full_number = get_numbers.full(article_id)
                 open.open_file(full_number)
             elif k == ord('i'):
-                article.start(article_id, volume_number, volume_year, issue_number, volume_current_page, main_pos)
-            elif k == ord('a'):
-                menu(stdscr, "authors", main_pos, authors_current_page, 0, 0, 0, 0, author_name)
+                article.start(menu_type, main_pos, 0, 0, 0, authors_y_pos, author_articles_y_pos, 0, 0, 0, 0, author_name, authors_current_page, article_id)
         if menu_type == "volume" or menu_type == "issue"  or menu_type == "articles":
             if k == ord('m'):
                 main.start(main_pos)
@@ -261,5 +281,5 @@ current_page = 1 if coming from main
 
 stdscr, menu_type, main_pos, authors_current_page, volume_number, vol_year, volume_current_page
 """
-def start(menu_type, main_pos, authors_current_page, volume_number, volume_year, volume_current_page, issue_number, author_name):
-    curses.wrapper(menu, menu_type, main_pos, authors_current_page, volume_number, volume_year, volume_current_page, issue_number, author_name)
+def start(menu_type, main_pos, volume_y_pos, issue_y_pos, articles_y_pos, authors_y_pos, author_articles_y_pos, authors_current_page, volume_number, volume_year, volume_current_page, issue_number, author_name):
+    curses.wrapper(menu, menu_type, main_pos, volume_y_pos, issue_y_pos, articles_y_pos, authors_y_pos, author_articles_y_pos, authors_current_page, volume_number, volume_year, volume_current_page, issue_number, author_name)
