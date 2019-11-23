@@ -35,7 +35,7 @@ def get_display_row(menu_type, display, volume_number, year, width):
         number = str(display)
         return "Vol {} ({}) - Issue {}".format(volume_number, year, number)
     elif menu_type == "articles" or menu_type == "author_articles":
-        return string_handler.display_string(display, width)
+        return string_handler.display_string(display, width, menu_type)
 
 def get_status_bar(menu_type, current_page, num_pages, sort_int):
     menuStr1 = "'m' : Main Menu"

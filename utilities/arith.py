@@ -17,9 +17,12 @@ def get_last_row(rows, max_rows, num_pages):
     else:
         return rows - 1
 
-def get_max_title_len(width, a_len):
+def get_max_title_len(width, a_len, menu_type):
     length = width - 7 #5 spots are spaces, 2 are dividiers (|)
-    length -= 12 # the volume number and issue number will always be 5 total
+    if menu_type == "author_articles":
+        length -= 15
+    else:
+        length -= 12 # the issue number and article number will always be 5 total
     length -= a_len #length for author string
     return length
 
