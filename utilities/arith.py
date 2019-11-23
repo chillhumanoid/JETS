@@ -21,7 +21,6 @@ def get_max_title_len(width, a_len):
     length = width - 7 #5 spots are spaces, 2 are dividiers (|)
     length -= 12 # the volume number and issue number will always be 5 total
     length -= a_len #length for author string
-    print(length)
     return length
 
 def get_index(max_rows, num_pages, current_page, cursor_y, last_row):
