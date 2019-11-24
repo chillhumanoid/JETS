@@ -1,6 +1,7 @@
 import curses, sys
-from display import displays
-
+from display import displays, login_screen as login
+from download import get_url
+from utilities import login as log
 
 def main_menu(stdscr, cursor_y):
     cursor_x = 1
@@ -10,7 +11,7 @@ def main_menu(stdscr, cursor_y):
 
     stdscr.clear()
     stdscr.refresh()
-
+    isLogged = log.check_login()
     curses.start_color()
     curses.init_pair(1, curses.COLOR_CYAN, curses.COLOR_BLACK)
     curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)
@@ -21,11 +22,15 @@ def main_menu(stdscr, cursor_y):
             break #27 is the esc key
         elif k == curses.KEY_UP:
             cursor_y -= 1
-            if cursor_y == 0:
+            if cursor_y == 0 and isLogged == False:
                 cursor_y = 5 #hardcoded because i know how many menu items (+1)
+            elif cursor_y == 0 and isLogged == True:
+                cursor_y = 4
         elif k == curses.KEY_DOWN:
             cursor_y += 1
-            if cursor_y == 6: #above value + 1
+            if cursor_y == 6 and isLogged == False: #above value + 1
+                cursor_y = 1
+            elif cursor_y == 5 and isLogged == True:
                 cursor_y = 1
         elif k == 10 or curses.KEY_RIGHT:
             char = int.from_bytes(stdscr.instr(cursor_y, 1, 1),  byteorder='little')
@@ -33,6 +38,12 @@ def main_menu(stdscr, cursor_y):
                 displays.start("volume", cursor_y, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, "")
             elif char == ord('2'):
                 displays.start("authors", cursor_y, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, "")
+            elif char == ord('4'):
+                get_url.volume()
+            elif char == ord('5') and isLogged == False:
+                login.start(cursor_y)
+
+
         stdscr.clear()
         height, width = stdscr.getmaxyx()
 
@@ -46,6 +57,7 @@ def main_menu(stdscr, cursor_y):
         option_3 = "3. View by Topic (Not Done Yet)"
         option_4 = "4. Check for New Articles"
         option_5 = "5. Login"
+        option_5_b = "Logged in to etsjets.org"
 
         start_x_title = int((width // 2 ) - (len(title) // 2) - len(title) % 2)
 
@@ -79,11 +91,14 @@ def main_menu(stdscr, cursor_y):
         stdscr.addstr(4, 1, option_4)
         if cursor_y == 4:
             stdscr.attroff(curses.color_pair(3))
-        if cursor_y == 5:
-            stdscr.attron(curses.color_pair(3))
-        stdscr.addstr(5, 1, option_5)
-        if cursor_y == 5:
-            stdscr.attroff(curses.color_pair(3))
+        if isLogged == False:
+            if cursor_y == 5:
+                stdscr.attron(curses.color_pair(3))
+            stdscr.addstr(5, 1, option_5)
+            if cursor_y == 5:
+                stdscr.attroff(curses.color_pair(3))
+        else:
+            stdscr.addstr(6, 1, option_5_b)
 
         stdscr.move(cursor_y, cursor_x)
         stdscr.refresh()
