@@ -1,10 +1,13 @@
 import curses
 from database import get_title, get_author, get_numbers
 from display import displays
-from utilities import open
+from utilities import open, variables as var
 from menus import main
-def menu(stdscr, menu_type, main_pos, volume_y_pos, issue_y_pos, articles_y_pos, authors_y_pos, author_articles_y_pos, volume_number, volume_year, volume_current_page, issue_number, author_name, authors_current_page, article_id):
-
+def menu(stdscr, article_id):
+    x_start_pos = 1
+    cursor_x    = 1
+    cursor_y    = 1
+    k           = 0
     k = 0
     full_number = get_numbers.full(article_id)
     stdscr.clear()
@@ -18,25 +21,35 @@ def menu(stdscr, menu_type, main_pos, volume_y_pos, issue_y_pos, articles_y_pos,
     curses.init_pair(3, curses.COLOR_BLACK, curses.COLOR_WHITE)
  #menu_type, main_pos, authors_current_page, volume_number, volume_year, volume_current_page, issue_number, author_name):
     while True:
-        if menu_type == "articles" or menu_type == "author_articles":
+        if var.menu_type == "articles" or var.menu_type == "author_articles":
             if k == ord('m'):
-                main.start(main_pos)
+                main.start()
             elif k == ord('o'):
                 open.open_file(full_number)
-            if menu_type == "articles":
+            if var.menu_type == "articles":
                 status_bar = " 'o' : Open | 'b'/esc : Back | 'i' : Issue Selection | 'v' : Volume Selection | 'm' : Main Menu"
                 if k == ord('i'):
-                    displays.start("issue", main_pos, volume_y_pos, issue_y_pos, 0, 0, 0, 0, volume_number, volume_year, volume_current_page, issue_number, "")
+                    var.menu_type = "issue"
+                    var.articles_y_pos = 0
+                    displays.start()
                 elif k == ord('v'):
-                    displays.start("volume", main_pos, volume_y_pos, 0, 0, 0, 0, 0, 0, 0, volume_current_page, "")
+                    var.menu_type = "volume"
+                    var.articles_y_pos = 0
+                    var.issue_y_pos = 0
+                    var.issue_number = 0
+                    var.volume_number = 0
+                    var.volume_year = 0
+                    displays.start()
                 elif k == 27 or k == curses.KEY_LEFT or k == ord('b'):
-                    displays.start("articles", main_pos, volume_y_pos, issue_y_pos, articles_y_pos, 0, 0, 0, volume_number, volume_year, volume_current_page, issue_number, "")
-            elif menu_type == "author_articles":
+                    displays.start()
+            elif var.menu_type == "author_articles":
                 status_bar = " 'o' : Open | 'b'/esc : Back | 'a' : Author Selection | 'm' : Main Menu"
                 if k == 27 or k == ord('b') or k == curses.KEY_LEFT:
-                    displays.start("author_articles", main_pos, 0, 0, 0, authors_y_pos, author_articles_y_pos, authors_current_page, 0, 0, 0, 0, author_name)
+                    displays.start()
                 elif k == ord("a"):
-                    displays.start("authors",  main_pos, 0, 0, 0, authors_y_pos, 0, authors_current_page, 0, 0, 0, 0, "")
+                    var.author_articles_y_pos = 0
+                    var.menu_type = "authors"
+                    displays.start()
             stdscr.clear()
             height, width = stdscr.getmaxyx()
 
@@ -75,5 +88,5 @@ def menu(stdscr, menu_type, main_pos, volume_y_pos, issue_y_pos, articles_y_pos,
             stdscr.refresh()
             k = stdscr.getch()
 
-def start(menu_type, main_pos, volume_y_pos, issue_y_pos, articles_y_pos, authors_y_pos, author_articles_y_pos, volume_number, volume_year, volume_current_page, issue_number, author_name, authors_current_page, article_id):
-    curses.wrapper(menu, menu_type, main_pos, volume_y_pos, issue_y_pos, articles_y_pos, authors_y_pos, author_articles_y_pos, volume_number, volume_year, volume_current_page, issue_number, author_name, authors_current_page, article_id)
+def start(article_id):
+    curses.wrapper(menu, article_id)

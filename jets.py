@@ -3,6 +3,7 @@ import rename as ren, login as log_in, database as db, util
 from rename import rename as r; from download import download as dl
 import click, configparser, os, sys
 from menus import main as main_menu
+from display import login_screen as log # THIS IS A DEV IMPORT
 from download import get_url                                            #outside imports
 import time
 
@@ -29,7 +30,8 @@ def cli(ctx):
 
 @cli.command()
 def curses():
-    main_menu.start(1)
+    main_menu.start()
+    #log.start(1)
 #LOGIN COMMAND
 @cli.command()
 @click.option('-u', 'user', required = True, metavar='<user>', nargs=1, help="Username for etsjets.org")

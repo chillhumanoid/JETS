@@ -1,6 +1,6 @@
 import requests, urllib.request, sqlite3, click
 from bs4 import BeautifulSoup
-from requests import Session
+from requests import *
 from download import util, download, information
 from util import p
 import login as log
@@ -8,8 +8,8 @@ import login as log
 login_exists = util.is_login()
 base_url     = "https://www.etsjets.org"
 url          = "https://www.etsjets.org/JETS_Online_Archive"
-
-def volume(data):
+#did contain data at one point, but i can't remember what data even was.
+def volume():
     """
     Start of pdf downloader, needs to get volume url first
 
@@ -22,16 +22,25 @@ def volume(data):
         if login_exists:
 
             login_data = {"name":log.get_username(), "pass":log.get_password(), "op":"Log in", "form_build_id":"form-a0ed7b5c7437ac9afeb21b126e24633b", "form_id":"user_login_block"}
-            s.post("https://www.etsjets.org/new_welcome?destination=node%2F1120", login_data)
+            response = s.post("https://www.etsjets.org/new_welcome?destination=node%2F1120", login_data)
+            soup             = BeautifulSoup(response.content,'html.parser')
+            login_check = soup.findAll("div", {"class":"messages error"})
+            if(len(login_check) > 0):
+                print("Login Failed")
 
+        """
         volume_number    = data[0]
         if volume_number == '0':
             file_start   = "Vol "
         else:
             file_start   = " " + volume_number + " "
+        """
 
         response         = s.get(url)
+        #print(response.content)
         soup             = BeautifulSoup(response.content,'html.parser')
+        print(soup)
+        """
         link_list        = soup.findAll('a') #finds the "a" tag on url
 
         for link in link_list:
@@ -45,6 +54,7 @@ def volume(data):
                 volume_url  = base_url + urlAppend
 
                 issue(data, volume_url)
+        """
 
 def issue(data, volume_url):
     """

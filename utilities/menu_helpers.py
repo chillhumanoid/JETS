@@ -1,9 +1,11 @@
-from utilities import sort_dict, string_handler
+from utilities import sort_dict, string_handler, variables as var
+from display import displays
+from menus import main
 """
 gets the title for the menu based on menu_type (authors, ) and sort_int(1-4 or 1 if not sortable)
 """
-def get_title(menu_type, sort_int, volume_number, year, issue_number, author_name):
-    if menu_type == "authors":
+def get_title(sort_int):
+    if var.menu_type == "authors":
         if sort_int == 1:
             return  "JETS Author Listing - Sorted by Last (A-Z)"
         elif sort_int == 2:
@@ -12,32 +14,68 @@ def get_title(menu_type, sort_int, volume_number, year, issue_number, author_nam
             return "JETS Author Listing - Sorted by First (A-Z)"
         elif sort_int == 4:
             return "JETS Author Listing - Sorted by First (Z-A)"
-    elif menu_type == "volume":
+    elif var.menu_type == "volume":
         return "JETS by Volume (Year)"
-    elif menu_type == "issue":
-        return "Volume {} ({})".format(volume_number, year)
-    elif menu_type == "articles":
-        if issue_number == "All":
-            return "Volume {} ({}) - All Issues".format(volume_number, year)
+    elif var.menu_type == "issue":
+        return "Volume {} ({})".format(var.volume_number, var.volume_year)
+    elif var.menu_type == "articles":
+        if var.issue_number == "All":
+            return "Volume {} ({}) - All Issues".format(var.volume_number, var.volume_year)
         else:
-            return "Volume {} ({}) - Issue {}".format(volume_number, year, issue_number)
-    elif menu_type == "author_articles":
-        return "Articles by {}".format(author_name)
+            return "Volume {} ({}) - Issue {}".format(var.volume_number, var.volume_year, var.issue_number)
+    elif var.menu_type == "author_articles":
+        return "Articles by {}".format(var.author_name)
 
-def get_display_row(menu_type, display, volume_number, year, width):
-    if menu_type == "authors":
+def get_display_row(display, width):
+    if var.menu_type == "authors":
         return sort_dict.get_name(display)
-    elif menu_type == "volume":
+    elif var.menu_type == "volume":
         display_number = string_handler.display_number(str(display))
         display = string_handler.display_volume(display_number, str(display))
         return display
-    elif menu_type == "issue":
+    elif var.menu_type == "issue":
         number = str(display)
-        return "Vol {} ({}) - Issue {}".format(volume_number, year, number)
-    elif menu_type == "articles" or menu_type == "author_articles":
-        return string_handler.display_string(display, width, menu_type)
+        return "Vol {} ({}) - Issue {}".format(var.volume_number, var.volume_year, number)
+    elif var.menu_type == "articles" or var.menu_type == "author_articles":
+        return string_handler.display_string(display, width, var.menu_type)
 
-def get_status_bar(menu_type, current_page, num_pages, sort_int):
+def back():
+    if var.menu_type == "authors" or var.menu_type == "volume":
+        main.start()
+    elif var.menu_type == "issue":
+        var.issue_y_pos = 0
+        var.articles_y_pos = 0
+        var.authors_y_pos = 0
+        var.author_articles_y_pos = 0
+        var.author_current_page = 0
+        var.author_name = ""
+        var.volume_year = 0
+        var.volume_number = 0
+        var.issue_number = 0
+        var.menu_type = "volume"
+        displays.start()
+    elif var.menu_type == "articles":
+        var.articles_y_pos = 0
+        var.authors_y_pos = 0
+        var.author_articles_y_pos = 0
+        var.author_current_page = 0
+        var.author_name = 0
+        var.menu_type = "issue"
+        displays.start()
+    elif var.menu_type == "author_articles":
+        var.volume_y_pos = 0
+        var.issue_y_pos = 0
+        var.articles_y_pos = 0
+        var.author_articles_y_pos = 0
+        var.volume_number = 0
+        var.volume_year = 0
+        var.volume_current_page = 0
+        var.issue_number = 0
+        var.menu_type = "authors"
+        displays.start()
+
+
+def get_status_bar(current_page, num_pages, sort_int):
     menuStr1 = "'m' : Main Menu"
     menuStr2 = "'m'/esc : Main Menu"
     menuStr3 = "esc : Main Menu"
@@ -51,7 +89,7 @@ def get_status_bar(menu_type, current_page, num_pages, sort_int):
     arrowStr = "arrow keys : Navigation"
     alphaStr = "(a-z) : Go to Letter"
     authorStr = "'a'/esc : Back to Author"
-    if menu_type == "authors":
+    if var.menu_type == "authors":
         current = "Last"
         cur2 = "Z-A"
         if sort_int == 1:
@@ -67,7 +105,7 @@ def get_status_bar(menu_type, current_page, num_pages, sort_int):
             current = "Last"
             cur2 = "A-Z"
         return " {} | {} | {} | 1: Sort by {} | 2: Sort ({})".format(menuStr3, arrowStr, alphaStr, current, cur2)
-    elif menu_type == "volume":
+    elif var.menu_type == "volume":
         if current_page == 1:
             return " {} | {}".format(nextStr, menuStr2)
         elif current_page == num_pages:
@@ -75,9 +113,9 @@ def get_status_bar(menu_type, current_page, num_pages, sort_int):
         else:
             return " {} | {} | {}".format(nextStr, prevStr, menuStr2)
 
-    elif menu_type == "issue":
+    elif var.menu_type == "issue":
         return " {} | {} ".format(volStr2, menuStr1)
-    elif menu_type == "articles":
+    elif var.menu_type == "articles":
         if num_pages == 1:
             return " {} | {} | {} | {} | {}".format(openStr, infoStr, issueStr, volStr1, menuStr1)
         elif current_page == 1 and not num_pages == 1:
@@ -86,7 +124,7 @@ def get_status_bar(menu_type, current_page, num_pages, sort_int):
             return " {} | {} | {} | {} | {} | {}".format(prevStr, openStr, infoStr, issueStr, volStr1, menuStr1)
         else:
             return " {} | {} | {} | {} | {} | {} | {}".format(nextStr, prevStr, openStr, infoStr, issueStr, volStr1, menuStr1)
-    elif menu_type == "author_articles":
+    elif var.menu_type == "author_articles":
         if num_pages == 1:
             return " {} | {} | {} | {}".format(openStr, infoStr, authorStr, menuStr1)
         if current_page == 1 and not num_pages == 1:
