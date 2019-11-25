@@ -1,5 +1,6 @@
 import curses, sys
-from utilities import login
+from utilities import login, arith
+from utilities.menu import login_option, title, login_status, add_string
 from menus import main
 import time
 def menu(stdscr, main_pos):
@@ -15,6 +16,7 @@ def menu(stdscr, main_pos):
     curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)
     curses.init_pair(3, curses.COLOR_BLACK, curses.COLOR_WHITE)
     curses.init_pair(4, curses.COLOR_GREEN, curses.COLOR_BLACK)
+    title_str = "etsjets.org Login"
     user_label = "Username: "
     password_label = "Password: "
     x_pos_user = len(user_label) + 2
@@ -29,27 +31,29 @@ def menu(stdscr, main_pos):
 
     while(True):
         stdscr.clear()
-        title = "JETS Login"
 
-        stdscr.attron(curses.color_pair(1))
-        stdscr.addstr(2,2, user_label)
-        stdscr.addstr(3,2, password_label)
-        stdscr.attroff(curses.color_pair(1))
-        stdscr.addstr(2,x_pos_user, username)
-        stdscr.addstr(3, x_pos_pass, password_display)
 
-        if isError:
-            stdscr.attron(curses.color_pair(2))
+        if isError == True and success == "Please enter a username":
+            login_option(stdscr, user_label, 2, 2, cursor_y, True)
         else:
-            stdscr.attron(curses.color_pair(4))
-        stdscr.addstr(4, (width - len(success)) // 2, success)
-        if isError:
-            stdscr.attroff(curses.color_pair(2))
+            login_option(stdscr, user_label, 2, 2, cursor_y, False)
+        if isError == True and success == "Please enter a password":
+            login_option(stdscr, password_label, 3, 2, cursor_y, True)
         else:
-            stdscr.attroff(curses.color_pair(4))
+            login_option(stdscr, password_label, 3, 2, cursor_y, False)
+
+        add_string(stdscr, username, 2, x_pos_user)
+        add_string(stdscr, password_display, 3, x_pos_pass)
+
+        title(stdscr, title_str)
+
+        login_status(stdscr, isError, success, 4, curses.color_pair(2), curses.color_pair(4))
+
+
 
         stdscr.move(cursor_y, cursor_x)
         stdscr.refresh()
+
         if isError == False and success == "Successfully logged in! Returning to main menu...":
             time.sleep(5)
             main.start(main_pos)
@@ -71,9 +75,11 @@ def menu(stdscr, main_pos):
             elif cursor_y == 3:
                 if len(username) == 0:
                     success = "Please enter a username"
+                    cursor_y = 2
                     isError = True
                 elif len(password) == 0:
                     success = "Please enter a password"
+                    cursor_y = 3
                     isError = True
                 else:
                     isLogged = login.set_login(username, password)
