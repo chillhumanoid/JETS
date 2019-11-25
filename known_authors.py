@@ -1,5 +1,3 @@
-import os, sys
-
 
 known_authors = ["Jerome Ficek", "Bruce Waltke", "James B. De Young", "Thomas Edward Mccomiskey", ". Robert L. Saucy", "Ronald Youngblood", 
                  "Cleon Rogers", "Robert L Saucy", "Alan Johnson", "Lewis Foster", "Phillip H. Wiebe", "William Lane Craig", "Edwin Yamauchi",

@@ -1,4 +1,3 @@
-#this is the file for parsing title, filenumber or author name from a raw file title or the post-change file.
 import util
 
 def get_full_number(file_name):

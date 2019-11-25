@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from requests import *
 from download import util, download, information
 from util import p
-import login as log
+from utilities import login as log
 
 login_exists = util.is_login()
 base_url     = "https://www.etsjets.org"
