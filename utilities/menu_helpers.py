@@ -1,6 +1,5 @@
 from utilities import sort_dict, string_handler, variables as var
-from display import displays
-from menus import main
+from display import displays, main
 """
 gets the title for the menu based on menu_type (authors, ) and sort_int(1-4 or 1 if not sortable)
 """
