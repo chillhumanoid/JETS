@@ -8,23 +8,24 @@ def create(list):
     for name in list:
         if name == "Augustus Cerillo":
             name = "Augustus Cerillo Jr"
-        full_name = name.split(" ")
-        first = full_name[0]
-        middle = " "
-        postfix = ""
-        if "Jr" in full_name or "III" in full_name or "II" in full_name or "IV" in full_name or "Jr." in full_name:
-            last_location = len(full_name) - 2
-            postfix = full_name[len(full_name) - 1]
-            postfix = " " + postfix
-        else:
-            last_location = len(full_name) - 1
-        last = full_name[last_location]
-        if not last_location == 1 or last_location == 0:
-            middle_full = get_middle(last_location, full_name, [], first)
-            middle = ' '.join(middle_full)
-            middle = " " + middle + " "
-        name_dict = {"first":first, "middle":middle, "last":last, "post":postfix, "original":name}
-        dict_list.append(name_dict)
+        elif not name == "Jr.":
+            full_name = name.split(" ")
+            first = full_name[0]
+            middle = " "
+            postfix = ""
+            if "Jr" in full_name or "III" in full_name or "II" in full_name or "IV" in full_name or "Jr." in full_name:
+                last_location = len(full_name) - 2
+                postfix = full_name[len(full_name) - 1]
+                postfix = " " + postfix
+            else:
+                last_location = len(full_name) - 1
+            last = full_name[last_location]
+            if not last_location == 1 or last_location == 0:
+                middle_full = get_middle(last_location, full_name, [], first)
+                middle = ' '.join(middle_full)
+                middle = " " + middle + " "
+            name_dict = {"first":first, "middle":middle, "last":last, "post":postfix, "original":name}
+            dict_list.append(name_dict)
     return dict_list
 
 def sort(lis, num):
@@ -39,6 +40,7 @@ def sort(lis, num):
 
 def get_middle(location, full_name, middle_full, first):
     middle_end = location - 1
+
     middle = full_name[middle_end]
     if not len(middle) == 2:
         if not len(first) == 2:
