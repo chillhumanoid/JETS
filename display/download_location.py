@@ -22,13 +22,14 @@ def menu(stdscr):
 
     title_str = "Download Info"
     status_msg = " 'm' : Main Menu | 'q' : Quit"
-    info_1 = "Current Directory: {}".format(current_location)
-    info_2 = "Downloaded Files: {}".format(downloaded_files)
-    option_1 = "1. Change Directory (will delete current files)"
+    option_1 = "1. Change Directory"
     option_2 = "2. Delete All Files"
     option_3 = "3. Exit"
 
     while(True):
+        info_1 = "Current Directory: {}".format(current_location)
+        info_2 = "Downloaded Files: {}".format(downloaded_files)
+
         stdscr.clear()
         m.title(stdscr, title_str)
         m.status_bar(stdscr, status_msg)
