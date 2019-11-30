@@ -1,19 +1,19 @@
 from database import executor, get_author_id
-from database.util import quotate
-
+"""
 def all():
-    """
+
     Get all the article IDs
 
     Returns:
     article_id_list (list): list of the article ids
-    """
-    sql = "SELECT article_id FROM titles ORDER BY full_number ASC"
-    c = executor.execute(sql)
+
+    sql = "SELECT article_id FROM articles ORDER BY full_number ASC"
+    c = executor.select(sql)
     article_id_list = []
     for x in c:
         article_id_list.append(x[0])
     return article_id_list
+    """
 
 def by_author(author_name):
     """
@@ -26,8 +26,8 @@ def by_author(author_name):
     article_id_list (list)
     """
     author_id = get_author_id.by_name(author_name)
-    sql = "SELECT article_id FROM linker WHERE author_id = %s" % author_id
-    c = executor.execute(sql).fetchall()
+    sql = "SELECT article_id FROM linker WHERE author_id = {}".format(author_id)
+    c = executor.select(sql)
     article_id_list = []
     for lis in c:
         article_id_list.append(lis[0])
@@ -42,9 +42,12 @@ def by_full_number(full_number):
     Parameters:
     full_number (string) : Vol.issue.article (##.##.##)
     """
-    sql = "SELECT article_id FROM titles WHERE full_number = %s" % quotate(full_number)
-    c = executor.execute(sql).fetchall()
-    return c[0][0]
+    sql = "SELECT article_id FROM articles WHERE full_number = '{}'".format(full_number)
+    c = executor.select(sql)
+    if len(c) == 0:
+        return False
+    else:
+        return c[0][0]
 
 def by_volume(volume_number):
     """
@@ -55,8 +58,8 @@ def by_volume(volume_number):
     Parameters:
     volume_number (integer)
     """
-    sql = "SELECT article_id FROM titles WHERE volume_number = %s" % volume_number
-    c = executor.execute(sql).fetchall()
+    sql = "SELECT article_id FROM articles WHERE volume_number = {}".format(volume_number)
+    c = executor.select(sql)
     article_id_list = []
     for lis in c:
         article_id_list.append(lis[0])

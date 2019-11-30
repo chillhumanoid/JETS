@@ -12,8 +12,8 @@ def by_article_id(article_id):
     Returns:
     title (string)
     """
-    sql = "SELECT article_title FROM titles WHERE article_id = %s" % article_id
-    c = executor.execute(sql).fetchall()
+    sql = "SELECT article_title FROM articles WHERE article_id = {}".format(article_id)
+    c = executor.select(sql)
     return c[0][0]
 
 def all():
@@ -24,8 +24,8 @@ def all():
     titles (list): a list of all the titles in the table
     """
     titles = []
-    sql = "SELECT article_title, full_number FROM titles"
-    c = executor.execute(sql)
+    sql = "SELECT article_title, full_number FROM articles"
+    c = executor.select(sql)
     for x in c:
         titles.append((x[0], x[1]))
     return titles

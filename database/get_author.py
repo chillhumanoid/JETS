@@ -11,7 +11,7 @@ def all():
     """
     names = []
     sql = "SELECT author_name FROM authors"
-    c = executor.execute(sql)
+    c = executor.select(sql)
     for x in c:
         names.append(x[0])
     return names
@@ -33,8 +33,8 @@ def by_full_number(full_number):
     return author_list
 
 def by_article_id(article_id):
-    sql = "SELECT author_id FROM linker WHERE article_id = %s" % article_id
-    c = executor.execute(sql)
+    sql = "SELECT author_id FROM linker WHERE article_id = {}".format(article_id)
+    c = executor.select(sql)
     author_list = []
     for lis in c:
         name = by_author_id(lis[0])
@@ -42,6 +42,6 @@ def by_article_id(article_id):
     return author_list
 
 def by_author_id(author_id):
-    sql = "SELECT author_name from authors WHERE author_id = %s" % author_id
-    c = executor.execute(sql).fetchall()
+    sql = "SELECT author_name FROM authors WHERE author_id = {}".format(author_id)
+    c = executor.select(sql)
     return c[0][0]
