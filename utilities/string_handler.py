@@ -3,7 +3,7 @@ from utilities import arith, names
 def display_string(article_id, width, menu_type):
     a_len = 26
     number = get_numbers.full(article_id)
-    if not menu_type == "author_articles":
+    if not (menu_type == "author_articles" or menu_type == "search"):
         number = number.split(".")[1] + "." + number.split(".")[2]
     title = get_title.by_article_id(article_id)
     author = get_author.by_article_id(article_id)
