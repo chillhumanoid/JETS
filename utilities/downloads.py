@@ -1,5 +1,5 @@
 import os
-
+from utilities import variables as var
 def get_location():
     current_path = os.getcwd()
     check = os.path.join(current_path, 'download_location.txt')
@@ -32,5 +32,8 @@ def add_files():
     with open(file, 'w') as f:
         f.write(number)
 
-def set_location():
-    pass
+def set_location(new_location):
+    var.download_folder = new_location
+    check = os.path.join(os.getcwd(), 'download_location.txt')
+    with open(check, 'w') as f:
+        f.write(new_location)
