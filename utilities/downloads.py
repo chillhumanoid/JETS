@@ -24,16 +24,10 @@ def get_size():
     return '{:.2f} GB'.format(total_size/float(1 << 30))
 
 def get_files():
-    current_path = os.getcwd()
-    file = os.path.join(current_path, 'file_count.txt')
-    if not os.path.exists(file):
-        with open(file, 'w') as f:
-            f.write('0')
-        return 0
-    else:
-        with open(file, 'r') as f:
-            value = f.readlines()[0]
-        return value
+    total_files = 0
+    for root, dirs, files in os.walk(var.download_folder):
+        total_files += len(files)
+    return total_files
 
 def add_files():
     file = os.path.join(os.getcwd(), 'file_count.txt')
