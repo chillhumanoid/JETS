@@ -24,10 +24,12 @@ def main_menu(stdscr):
     option_2 = "2. View by Author"
     option_3 = "3. View by Topic (NOT DONE)"
     option_4 = "4. Search (NOT DONE)"
-    option_5 = "5. Downloads (WIP)"
+    option_5 = "5. Downloads"
     option_6 = "6. Login"
     option_6_b = "Logged in to etsjets.org"
 
+    option_7 = "7. Quit"
+    option_7b = "6. Quit"
     while(True):
         stdscr.clear()
 
@@ -43,8 +45,10 @@ def main_menu(stdscr):
 
         if var.isLogged == False:
             m.menu_option(stdscr, option_6, 6, 1, cursor_y)
+            m.menu_option(stdscr, option_7, 7, 1, cursor_y)
         else:
-            m.menu_option(stdscr, option_6_b, 7, 1, cursor_y)
+            m.menu_option(stdscr, option_7b, 6, 1, cursor_y)
+            m.menu_option(stdscr, option_6_b, 8, 1, cursor_y)
 
         stdscr.move(cursor_y, cursor_x)
         stdscr.refresh()
@@ -56,17 +60,17 @@ def main_menu(stdscr):
             if cursor_y == 4: #COMMENT THIS OUT LATER
                 cursor_y = 2 #DITTO
             elif cursor_y == 0 and var.isLogged == False:
-                cursor_y = 6
+                cursor_y = 7
             elif cursor_y == 0 and var.isLogged == True:
-                cursor_y = 5 # CHANGE THIS
+                cursor_y = 6
             var.main_position = cursor_y
         elif k == curses.KEY_DOWN:
             cursor_y += 1
-            if cursor_y > 6 and var.isLogged == False:
+            if cursor_y > 6 and var.isLogged == True:
                 cursor_y = 1
-            elif cursor_y > 3 and var.isLogged == True: #CHANGE THIS
-                cursor_y = 5
-            elif cursor_y == 3 and var.isLogged == False: # COMMENT THIS OUT
+            elif cursor_y > 7 and var.isLogged == False:
+                cursor_y = 1
+            elif cursor_y == 3: # COMMENT THIS OUT
                 cursor_y = 5 #COMMENT THIS OUT
             var.main_position = cursor_y
         elif k == 10 or k == curses.KEY_RIGHT:
@@ -81,11 +85,22 @@ def main_menu(stdscr):
                 displays.start()
             elif char == ord('5'):
                 dl.start()
-            elif char == ord('6'):
+            elif char == ord('6') and var.isLogged == False:
                 login.start(cursor_y)
+            elif char == ord('7') or (char == ord('6') and var.isLogged == True):
+                sys.exit()
         elif k == 260:
             start()
-
+        elif k == ord('1'):
+            cursor_y = 1
+        elif k == ord('2'):
+            cursor_y = 2
+        elif k == ord('5'):
+            cursor_y = 5
+        elif k == ord('6'):
+            cursor_y = 6
+        elif k == ord('7') and var.isLogged == False:
+            cursor_y = 7
 
 
 def start():
