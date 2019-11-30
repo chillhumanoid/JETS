@@ -1,5 +1,5 @@
 import curses, sys
-from display import displays, login_screen as login, download_location as dl
+from display import displays, login_screen as login, download_location as dl, search
 from utilities import variables as var, menu as m
 def main_menu(stdscr):
     cursor_y = var.main_position
@@ -17,16 +17,17 @@ def main_menu(stdscr):
     curses.init_pair(1, curses.COLOR_CYAN, curses.COLOR_BLACK)
     curses.init_pair(2, curses.COLOR_RED, curses.COLOR_BLACK)
     curses.init_pair(3, curses.COLOR_BLACK, curses.COLOR_WHITE)
+    curses.init_pair(4, curses.COLOR_GREEN, curses.COLOR_BLACK)
 
     title_str = "Journal of the Evangelical Theological Society Application"
     status_msg = "Written by Jonathan Thorne | © 2019 | Press 'esc' to quit"
     option_1 = "1. View by Volume/Year"
     option_2 = "2. View by Author"
     option_3 = "3. View by Topic (NOT DONE)"
-    option_4 = "4. Search (NOT DONE)"
+    option_4 = "4. Search (WIP)"
     option_5 = "5. Downloads"
-    option_6 = "6. Login"
-    option_6_b = "Logged in to etsjets.org"
+    option_6 = "6. Log In To etsjsts.org"
+    option_6_b = "Logged In To etsjets.org"
 
     option_7 = "7. Quit"
     option_7b = "6. Quit"
@@ -57,7 +58,7 @@ def main_menu(stdscr):
             sys.exit()
         elif k == curses.KEY_UP:
             cursor_y -= 1
-            if cursor_y == 4: #COMMENT THIS OUT LATER
+            if cursor_y == 3: #COMMENT THIS OUT LATER
                 cursor_y = 2 #DITTO
             elif cursor_y == 0 and var.isLogged == False:
                 cursor_y = 7
@@ -71,7 +72,7 @@ def main_menu(stdscr):
             elif cursor_y > 7 and var.isLogged == False:
                 cursor_y = 1
             elif cursor_y == 3: # COMMENT THIS OUT
-                cursor_y = 5 #COMMENT THIS OUT
+                cursor_y = 4 #COMMENT THIS OUT
             var.main_position = cursor_y
         elif k == 10 or k == curses.KEY_RIGHT:
             char = int.from_bytes(stdscr.instr(cursor_y, 1, 1), byteorder='little')
@@ -83,6 +84,8 @@ def main_menu(stdscr):
                 var.menu_type = "authors"
                 var.author_current_page = 1
                 displays.start()
+            elif char == ord('4'):
+                search.start("", "")
             elif char == ord('5'):
                 dl.start()
             elif char == ord('6') and var.isLogged == False:
