@@ -1,5 +1,6 @@
 import os
 from utilities import variables as var
+
 def get_location():
     current_path = os.getcwd()
     check = os.path.join(current_path, 'download_location.txt')
