@@ -5,14 +5,14 @@ def get_authors(author_list):
             first_name = name[0:1] + "."
             full_name = name.split(" ")
             full_name[0] = first_name
-            if "Jr" in full_name or "III" in full_name or "Jr." in full_name or "IV" in full_name or "II" in full_name: 
+            if "Jr" in full_name or "III" in full_name or "Jr." in full_name or "IV" in full_name or "II" in full_name:
                 last_location = len(full_name) - 2
             else:
                 last_location = len(full_name) - 1
                 if not last_location == 1:
                     full_name = get_middle(last_location, full_name)
-                name = ' '.join(full_name)
-                fullName.append(name)
+            name = ' '.join(full_name)
+            fullName.append(name)
         else:
             return "JETS"
     author = ', '.join(fullName)
