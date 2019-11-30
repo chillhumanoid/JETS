@@ -1,11 +1,13 @@
 import curses, sys
-from utilities import login, menu as m
+from utilities import login, menu as m, inputs
 from display import main
 import time
 
 def menu(stdscr, main_pos):
     cursor_y = 2
     k = 0
+
+    curses.curs_set(True)
 
     stdscr.clear()
     stdscr.refresh()
@@ -31,7 +33,7 @@ def menu(stdscr, main_pos):
 
     while(True):
         stdscr.clear()
-
+        password_display = "*" * len(password)
 
         if isError == True and success == "Please enter a username":
             m.login_option(stdscr, user_label, 2, 2, cursor_y, True)
@@ -64,10 +66,10 @@ def menu(stdscr, main_pos):
         elif k == 9:
             if cursor_y == 2:
                 cursor_y = 3
-                cursor_x = x_pos_pass
+                cursor_x = x_pos_pass  + len(password)
             elif cursor_y == 3:
                 cursor_y = 2
-                cursor_x = x_pos_user
+                cursor_x = x_pos_user + len(username)
         elif k == 10:
             if cursor_y == 2:
                 cursor_y = 3
@@ -104,44 +106,14 @@ def menu(stdscr, main_pos):
         elif k == curses.KEY_RIGHT:
             if cursor_y == 2 and not cursor_x >= x_pos_user + len(username):
                 cursor_x += 1
-            elif cursor_y == 2 and not cursor_x >= x_pos_pass + len(password_display):
+            elif cursor_y == 3 and not cursor_x >= x_pos_pass + len(password_display):
                 cursor_x += 1
         elif cursor_y == 2:
-            if k == 8:
-                if not len(username) == 0:
-                    if (not cursor_x == x_pos_user + len(username)) and ( not cursor_x - 1 < x_pos_user):
-                        s_pos = cursor_x - x_pos_user
-                        username = username[:s_pos-1] + username[s_pos:]
-                    else:
-                        username = username[:-1]
-                    if not cursor_x - 1 < x_pos_user:
-                        cursor_x -= 1
-            elif str(chr(k)).isalnum() or str(chr(k)) in valid_symbols:
-                if not cursor_x == x_pos_user + len(username):
-                    s_pos = cursor_x - x_pos_user
-                    username = username[:s_pos] + str(chr(k)) + username[s_pos:]
-                else:
-                    username = username + str(chr(k))
-                cursor_x += 1
+            username = inputs.handler(username, k, x_pos_user, cursor_x)
+            cursor_x = x_pos_user + len(username)
         elif cursor_y == 3:
-            if k == 8:
-                if not len(password) == 0:
-                    if (not cursor_x == x_pos_pass + len(password)) and (not cursor_x - 1 < x_pos_pass):
-                        s_pos = cursor_x - x_pos_pass
-                        password = password[:s_pos-1] + password[s_pos:]
-                    else:
-                        password = password[:-1]
-                    password_display = password_display[:-1]
-                    if not cursor_x - 1 < x_pos_pass:
-                        cursor_x -= 1
-            elif str(chr(k)).isalnum() or str(chr(k)) in valid_symbols:
-                if not cursor_x == x_pos_pass + len(password):
-                    s_pos = cursor_x - x_pos_pass
-                    password = password[:s_pos] + str(chr(k)) + password[s_pos:]
-                else:
-                    password = password + str(chr(k))
-                password_display = password_display + "*"
-                cursor_x += 1
+            password = inputs.handler(password, k, x_pos_pass, cursor_x)
+            cursor_x = x_pos_pass + len(password)
 
 def start(main_pos):
     curses.wrapper(menu, main_pos)
