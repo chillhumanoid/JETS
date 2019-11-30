@@ -1,6 +1,5 @@
 from database import get_author, get_article, get_numbers, get_article_id
 from utilities import sort_dict, variables as var
-from menus import main
 
 def volume():
     vol = get_numbers.volumes()
