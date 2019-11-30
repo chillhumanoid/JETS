@@ -59,6 +59,7 @@ def main_menu(stdscr):
                 cursor_y = 6
             elif cursor_y == 0 and var.isLogged == True:
                 cursor_y = 5 # CHANGE THIS
+            var.main_position = cursor_y
         elif k == curses.KEY_DOWN:
             cursor_y += 1
             if cursor_y > 6 and var.isLogged == False:
@@ -67,15 +68,14 @@ def main_menu(stdscr):
                 cursor_y = 5
             elif cursor_y == 3 and var.isLogged == False: # COMMENT THIS OUT
                 cursor_y = 5 #COMMENT THIS OUT
+            var.main_position = cursor_y
         elif k == 10 or k == curses.KEY_RIGHT:
             char = int.from_bytes(stdscr.instr(cursor_y, 1, 1), byteorder='little')
             if char == ord('1'):
-                var.main_position = cursor_y
                 var.menu_type = "volume"
                 var.volume_current_page = 1
                 displays.start()
             elif char == ord('2'):
-                var.main_position = cursor_y
                 var.menu_type = "authors"
                 var.author_current_page = 1
                 displays.start()
@@ -84,10 +84,9 @@ def main_menu(stdscr):
             elif char == ord('6'):
                 login.start(cursor_y)
         elif k == 260:
-            start(cursor_y)
+            start()
 
 
 
 def start():
-    var.init()
     curses.wrapper(main_menu)
