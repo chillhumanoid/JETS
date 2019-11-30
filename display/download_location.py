@@ -5,8 +5,8 @@ from tkinter import filedialog
 from display import main
 def menu(stdscr):
     current_location = var.download_folder
-    downloaded_files = var.downloaded_files
-    cursor_y = 4
+
+    cursor_y = 5
     k = 0
 
     curses.curs_set(0)
@@ -28,7 +28,8 @@ def menu(stdscr):
 
     while(True):
         info_1 = "Current Directory: {}".format(current_location)
-        info_2 = "Downloaded Files: {}".format(downloaded_files)
+        info_2 = "Downloaded Files: {}".format(downloads.get_files())
+        info_3 = "Directory Size: {}".format(downloads.get_size())
 
         stdscr.clear()
         m.title(stdscr, title_str)
@@ -36,22 +37,23 @@ def menu(stdscr):
         stdscr.attron(curses.color_pair(1))
         stdscr.addstr(1, 1, info_1)
         stdscr.addstr(2, 1, info_2)
+        stdscr.addstr(3, 1, info_3)
         stdscr.attroff(curses.color_pair(1))
 
-        m.menu_option(stdscr, option_1, 4, 1, cursor_y)
-        m.menu_option(stdscr, option_2, 5, 1, cursor_y)
-        m.menu_option(stdscr, option_3, 6, 1, cursor_y)
+        m.menu_option(stdscr, option_1, 5, 1, cursor_y)
+        m.menu_option(stdscr, option_2, 6, 1, cursor_y)
+        m.menu_option(stdscr, option_3, 7, 1, cursor_y)
         stdscr.move(cursor_y, 1)
         stdscr.refresh()
         k = stdscr.getch()
         if k == curses.KEY_UP:
             cursor_y -= 1
-            if cursor_y == 3:
-                cursor_y = 6
+            if cursor_y == 4:
+                cursor_y = 7
         elif k == curses.KEY_DOWN:
             cursor_y += 1
-            if cursor_y == 7:
-                cursor_y = 4
+            if cursor_y == 8:
+                cursor_y = 5
         elif k == 10 or k == curses.KEY_RIGHT:
             char = int.from_bytes(stdscr.instr(cursor_y, 1, 1), byteorder='little')
             if char == ord('1'):
