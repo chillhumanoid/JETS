@@ -69,7 +69,7 @@ def menu(stdscr):
                             downloads.set_location(file_path)
                             current_location = var.download_folder
             elif char == ord('2'):
-                pass # TODO: Delete all files LOGIC
+                downloads.delete_all()
             elif char == ord('3'):
                 main.start()
         elif k == curses.KEY_LEFT or k == ord('m') or k == 27:

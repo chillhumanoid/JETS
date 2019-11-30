@@ -1,4 +1,4 @@
-import os
+import os, shutil
 from utilities import variables as var
 
 def get_location():
@@ -16,6 +16,14 @@ def get_location():
             path = f.readlines()[0]
         return path
 
+def delete_all():
+    for root, dirs, files in os.walk(var.download_folder):
+        for file in files:
+            file_path = os.path.join(var.download_folder, root, file)
+            os.remove(file_path)
+    shutil.rmtree(var.download_folder) #just a full on delete
+    os.mkdir(var.download_folder) #just a full on remake
+    
 def get_size():
     total_size = 0
     for root, dirs, files in os.walk(var.download_folder):
