@@ -1,12 +1,8 @@
 import curses, sys
-from utilities import get_year as get, menu_helpers, arith, string_handler, open
-from utilities import get_list, calculate_y, variables as var
-from utilities.menu import title, status_bar, last_row, get_height, display_option, get_sort_1, get_sort_2
-from utilities.menu_helpers import back
+from utilities import arith, string_handler, get_list, calculate_y, variables as var, menu as m, menu_helpers as mh
 from math import ceil
-from database import get_numbers
-from menus import main
-from display import article
+from database import get_url, get_numbers
+from display import article, main
 
 """
 testing capability to reuse menu logic
