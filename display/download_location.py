@@ -55,7 +55,17 @@ def menu(stdscr):
         elif k == 10 or k == curses.KEY_RIGHT:
             char = int.from_bytes(stdscr.instr(cursor_y, 1, 1), byteorder='little')
             if char == ord('1'):
-                pass # TODO: CHANGE DIRECTORY LOGIC
+                root = tk.Tk()
+                root.withdraw()
+                new_path = filedialog.askdirectory()
+                if not new_path == "":
+                    file_path = os.path.join(new_path, 'JETS')
+                    file_path = file_path.replace("/", "\\")
+                    if not file_path == current_location:
+                        if os.path.exists(current_location):
+                            os.rename(current_location, file_path)
+                            downloads.set_location(file_path)
+                            current_location = var.download_folder
             elif char == ord('2'):
                 pass # TODO: Delete all files LOGIC
             elif char == ord('3'):
