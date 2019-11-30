@@ -14,6 +14,15 @@ def get_location():
         with open(check, 'r') as f:
             path = f.readlines()[0]
         return path
+
+def get_size():
+    total_size = 0
+    for root, dirs, files in os.walk(var.download_folder):
+        for file in files:
+            check_path = os.path.join(var.download_folder, root,  file)
+            total_size += os.path.getsize(check_path)
+    return '{:.2f} GB'.format(total_size/float(1 << 30))
+
 def get_files():
     current_path = os.getcwd()
     file = os.path.join(current_path, 'file_count.txt')
