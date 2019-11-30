@@ -1,10 +1,11 @@
 #import statements
+"""
+FILE CURRENTLY SAVED FOR FURTHER IMPLEMENTATION SAKE
 
-import os, sys, click, database as db, time
-from PyPDF2 import PdfFileReader, PdfFileWriter
+
+import os, click
 from database import get_title
 from database import get_article_id
-from database import search as s
 from database import get_author
 #global variables
 
@@ -40,7 +41,7 @@ def auth_search(author):
             for article_id in get_article_id.by_author(author):
                 article_id_list.append(article_id)
 
-    display(article_id_list)
+    #display(article_id_list)
 
 def article_search(term):
     found            = []
@@ -83,4 +84,5 @@ def article_search(term):
                             found.remove(item[1])
     for full_number in found:
         article_id_list.append(get_article_id.by_full_number(full_number))
-    display(article_id_list)
+    #display(article_id_list)
+"""
