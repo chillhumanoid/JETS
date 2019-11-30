@@ -22,3 +22,6 @@ utilbak.py
 *.exe
 *.spec
 *.txt
+hello.py
+
+setup.py
