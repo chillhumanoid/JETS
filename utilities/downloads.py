@@ -1,0 +1,36 @@
+import os
+
+def get_location():
+    current_path = os.getcwd()
+    check = os.path.join(current_path, 'download_location.txt')
+    if not os.path.exists(check):
+        path = os.path.join(os.path.expanduser('~'), 'Documents', 'JETS')
+        if not os.path.exists(path):
+            os.mkdir(path)
+        with open(check, 'w') as f:
+            f.write(path)
+        return path
+    else:
+        with open(check, 'r') as f:
+            path = f.readlines()[0]
+        return path
+def get_files():
+    current_path = os.getcwd()
+    file = os.path.join(current_path, 'file_count.txt')
+    if not os.path.exists(file):
+        with open(file, 'w') as f:
+            f.write('0')
+        return 0
+    else:
+        with open(file, 'r') as f:
+            value = f.readlines()[0]
+        return value
+
+def add_files():
+    file = os.path.join(os.getcwd(), 'file_count.txt')
+    number = get_files() + 1
+    with open(file, 'w') as f:
+        f.write(number)
+
+def set_location():
+    pass
