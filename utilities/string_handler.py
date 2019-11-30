@@ -1,5 +1,5 @@
 from database import get_numbers, get_title, get_author
-from utilities import arith, names, get_year as get
+from utilities import arith, names
 def display_string(article_id, width, menu_type):
     a_len = 26
     number = get_numbers.full(article_id)
@@ -13,9 +13,10 @@ def display_string(article_id, width, menu_type):
     finString = "{} | {} | {}".format(number, display_title, display_author)
     return finString
 def display_volume(display_number, number):
-    return "Vol " + display_number + " (" + get.year(number) + ")"
+    return "Vol " + display_number + " (" + str(get_numbers.year(number)) + ")"
 
 def get_display_author(author, a_len):
+    #print(author)
     if(len(author) > a_len):
         display_author = author[:a_len - 6]
         display_author = display_author + " . . ."
