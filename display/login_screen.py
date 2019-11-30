@@ -56,11 +56,11 @@ def menu(stdscr, main_pos):
 
         if isError == False and success == "Successfully logged in! Returning to main menu...":
             time.sleep(5)
-            main.start(main_pos)
+            main.start()
         k = stdscr.getch()
 
         if k == 27:
-            sys.exit()
+            main.start()
         elif k == 9:
             if cursor_y == 2:
                 cursor_y = 3
