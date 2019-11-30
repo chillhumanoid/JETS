@@ -4,12 +4,6 @@ def title_start(title, width):
     start_pos = int((width // 2) - (len(title) // 2) - len(title) % 2)
     return start_pos
 
-def get_page_num(rows, max_rows):
-    if rows > max_rows:
-        return ceil(rows/max_rows)
-    else:
-        return 1
-
 def get_last_row(rows, max_rows, num_pages):
     if rows > max_rows:
         return (rows - (max_rows * (num_pages - 1)) + 2)
