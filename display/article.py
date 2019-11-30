@@ -1,14 +1,11 @@
 import curses
-from database import get_title, get_author, get_numbers
-from display import displays
-from utilities import open, variables as var
-from menus import main
+from database import get_title, get_author, get_numbers, get_url
+from display import displays, main
+from utilities import variables as var
+
 def menu(stdscr, article_id):
     x_start_pos = 1
-    cursor_x    = 1
-    cursor_y    = 1
     k           = 0
-    k = 0
     full_number = get_numbers.full(article_id)
     stdscr.clear()
     stdscr.refresh()
@@ -25,9 +22,11 @@ def menu(stdscr, article_id):
             if k == ord('m'):
                 main.start()
             elif k == ord('o'):
-                open.open_file(full_number)
+                get_url.by_article_id(article_id)
+            elif k == ord('d'):
+                pass ## TODO: Downloader
             if var.menu_type == "articles":
-                status_bar = " 'o' : Open | 'b'/esc : Back | 'i' : Issue Selection | 'v' : Volume Selection | 'm' : Main Menu"
+                status_bar = " 'o' : Open | 'b'/esc : Back | 'i' : Issue Selection | 'v' : Volume Selection | 'd' : Download | 'm' : Main Menu"
                 if k == ord('i'):
                     var.menu_type = "issue"
                     var.articles_y_pos = 0
@@ -43,7 +42,7 @@ def menu(stdscr, article_id):
                 elif k == 27 or k == curses.KEY_LEFT or k == ord('b'):
                     displays.start()
             elif var.menu_type == "author_articles":
-                status_bar = " 'o' : Open | 'b'/esc : Back | 'a' : Author Selection | 'm' : Main Menu"
+                status_bar = " 'o' : Open | 'b'/esc : Back | 'a' : Author Selection | 'd' : Download | 'm' : Main Menu"
                 if k == 27 or k == ord('b') or k == curses.KEY_LEFT:
                     displays.start()
                 elif k == ord("a"):
