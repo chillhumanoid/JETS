@@ -1,11 +1,35 @@
 import os, curses, sys
-from utilities import variables as var, downloads, menu as m, menu_helpers as mh
+from utilities import variables as var,downloads,  menu as m, menu_helpers as mh, files
 import tkinter as tk
 from tkinter import filedialog
 from display import main
+
+def key_up():
+    global cursor_y
+    cursor_y -= 1
+    if cursor_y == 4:
+        cursor_y = 7
+
+def key_down():
+    global cursor_y
+    cursor_y += 1
+    if cursor_y == 8:
+        cursor_y = 5
+
+def get_option(char):
+    if char == ord('1'):
+        root = tk.Tk()
+        root.withdraw()
+        new_path = filedialog.askdirectory()
+        isOkay = files.change_path(new_path, var.download_folder)
+    elif char == ord('2'):
+        downloads.delete_all()
+    elif char == ord('3'):
+        main.start()
+
 def menu(stdscr):
     current_location = var.download_folder
-
+    global cursor_y
     cursor_y = 5
     k = 0
 
@@ -30,7 +54,7 @@ def menu(stdscr):
         info_1 = "Current Directory: {}".format(current_location)
         info_2 = "Downloaded Files: {}".format(downloads.get_files())
         info_3 = "Directory Size: {}".format(downloads.get_size())
-
+        k = 0
         stdscr.clear()
         m.title(stdscr, title_str)
         m.status_bar(stdscr, status_msg)
@@ -45,33 +69,15 @@ def menu(stdscr):
         m.menu_option(stdscr, option_3, 7, 1, cursor_y)
         stdscr.move(cursor_y, 1)
         stdscr.refresh()
+
         k = stdscr.getch()
         if k == curses.KEY_UP:
-            cursor_y -= 1
-            if cursor_y == 4:
-                cursor_y = 7
+            key_up()
         elif k == curses.KEY_DOWN:
-            cursor_y += 1
-            if cursor_y == 8:
-                cursor_y = 5
+            key_down()
         elif k == 10 or k == curses.KEY_RIGHT:
             char = int.from_bytes(stdscr.instr(cursor_y, 1, 1), byteorder='little')
-            if char == ord('1'):
-                root = tk.Tk()
-                root.withdraw()
-                new_path = filedialog.askdirectory()
-                if not new_path == "":
-                    file_path = os.path.join(new_path, 'JETS')
-                    file_path = file_path.replace("/", "\\")
-                    if not file_path == current_location:
-                        if os.path.exists(current_location):
-                            os.rename(current_location, file_path)
-                            downloads.set_location(file_path)
-                            current_location = var.download_folder
-            elif char == ord('2'):
-                downloads.delete_all()
-            elif char == ord('3'):
-                main.start()
+            get_option(char)
         elif k == curses.KEY_LEFT or k == ord('m') or k == 27:
             main.start()
         elif k == ord('q'):
