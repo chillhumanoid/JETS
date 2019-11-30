@@ -76,6 +76,12 @@ def menu(stdscr):
             main.start()
         elif k == ord('q'):
             sys.exit()
+        elif k == ord('1'):
+            cursor_y = 5
+        elif k == ord('2'):
+            cursor_y = 6
+        elif k == ord('3'):
+            cursor_y = 7
 
 
 def start():
