@@ -15,3 +15,10 @@ names.txt
 display/author.py
 
 display/authors.py
+test.py
+build/
+dist/
+utilbak.py
+*.exe
+*.spec
+*.txt
