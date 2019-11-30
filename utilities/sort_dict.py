@@ -6,6 +6,8 @@ creates dictionary from the list
 def create(list):
     dict_list = []
     for name in list:
+        if name == "Augustus Cerillo":
+            name = "Augustus Cerillo Jr"
         full_name = name.split(" ")
         first = full_name[0]
         middle = " "
