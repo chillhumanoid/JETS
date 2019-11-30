@@ -27,8 +27,8 @@ def init():
     global issue_number
     issue_number = 0
     global isLogged
-    #isLogged = login.check_login()
     isLogged = False
+    #isLogged = login.check_login()
     global download_folder
     download_folder = downloads.get_location()
     global downloaded_files
