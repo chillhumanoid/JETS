@@ -1,3 +1,4 @@
+from utilities import login, downloads
 def init():
     global main_position
     main_position = 1
@@ -25,3 +26,10 @@ def init():
     volume_current_page = 0
     global issue_number
     issue_number = 0
+    global isLogged
+    #isLogged = login.check_login()
+    isLogged = False
+    global download_folder
+    download_folder = downloads.get_location()
+    global downloaded_files
+    downloaded_files = downloads.get_files()
