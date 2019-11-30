@@ -59,8 +59,8 @@ def menu(stdscr):
 
     while(True):
         stdscr.clear()
-        title_str = menu_helpers.get_title(sort_int)
-        title(stdscr, title_str)
+        title_str = mh.get_title(sort_int)
+        m.title(stdscr, title_str)
 
         if var.menu_type == "volume":
             display_list = get_list.volume()
@@ -75,22 +75,22 @@ def menu(stdscr):
 
 
         rows          = len(display_list)
-        max_rows      = get_height(stdscr) - 5
+        max_rows      = m.get_height(stdscr) - 5
         if max_rows > rows:
             max_rows  = rows
         num_pages     = ceil(rows / max_rows)
         last_page_row = arith.get_last_row(rows, max_rows, num_pages)
 
-        status_msg = menu_helpers.get_status_bar(current_page, num_pages, sort_int)
-        status_bar(stdscr, status_msg)
+        status_msg = mh.get_status_bar(current_page, num_pages, sort_int)
+        m.status_bar(stdscr, status_msg)
 
         l_row = "Page {} of {}".format(current_page, num_pages)
-        last_row(stdscr, l_row)
+        m.last_row(stdscr, l_row)
 
         for i in range(0, max_rows):
             y_position = i + 1
             if not (current_page == num_pages and y_position >= last_page_row - 1):
-                display_option(stdscr, y_position, x_start_pos, cursor_y, max_rows, num_pages, current_page, last_page_row, display_list)
+                m.display_option(stdscr, y_position, x_start_pos, cursor_y, max_rows, num_pages, current_page, last_page_row, display_list)
 
 
         stdscr.move(cursor_y, cursor_x)
@@ -108,7 +108,7 @@ def menu(stdscr):
             cursor_y = 1
             current_page -= 1
         elif k == curses.KEY_LEFT and current_page == 1:
-            back()
+            mh.back()
 
         elif k == curses.KEY_RIGHT and not current_page == num_pages:
             cursor_y = 1
@@ -117,14 +117,14 @@ def menu(stdscr):
 
         elif var.menu_type == "authors":
             if k == 27:
-                back()
+                mh.back()
 
             elif k == ord('1'):
-                sort_int = get_sort_1(sort_int)
+                sort_int = m.get_sort_1(sort_int)
                 current_page = 1
 
             elif k == ord('2'):
-                sort_int = get_sort_2(sort_int)
+                sort_int = m.get_sort_2(sort_int)
                 current_page = 1
 
             elif k == 10:
@@ -148,7 +148,7 @@ def menu(stdscr):
 
         elif var.menu_type == "volume":
             if k == 27:
-                back()
+                mh.back()
             elif k == ord('n') and not current_page == num_pages:
                 cursor_y - 1
                 current_page  += 1
@@ -163,7 +163,7 @@ def menu(stdscr):
             elif k == 10:
                 i = arith.get_index(max_rows, num_pages, current_page, cursor_y, last_page_row)
                 volume_num = str(display_list[i])
-                year = get.year(volume_num)
+                year = get_numbers.year(volume_num)
                 if(len(volume_num) == 1):
                     volume_num = "0" + volume_num
                 var.volume_y_pos = cursor_y
@@ -184,17 +184,16 @@ def menu(stdscr):
                 menu(stdscr)
 
             elif k == 27:
-                back()
+                mh.back()
 
         elif var.menu_type == "articles":
             i = arith.get_index(max_rows, num_pages, current_page, cursor_y, last_page_row)
             article_id = display_list[i]
             if k == 27:
-                back()
+                mh.back()
 
             elif k == 10 or k == ord('o'):
-                full_number = get_numbers.full(article_id)
-                open.open_file(full_number)
+                get_url.by_article_id(article_id)
 
             elif k == ord('i'):
                 article.start(article_id)
@@ -210,11 +209,10 @@ def menu(stdscr):
             article_id = display_list[i]
 
             if k==27 or k == ord('a'):
-                back()
+                mh.back()
 
             elif k == 10 or k == ord('o'):
-                full_number = get_numbers.full(article_id)
-                open.open_file(full_number)
+                get_url.by_article_id(article_id)
 
             elif k == ord('i'):
                 var.author_articles_y_pos = cursor_y

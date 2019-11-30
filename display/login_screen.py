@@ -1,8 +1,8 @@
 import curses, sys
-from utilities import login, arith
-from utilities.menu import login_option, title, login_status, add_string
-from menus import main
+from utilities import login, menu as m
+from display import main
 import time
+
 def menu(stdscr, main_pos):
     cursor_y = 2
     k = 0
@@ -34,20 +34,20 @@ def menu(stdscr, main_pos):
 
 
         if isError == True and success == "Please enter a username":
-            login_option(stdscr, user_label, 2, 2, cursor_y, True)
+            m.login_option(stdscr, user_label, 2, 2, cursor_y, True)
         else:
-            login_option(stdscr, user_label, 2, 2, cursor_y, False)
+            m.login_option(stdscr, user_label, 2, 2, cursor_y, False)
         if isError == True and success == "Please enter a password":
-            login_option(stdscr, password_label, 3, 2, cursor_y, True)
+            m.login_option(stdscr, password_label, 3, 2, cursor_y, True)
         else:
-            login_option(stdscr, password_label, 3, 2, cursor_y, False)
+            m.login_option(stdscr, password_label, 3, 2, cursor_y, False)
 
-        add_string(stdscr, username, 2, x_pos_user)
-        add_string(stdscr, password_display, 3, x_pos_pass)
+        m.add_string(stdscr, username, 2, x_pos_user)
+        m.add_string(stdscr, password_display, 3, x_pos_pass)
 
-        title(stdscr, title_str)
+        m.title(stdscr, title_str)
 
-        login_status(stdscr, isError, success, 4, curses.color_pair(2), curses.color_pair(4))
+        m.login_status(stdscr, isError, success, 4, curses.color_pair(2), curses.color_pair(4))
 
 
 
